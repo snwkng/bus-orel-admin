@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.link-active {
+	@apply bg-ligth-blue text-white !important;
+}
+
+.link {
+	@apply flex flex-row items-center gap-x-2 rounded-xl hover:bg-slate-200 px-3 py-2 transition-all;
+}
