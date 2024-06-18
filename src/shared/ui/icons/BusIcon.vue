@@ -1,9 +1,15 @@
 <script setup lang="ts">
-const props = defineProps({
-	fill: { type: String, default: '#020202' },
-	width: { type: Number, default: 32 },
-	height: { type: Number, default: 32 }
-});
+export interface Props {
+  fill?: string
+  width?: number,
+  height?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fill: '#020202',
+  width: 32,
+  height: 32
+})
 </script>
 <template>
 	<svg

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import { computed, onMounted } from 'vue';
 import { useExcursionStore } from '../model';
 
@@ -121,7 +122,16 @@ const excursions = computed(() => store.excursions)
 							</span>
 						</div>
 					</td>
-					<td class="p-2 text-start align-top">Редактировать, удалить</td>
+					<td class="p-2 text-start align-top">
+						<div class="flex gap-3 items-center">
+							<div class="cursor-pointer" title="Редактировать">
+								<EditIcon fill="#009EFF" />
+							</div>
+							<div class="cursor-pointer" title="Удалить">
+								<TrashIcon fill="red" />
+							</div>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>

@@ -1,3 +1,3 @@
-import ExcursionsTable from './ui/ExcursionsTable.vue'
+import ExcursionsTable from './ui/ExcursionsTable.vue';
 
-export default ExcursionsTable
+export default ExcursionsTable;

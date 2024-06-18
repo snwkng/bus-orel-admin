@@ -1,26 +1,24 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 import type { IExcursion } from './types';
-import { getExcursions } from '../api/api';
+import { getExcursions, getExcursion, createExcursion } from '../api/api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
-  state: () => ({
+	state: () => ({
 		excursions: [] as IExcursion[],
 		excursion: {} as IExcursion,
 		cityList: [] as SelectItem[]
 	}),
 	actions: {
-		async getExcursions (params?: any): Promise<void> {
-			this.excursions = await getExcursions(params)
+		async getExcursions(params?: any): Promise<void> {
+			this.excursions = await getExcursions(params);
 		},
 
-		// async getExcursion (id: string): Promise<void> {
-		// 	const { BASE_URL } = useRuntimeConfig().public;
-		// 	this.excursion = await fetch(`${BASE_URL}/excursions/${id}`)
-		// },
+		async getExcursion(id: string): Promise<void> {
+			this.excursion = await getExcursion(id);
+		},
 
-		// async getCityList (): Promise<void> {
-		// 	const { BASE_URL } = useRuntimeConfig().public;
-		// 	this.cityList = await fetch(`${BASE_URL}/excursions/city-list`)
-		// }
+		async createExcursion(excursion: IExcursion): Promise<void> {
+			await createExcursion(excursion);
+		}
 	}
-})
+});
