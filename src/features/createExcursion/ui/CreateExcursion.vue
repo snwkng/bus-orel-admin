@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { reactive, watch } from 'vue';
+import DragAndDrop from '@/shared/ui/dragAndDrop';
 
 const excursion: IExcursion = reactive({
   name: '',
@@ -84,5 +85,7 @@ watch(() => excursion.duration, () => {
       </div>
       <button type="button" class="mt-3 base-btn" @click="() => excursion.thePriceIncludes.push('')">Добавить поле</button>
     </div>
+
+    <DragAndDrop />
 	</form>
 </template>
