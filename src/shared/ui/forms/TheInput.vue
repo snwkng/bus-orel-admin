@@ -19,7 +19,7 @@ const emit = defineEmits<(event: 'update:modelValue', payload: string) => void>(
 </script>
 <template>
 	<label class="block">
-		<span class="text-gray-700">{{ props.label }}</span>
+		<span class="text-slate-700">{{ props.label }}</span>
 		<input
 			:name="label"
 			:type="props.type"

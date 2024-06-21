@@ -103,7 +103,7 @@ const excursions = computed(() => store.excursions)
 					<td class="p-2 text-start align-top">
 						<div class="flex flex-wrap gap-2">
 							<img v-for="image in excursion.images" :key="image._id"
-								:src="`${baseURl}:${basePort}/images/${imagePath}/${image.name}`"
+								:src="`${baseURl}:${basePort}/public/images/${imagePath}/${image.name}`"
 								alt=""
 								width="50"
 							/>

@@ -60,7 +60,7 @@ watch(() => excursion.duration, () => {
 		/>
 
     <div class="flex flex-col items-start w-full">
-      <div class="text-gray-700 mb-1">Программа экскурсии</div>
+      <div class="text-slate-700 mb-1">Программа экскурсии</div>
       <div class="w-full flex flex-col gap-y-2">
         <TheTextArea
           v-for="(inc, index) in excursion.description" :key="index"
@@ -74,7 +74,7 @@ watch(() => excursion.duration, () => {
     </div>
 
     <div class="flex flex-col items-start w-full">
-      <div class="text-gray-700 mb-1">В стоимость включено</div>
+      <div class="text-slate-700 mb-1">В стоимость включено</div>
       <div class="w-full flex flex-col gap-y-2">
         <TheTextArea
           v-for="(inc, index) in excursion.thePriceIncludes" :key="index"
@@ -86,6 +86,8 @@ watch(() => excursion.duration, () => {
       <button type="button" class="mt-3 base-btn" @click="() => excursion.thePriceIncludes.push('')">Добавить поле</button>
     </div>
 
-    <DragAndDrop />
+    <DragAndDrop title="Изображения эксркусии" name="images" accept="image/*" />
+
+    <DragAndDrop title="Прайс" name="document" accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
 	</form>
 </template>
