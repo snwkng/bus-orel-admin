@@ -43,7 +43,38 @@ export const getExcursion = async (id: string): Promise<IExcursion> => {
  */
 export const createExcursion = async (excursion: IExcursion): Promise<void> => {
 	try {
-		await fetchApi.post('/excursion', excursion);
+		await fetchApi.post('/excursions', excursion);
+	} catch (err: any) {
+		console.error(err);
+		throw err;
+	}
+};
+
+/**
+ * Retrieves a single excursion from the server.
+ * @param id - The ID of the excursion.
+ * @returns A promise that resolves to an IExcursion object.
+ * @throws If the request fails, the promise is rejected with an error.
+ */
+export const deleteExcursion = async (id: string): Promise<void> => {
+	try {
+		await fetchApi.delete('/excursions/' + id);
+	} catch (err: any) {
+		console.error(err);
+		throw err;
+	}
+};
+
+/**
+ * Uploads files to the server.
+ * @param Files - The files to upload.
+ * @param path - The path to upload the files to.
+ * @returns A promise that resolves when the files are uploaded.
+ * @throws If the request fails, the promise is rejected with an error.
+ */
+export const uploadFiles = async (Files: FormData, path: string): Promise<void> => {
+	try {
+		await fetchApi.uploadFiles(`/file/upload?path=${path}`, Files);
 	} catch (err: any) {
 		console.error(err);
 		throw err;

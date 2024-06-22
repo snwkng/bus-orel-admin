@@ -6,17 +6,21 @@ export interface Props {
 	title?: string;
 	accept?: string;
 	name: string;
+	multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	title: '',
 	accept: '',
-	name: 'images'
+	name: 'images',
+	multiple: false
 });
 
 const isDragging = ref(false);
 const files = ref<File[]>([]);
 const file = ref<any>(null);
+
+const emit = defineEmits<(event: 'change', payload: File[]) => void>();
 
 const onChange = () => {
 	const newFiles = Array.from(file.value.files).filter(
@@ -28,6 +32,7 @@ const onChange = () => {
 			)
 	);
 	files.value.push(...(newFiles as File[]));
+	emit('change', files.value);
 };
 
 const dragover = () => {
@@ -65,9 +70,9 @@ const remove = (index: number) => {
 
 const generatePreview = (file: File) => {
 	let fileSrc = null;
-	if (file.name.includes('doc')) {
+	if (file.type.includes('openxmlformats')) {
 		fileSrc = '/src/app/assets/icons/docxIcon.svg';
-	} else if (file.name.includes('pdf')) {
+	} else if (file.type.includes('pdf')) {
 		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
 	} else {
 		fileSrc = URL.createObjectURL(file);
@@ -88,7 +93,7 @@ const generatePreview = (file: File) => {
 		>
 			<input
 				type="file"
-				multiple
+				:multiple="typeof props.multiple === 'string' || props.multiple"
 				:name="props.name"
 				:id="props.name"
 				class="absolute h-[1px] w-[1px] overflow-hidden opacity-0"

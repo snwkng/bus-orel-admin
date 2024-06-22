@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import type { IExcursion } from './types';
-import { getExcursions, getExcursion, createExcursion } from '../api/api';
+import { getExcursions, getExcursion, createExcursion, uploadFiles, deleteExcursion } from '../api/api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({
@@ -19,6 +19,14 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async createExcursion(excursion: IExcursion): Promise<void> {
 			await createExcursion(excursion);
+		},
+
+		async deleteExcursion(id: string): Promise<void> {
+			await deleteExcursion(id);
+		},
+
+		async uploadFiles(Files: FormData, path: string): Promise<void> {
+			await uploadFiles(Files, path);
 		}
 	}
 });

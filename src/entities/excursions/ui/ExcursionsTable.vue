@@ -2,6 +2,7 @@
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import { computed, onMounted } from 'vue';
 import { useExcursionStore } from '../model';
+import dayjs from 'dayjs';
 
 const baseURl = import.meta.env.VITE_BASE_URL
 const basePort = import.meta.env.VITE_BACKEND_PORT
@@ -13,6 +14,8 @@ onMounted(async () => {
 })
 
 const excursions = computed(() => store.excursions)
+
+const { deleteExcursion } = store
 </script>
 <template>
 	<!--Card-->
@@ -113,7 +116,7 @@ const excursions = computed(() => store.excursions)
 					<td class="p-2 text-center align-top">{{ excursion.price }}&#8381;</td>
 					<td class="p-2 text-start align-top">{{ excursion.hotelName }}</td>
 					<td class="p-2 text-start align-top">{{ excursion.documentName }}</td>
-					<td class="p-2 text-start align-top">{{ excursion.excursionStart }}</td>
+					<td class="p-2 text-start align-top">{{ dayjs(excursion.excursionStart).format('DD.MM.YYYY') }}</td>
 					<td class="p-2 text-start align-top">{{ excursion.city }}</td>
 					<td class="p-2 text-start align-top">
 						<div class="line-clamp-4">
@@ -127,9 +130,9 @@ const excursions = computed(() => store.excursions)
 							<div class="cursor-pointer" title="Редактировать">
 								<EditIcon fill="#009EFF" />
 							</div>
-							<div class="cursor-pointer" title="Удалить">
+							<button type="button" class="cursor-pointer" title="Удалить" @click="deleteExcursion(excursion._id)">
 								<TrashIcon fill="red" />
-							</div>
+							</button>
 						</div>
 					</td>
 				</tr>
