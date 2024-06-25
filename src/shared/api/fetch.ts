@@ -2,6 +2,8 @@ class FetchApi {
 	private baseUrl = import.meta.env.VITE_BASE_URL;
 	private port = import.meta.env.VITE_BACKEND_PORT;
 
+
+
 	async get(url: string, params?: any) {
 		const res = await fetch(
 			`${this.baseUrl}:${this.port}${url}` +
@@ -12,15 +14,23 @@ class FetchApi {
 		return res.json();
 	}
 
-	async post(url: string, body?: any) {
-		const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(body)
-		});
-		return res.json();
+	async post(url: string, body?: any): Promise<JSON | Error> {
+		try {
+			const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(body)
+			});
+			if (res.ok) {
+				return res.json();
+			} else {
+				throw new Error(res.statusText);
+			}
+		} catch (err: unknown) {
+			throw new Error(err as string);
+		}
 	}
 
 	async delete(url: string) {
@@ -36,6 +46,15 @@ class FetchApi {
 			body: formData
 		});
 		return res.json();
+	}
+
+	async getFiles(url: string,dir: 'docs' | 'images', type: 'excursions' | 'hotels') {
+		const res = await fetch(`${this.baseUrl}:${this.port}${url}` +
+		new URLSearchParams({
+			dir,
+			type
+		}));
+		return res;
 	}
 }
 

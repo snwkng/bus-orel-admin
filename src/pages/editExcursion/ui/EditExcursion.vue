@@ -2,5 +2,5 @@
 import ExcursionForm from '@/features/excursionForm';
 </script>
 <template>
-	<ExcursionForm type="create" />
+	<ExcursionForm type="edit"/>
 </template>

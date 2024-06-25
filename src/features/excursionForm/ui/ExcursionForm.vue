@@ -2,43 +2,48 @@
 import dayjs from 'dayjs';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
-import { reactive, ref, watch, type Ref } from 'vue';
+import { onMounted, reactive, ref, watch, type Ref } from 'vue';
 import DragAndDrop from '@/shared/ui/dragAndDrop';
 import { useExcursionStore } from '@/entities/excursions/model';
+import { useRoute, useRouter } from 'vue-router';
+
+export interface Props {
+	type: string
+}
+
+const props = defineProps<Props>();
 
 const store = useExcursionStore();
 
-const { createExcursion, uploadFiles } = store;
+const router = useRouter();
+const route = useRoute();
 
-const excursion: IExcursion = reactive({
+const { createExcursion, uploadFiles, getExcursion } = store;
+
+const excursion: Ref<IExcursion> = ref({
+	_id: '',
 	name: '',
-	description: Array.from({ length: 1 }),
+	description: Array.from(' '),
 	images: [],
 	duration: 0,
 	price: 0,
-	hotelName: '',
 	documentName: '',
 	excursionStart: '',
 	city: '',
-	thePriceIncludes: Array.from({ length: 1 })
+	hotelName: '',
+	thePriceIncludes: Array.from(' ')
 });
+
 
 const images: Ref<File[]> = ref([]);
 const price: Ref<File> = ref({} as File);
 
 watch(
-	() => excursion.duration,
-	() => {
-		excursion.description = Array.from({ length: excursion.duration });
-	}
-);
-
-watch(
 	() => images.value,
 	() => {
 		if (images.value.length) {
-			excursion.images = images.value.map((image: File) => ({
-				name: image.name.split('.')[0]+'.webp'
+			excursion.value.images = images.value.map((image: File) => ({
+				name: image.name.split('.')[0] + '.webp'
 			}));
 		}
 	}
@@ -48,7 +53,7 @@ watch(
 	() => price.value,
 	() => {
 		if (price.value) {
-			excursion.documentName = price.value.name;
+			excursion.value.documentName = price.value.name;
 		}
 	}
 );
@@ -67,27 +72,39 @@ const mappedFiles = (files: File[]): FormData => {
 		formData.append('file', file);
 	});
 
-  return formData;
+	return formData;
 };
 
 const create = async (excursion: IExcursion) => {
 	try {
-		await Promise.all([
-			createExcursion(excursion),
-			uploadFiles(mappedFiles(images.value), 'images/excursions'),
-			uploadFiles(mappedFiles([price.value]), 'docs/excursions')
-		]);
+		if (images.value && images.value.length) {
+			await uploadFiles(mappedFiles(images.value), 'images/excursions');
+		}
+		if (Object.keys(price.value).length) {
+			await uploadFiles(mappedFiles([price.value]), 'docs/excursions');
+		}
+		await createExcursion(excursion);
+		router.push('/excursions');
 	} catch (err) {
 		console.error(err);
 	}
 };
+
+const edit = async (excursion: IExcursion) => {
+	// TODO: implement edit
+}
+
+onMounted(async () => {
+	if (props.type === 'edit' && route.params.id) {
+		excursion.value = await getExcursion(route.params.id as string)
+	}
+})
 </script>
 <template>
-	<form class="flex flex-col gap-y-5" @submit.prevent="create(excursion)">
+	<form class="flex flex-col gap-y-5" @submit.prevent="type === 'create' ? create(excursion) : edit(excursion)">
 		<TheInput
 			label="Название экскурсии"
-			:modelValue="excursion.name"
-			@update:modelValue="($event) => (excursion.name = $event)"
+			v-model="excursion.name"
 		/>
 		<TheInput
 			label="Длительность экскурсии (в днях)"
@@ -109,7 +126,7 @@ const create = async (excursion: IExcursion) => {
 		<TheInput
 			label="Дата отправления"
 			type="date"
-			:modelValue="excursion.excursionStart.toString()"
+			:modelValue="dayjs(excursion.excursionStart).format('YYYY-MM-DD')"
 			@update:modelValue="
 				($event) =>
 					(excursion.excursionStart = dayjs($event).format('YYYY-MM-DD'))
@@ -134,13 +151,22 @@ const create = async (excursion: IExcursion) => {
 					"
 				/>
 			</div>
-			<button
-				type="button"
-				class="base-btn mt-3"
-				@click="() => excursion.description.push('')"
-			>
-				Добавить день
-			</button>
+			<div class="flex flex-row gap-x-3">
+				<button
+					type="button"
+					class="base-btn mt-3"
+					@click="() => excursion.description.push('')"
+				>
+					Добавить день
+				</button>
+				<button
+					type="button"
+					class="secondary-btn mt-3"
+					@click="() => excursion.description.pop()"
+				>
+					Удалить день
+				</button>
+			</div>
 		</div>
 
 		<div class="flex w-full flex-col items-start">
@@ -156,13 +182,22 @@ const create = async (excursion: IExcursion) => {
 					"
 				/>
 			</div>
-			<button
-				type="button"
-				class="base-btn mt-3"
-				@click="() => excursion.thePriceIncludes.push('')"
-			>
-				Добавить поле
-			</button>
+			<div class="flex flex-row gap-x-3">
+				<button
+					type="button"
+					class="base-btn mt-3"
+					@click="() => excursion.thePriceIncludes.push('')"
+				>
+					Добавить опцию
+				</button>
+				<button
+						type="button"
+						class="secondary-btn mt-3"
+						@click="() => excursion.thePriceIncludes.pop()"
+					>
+						Удалить опцию
+					</button>
+				</div>
 		</div>
 
 		<DragAndDrop

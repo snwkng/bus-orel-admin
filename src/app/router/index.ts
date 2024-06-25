@@ -22,6 +22,11 @@ const router = createRouter({
 			path: '/excursions/create',
 			name: 'create-excursion',
 			component: () => import('@/pages/createExcursion')
+		},
+		{
+			path: '/excursions/edit/:id',
+			name: 'edit-excursion',
+			component: () => import('@/pages/editExcursion')
 		}
 		// {
 		//   path: '/about',

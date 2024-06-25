@@ -3,10 +3,13 @@ import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import { computed, onMounted } from 'vue';
 import { useExcursionStore } from '../model';
 import dayjs from 'dayjs';
+import { useRouter } from 'vue-router';
 
 const baseURl = import.meta.env.VITE_BASE_URL
 const basePort = import.meta.env.VITE_BACKEND_PORT
 const imagePath = 'excursions'
+
+const router = useRouter();
 const store = useExcursionStore();
 
 onMounted(async () => {
@@ -15,11 +18,16 @@ onMounted(async () => {
 
 const excursions = computed(() => store.excursions)
 
-const { deleteExcursion } = store
+const deleteExcursion = async (id: string) => {
+	await store.deleteExcursion(id).then(async () => {
+		await store.getExcursions();
+	}).catch((err) => {
+		console.error(err);
+	})
+}
 </script>
 <template>
-	<!--Card-->
-	<div id="recipients" class="mt-6 rounded-xl bg-white p-8 shadow lg:mt-0">
+	<div class="mt-6 rounded-xl bg-white p-8 shadow lg:mt-0">
 		<table id="excursions-table" class="block w-full max-w-fit overflow-x-auto">
 			<thead>
 				<tr>
@@ -127,7 +135,7 @@ const { deleteExcursion } = store
 					</td>
 					<td class="p-2 text-start align-top">
 						<div class="flex gap-3 items-center">
-							<div class="cursor-pointer" title="Редактировать">
+							<div class="cursor-pointer" title="Редактировать" @click="router.push({name: 'edit-excursion', params: {id: excursion._id}})">
 								<EditIcon fill="#009EFF" />
 							</div>
 							<button type="button" class="cursor-pointer" title="Удалить" @click="deleteExcursion(excursion._id)">
@@ -139,5 +147,4 @@ const { deleteExcursion } = store
 			</tbody>
 		</table>
 	</div>
-	<!--/Card-->
 </template>

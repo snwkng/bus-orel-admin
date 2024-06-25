@@ -27,7 +27,7 @@ export const getExcursions = async (
  */
 export const getExcursion = async (id: string): Promise<IExcursion> => {
 	try {
-		const response = await fetchApi.get('/excursions/' + id);
+		const response: IExcursion = await fetchApi.get('/excursions/' + id);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -41,13 +41,8 @@ export const getExcursion = async (id: string): Promise<IExcursion> => {
  * @returns A promise that resolves to an IExcursion object.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const createExcursion = async (excursion: IExcursion): Promise<void> => {
-	try {
-		await fetchApi.post('/excursions', excursion);
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
+export const createExcursion = async (excursion: IExcursion): Promise<JSON | Error> => {
+	return await fetchApi.post('/excursions', excursion);
 };
 
 /**

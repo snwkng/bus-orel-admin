@@ -13,3 +13,7 @@
 .base-btn {
 	@apply py-2 px-4 bg-deep-orange text-white rounded-xl transition-all hover:bg-deep-orange/85;
 }
+
+.secondary-btn {
+	@apply py-2 px-4 bg-ligth-blue text-white rounded-xl transition-all hover:bg-ligth-blue/85;
+}

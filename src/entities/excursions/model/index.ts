@@ -5,7 +5,6 @@ import { getExcursions, getExcursion, createExcursion, uploadFiles, deleteExcurs
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({
 		excursions: [] as IExcursion[],
-		excursion: {} as IExcursion,
 		cityList: [] as SelectItem[]
 	}),
 	actions: {
@@ -13,11 +12,11 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			this.excursions = await getExcursions(params);
 		},
 
-		async getExcursion(id: string): Promise<void> {
-			this.excursion = await getExcursion(id);
+		async getExcursion(id: string): Promise<IExcursion> {
+			return await getExcursion(id);
 		},
 
-		async createExcursion(excursion: IExcursion): Promise<void> {
+		async createExcursion(excursion: IExcursion): Promise<void | Error> {
 			await createExcursion(excursion);
 		},
 
