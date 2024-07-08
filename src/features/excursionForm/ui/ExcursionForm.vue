@@ -2,13 +2,13 @@
 import dayjs from 'dayjs';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
-import { onMounted, reactive, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import DragAndDrop from '@/shared/ui/dragAndDrop';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { useRoute, useRouter } from 'vue-router';
 
 export interface Props {
-	type: string
+	type: string;
 }
 
 const props = defineProps<Props>();
@@ -18,7 +18,7 @@ const store = useExcursionStore();
 const router = useRouter();
 const route = useRoute();
 
-const { createExcursion, uploadFiles, getExcursion } = store;
+const { createExcursion, editExcursion, uploadFiles, getExcursion, getFile } = store;
 
 const excursion: Ref<IExcursion> = ref({
 	_id: '',
@@ -33,7 +33,6 @@ const excursion: Ref<IExcursion> = ref({
 	hotelName: '',
 	thePriceIncludes: Array.from(' ')
 });
-
 
 const images: Ref<File[]> = ref([]);
 const price: Ref<File> = ref({} as File);
@@ -91,21 +90,45 @@ const create = async (excursion: IExcursion) => {
 };
 
 const edit = async (excursion: IExcursion) => {
-	// TODO: implement edit
-}
+	try {
+		if (images.value && images.value.length) {
+			await uploadFiles(mappedFiles(images.value), 'images/excursions');
+		}
+		if (Object.keys(price.value).length) {
+			await uploadFiles(mappedFiles([price.value]), 'docs/excursions');
+		}
+		await editExcursion(excursion);
+		router.push('/excursions');
+	} catch (err) {
+		console.error(err);
+	}
+};
 
 onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
-		excursion.value = await getExcursion(route.params.id as string)
+		excursion.value = await getExcursion(route.params.id as string);
+		const exImages = excursion.value.images.map((image) => {
+			return getFile(image.name, 'images', 'excursions');
+		});
+
+		images.value = await Promise.all(exImages);
+
+		const exPrice = await getFile(
+			excursion.value.documentName,
+			'docs',
+			'excursions'
+		);
+
+		price.value = exPrice;
 	}
-})
+});
 </script>
 <template>
-	<form class="flex flex-col gap-y-5" @submit.prevent="type === 'create' ? create(excursion) : edit(excursion)">
-		<TheInput
-			label="Название экскурсии"
-			v-model="excursion.name"
-		/>
+	<form
+		class="flex flex-col gap-y-5"
+		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
+	>
+		<TheInput label="Название экскурсии" v-model="excursion.name" />
 		<TheInput
 			label="Длительность экскурсии (в днях)"
 			type="number"
@@ -191,13 +214,13 @@ onMounted(async () => {
 					Добавить опцию
 				</button>
 				<button
-						type="button"
-						class="secondary-btn mt-3"
-						@click="() => excursion.thePriceIncludes.pop()"
-					>
-						Удалить опцию
-					</button>
-				</div>
+					type="button"
+					class="secondary-btn mt-3"
+					@click="() => excursion.thePriceIncludes.pop()"
+				>
+					Удалить опцию
+				</button>
+			</div>
 		</div>
 
 		<DragAndDrop
@@ -206,6 +229,7 @@ onMounted(async () => {
 			accept="image/*"
 			multiple
 			@change="updateImages"
+			:value="images"
 		/>
 
 		<DragAndDrop
@@ -213,8 +237,9 @@ onMounted(async () => {
 			name="document"
 			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			@change="updatePrice"
+			:value="[price]"
 		/>
 
-		<button class="base-btn w-[300px]" type="submit">Создать экскурсию</button>
+		<button class="base-btn w-[300px]" type="submit">{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}</button>
 	</form>
 </template>

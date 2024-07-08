@@ -7,9 +7,9 @@ class FetchApi {
 	async get(url: string, params?: any) {
 		const res = await fetch(
 			`${this.baseUrl}:${this.port}${url}` +
-				new URLSearchParams({
-					...params
-				})
+			new URLSearchParams({
+				...params
+			})
 		);
 		return res.json();
 	}
@@ -18,6 +18,25 @@ class FetchApi {
 		try {
 			const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
 				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(body)
+			});
+			if (res.ok) {
+				return res.json();
+			} else {
+				throw new Error(res.statusText);
+			}
+		} catch (err: unknown) {
+			throw new Error(err as string);
+		}
+	}
+
+	async put(url: string, body?: any): Promise<JSON | Error> {
+		try {
+			const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -48,13 +67,24 @@ class FetchApi {
 		return res.json();
 	}
 
-	async getFiles(url: string,dir: 'docs' | 'images', type: 'excursions' | 'hotels') {
-		const res = await fetch(`${this.baseUrl}:${this.port}${url}` +
-		new URLSearchParams({
-			dir,
-			type
-		}));
-		return res;
+	async getFile(url: string, fileName: string, dir: 'docs' | 'images', type: 'excursions' | 'hotels') {
+		try {
+			const res: Response = await fetch(`${this.baseUrl}:${this.port}${url}?` +
+				new URLSearchParams({
+					fileName,
+					dir,
+					type
+				}),
+			);
+			if (res.ok) {
+				const blob = await res.blob();
+				return new File([blob], fileName);
+			} else {
+				throw new Error(res.statusText);
+			}
+		} catch (err: unknown) {
+			throw new Error(err as string);
+		}
 	}
 }
 

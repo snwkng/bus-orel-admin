@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import type { IExcursion } from './types';
-import { getExcursions, getExcursion, createExcursion, uploadFiles, deleteExcursion } from '../api/api';
+import { getExcursions, getExcursion, createExcursion, editExcursion, uploadFiles, deleteExcursion, getFile } from '../api/api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({
 		excursions: [] as IExcursion[],
-		cityList: [] as SelectItem[]
+		files: [] as File[]
 	}),
 	actions: {
 		async getExcursions(params?: any): Promise<void> {
@@ -20,12 +20,20 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			await createExcursion(excursion);
 		},
 
+		async editExcursion(excursion: IExcursion): Promise<void | Error> {
+			await editExcursion(excursion);
+		},
+
 		async deleteExcursion(id: string): Promise<void> {
 			await deleteExcursion(id);
 		},
 
 		async uploadFiles(Files: FormData, path: string): Promise<void> {
 			await uploadFiles(Files, path);
+		},
+
+		async getFile(fileName: string, dir: 'docs' | 'images', type: 'excursions' | 'hotels'): Promise<File> {
+			return await getFile(fileName, dir, type);
 		}
 	}
 });

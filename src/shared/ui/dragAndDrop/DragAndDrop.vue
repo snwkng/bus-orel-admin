@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
 
 export interface Props {
@@ -7,13 +7,15 @@ export interface Props {
 	accept?: string;
 	name: string;
 	multiple?: boolean;
+	value?: File[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	title: '',
 	accept: '',
 	name: 'images',
-	multiple: false
+	multiple: false,
+	value: () => [] as File[]
 });
 
 const isDragging = ref(false);
@@ -22,6 +24,9 @@ const file = ref<any>(null);
 
 const emit = defineEmits<(event: 'change', payload: File[]) => void>();
 
+watch(() => props.value, () => {
+	files.value = props.value;
+})
 const onChange = () => {
 	const newFiles = Array.from(file.value.files).filter(
 		(outerFile: unknown) =>
@@ -80,6 +85,12 @@ const generatePreview = (file: File) => {
 	setTimeout(() => URL.revokeObjectURL(fileSrc), 1000 * 60);
 	return fileSrc;
 };
+
+onMounted(() => {
+	if (props.value.length && Object.keys(props.value[0]).length) {
+		files.value = props.value;
+	}
+})
 </script>
 <template>
 	<div class="flex flex-col">
