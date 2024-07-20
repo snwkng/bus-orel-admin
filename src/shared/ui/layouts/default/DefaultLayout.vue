@@ -3,11 +3,11 @@ import TheNavbar from '@/shared/ui/navbar';
 import TheHeader from '@/shared/ui/header';
 </script>
 <template>
-	<div class="flex">
+	<div class="flex h-[100vh]">
 		<TheNavbar />
-		<div class="w-full max-w-[calc(100vw-300px)]">
+		<div class="flex-1 flex-col overflow-auto">
 			<TheHeader />
-			<main class="min-h-[calc(100vh-80px)] bg-slate-200 px-6 py-6">
+			<main class="bg-slate-200 px-6 py-6 transition-all">
 				<slot />
 			</main>
 		</div>

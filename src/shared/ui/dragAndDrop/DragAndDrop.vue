@@ -73,13 +73,13 @@ const remove = (index: number) => {
 	files.value.splice(index, 1);
 };
 
-const generatePreview = (file: File) => {
-	let fileSrc = null;
-	if (file.type.includes('openxmlformats')) {
+const generatePreview = (file: File): string => {
+	let fileSrc = '';
+	if (file?.type?.includes('openxmlformats') || file?.name?.includes('.docx') || file?.name?.includes('.doc')) {
 		fileSrc = '/src/app/assets/icons/docxIcon.svg';
-	} else if (file.type.includes('pdf')) {
+	} else if (file?.type?.includes('pdf') || file?.name?.includes('.pdf')) {
 		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
-	} else {
+	} else if (file?.name) {
 		fileSrc = URL.createObjectURL(file);
 	}
 	setTimeout(() => URL.revokeObjectURL(fileSrc), 1000 * 60);
@@ -87,7 +87,7 @@ const generatePreview = (file: File) => {
 };
 
 onMounted(() => {
-	if (props.value.length && Object.keys(props.value[0]).length) {
+	if (props.value.length) {
 		files.value = props.value;
 	}
 })

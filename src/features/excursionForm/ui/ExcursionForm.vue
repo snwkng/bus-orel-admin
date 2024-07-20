@@ -35,7 +35,7 @@ const excursion: Ref<IExcursion> = ref({
 });
 
 const images: Ref<File[]> = ref([]);
-const price: Ref<File> = ref({} as File);
+const price: Ref<File[]> = ref([]);
 
 watch(
 	() => images.value,
@@ -51,8 +51,8 @@ watch(
 watch(
 	() => price.value,
 	() => {
-		if (price.value) {
-			excursion.value.documentName = price.value.name;
+		if (price.value.length) {
+			excursion.value.documentName = price.value[0].name;
 		}
 	}
 );
@@ -62,7 +62,7 @@ const updateImages = ($event: File[]) => {
 };
 
 const updatePrice = ($event: File[]) => {
-	price.value = $event[0];
+	price.value[0] = $event[0];
 };
 
 const mappedFiles = (files: File[]): FormData => {
@@ -79,8 +79,8 @@ const create = async (excursion: IExcursion) => {
 		if (images.value && images.value.length) {
 			await uploadFiles(mappedFiles(images.value), 'images/excursions');
 		}
-		if (Object.keys(price.value).length) {
-			await uploadFiles(mappedFiles([price.value]), 'docs/excursions');
+		if (price.value && price.value.length) {
+			await uploadFiles(mappedFiles(price.value), 'docs/excursions');
 		}
 		await createExcursion(excursion);
 		router.push('/excursions');
@@ -94,8 +94,8 @@ const edit = async (excursion: IExcursion) => {
 		if (images.value && images.value.length) {
 			await uploadFiles(mappedFiles(images.value), 'images/excursions');
 		}
-		if (Object.keys(price.value).length) {
-			await uploadFiles(mappedFiles([price.value]), 'docs/excursions');
+		if (price.value && price.value.length) {
+			await uploadFiles(mappedFiles(price.value), 'docs/excursions');
 		}
 		await editExcursion(excursion);
 		router.push('/excursions');
@@ -113,13 +113,13 @@ onMounted(async () => {
 
 		images.value = await Promise.all(exImages);
 
-		const exPrice = await getFile(
+		await getFile(
 			excursion.value.documentName,
 			'docs',
 			'excursions'
-		);
-
-		price.value = exPrice;
+		)
+		.then((res) => price.value[0] = res)
+		.catch((err) => console.log(err));
 	}
 });
 </script>
@@ -237,7 +237,7 @@ onMounted(async () => {
 			name="document"
 			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			@change="updatePrice"
-			:value="[price]"
+			:value="price"
 		/>
 
 		<button class="base-btn w-[300px]" type="submit">{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}</button>

@@ -27,15 +27,12 @@ const router = createRouter({
 			path: '/excursions/edit/:id',
 			name: 'edit-excursion',
 			component: () => import('@/pages/editExcursion')
-		}
-		// {
-		//   path: '/about',
-		//   name: 'about',
-		//   // route level code-splitting
-		//   // this generates a separate chunk (About.[hash].js) for this route
-		//   // which is lazy-loaded when the route is visited.
-		//   component: () => import('@/pages/AboutView.vue')
-		// }
+		},
+		{
+			path: '/bus-rent',
+			name: 'bus-rent',
+			component: () => import('@/pages/bus-rent')
+		},
 	]
 });
 
