@@ -32,7 +32,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			await uploadFiles(Files, path);
 		},
 
-		async getFile(fileName: string, dir: 'docs' | 'images', type: 'excursions' | 'hotels'): Promise<File> {
+		async getFile(fileName: string, dir: FileDir, type: FileType): Promise<File> {
 			return await getFile(fileName, dir, type);
 		}
 	}

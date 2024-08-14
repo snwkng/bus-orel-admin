@@ -3,7 +3,7 @@ import TheNavbar from '@/shared/ui/navbar';
 import TheHeader from '@/shared/ui/header';
 </script>
 <template>
-	<div class="flex h-[100vh]">
+	<div class="flex">
 		<TheNavbar />
 		<div class="flex-1 flex-col overflow-auto">
 			<TheHeader />

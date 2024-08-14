@@ -1,17 +1,17 @@
 import { fetchApi } from '@/shared/api';
-import type { IExcursion } from '../model/types';
+import type { ITour } from '../model/types';
 
 /**
- * Retrieves a list of excursions from the server.
+ * Retrieves a list of tours from the server.
  * @param params - Optional query parameters for the request.
- * @returns A promise that resolves to an array of IExcursion objects.
+ * @returns A promise that resolves to an array of ITour objects.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const getExcursions = async (
+export const getTours = async (
 	params?: Record<string, string | number | boolean>
-): Promise<IExcursion[]> => {
+): Promise<ITour[]> => {
 	try {
-		const response = await fetchApi.get('/excursions', params);
+		const response = await fetchApi.get('/hotels', params);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -20,14 +20,14 @@ export const getExcursions = async (
 };
 
 /**
- * Retrieves a single excursion from the server.
- * @param id - The ID of the excursion.
- * @returns A promise that resolves to an IExcursion object.
+ * Retrieves a single tour from the server.
+ * @param id - The ID of the tour.
+ * @returns A promise that resolves to an ITour object.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const getExcursion = async (id: string): Promise<IExcursion> => {
+export const getTour = async (id: string): Promise<ITour> => {
 	try {
-		const response: IExcursion = await fetchApi.get('/excursions/' + id);
+		const response: ITour = await fetchApi.get('/hotels/' + id);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -36,38 +36,38 @@ export const getExcursion = async (id: string): Promise<IExcursion> => {
 };
 
 /**
- * Edits an excursion on the server.
- * @param excursion - The IExcursion object containing the updated data.
+ * Edits an tour on the server.
+ * @param tour - The ITour object containing the updated data.
  * @returns A promise that resolves to the JSON response from the server if the request succeeds, or rejects with an error if the request fails.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const editExcursion = async (excursion: IExcursion): Promise<JSON | Error> => {
+export const editTour = async (tour: ITour): Promise<JSON | Error> => {
 	// Construct the URL for the API endpoint.
-	const url = `/excursions/${excursion._id}`;
+	const url = `/hotels/${tour._id}`;
 
 	// Send the request to the server.
-	return await fetchApi.put(url, excursion);
+	return await fetchApi.put(url, tour);
 };
 
 /**
- * Retrieves a single excursion from the server.
- * @param id - The ID of the excursion.
- * @returns A promise that resolves to an IExcursion object.
+ * Retrieves a single tour from the server.
+ * @param tour - The ITour object containing the create data.
+ * @returns A promise that resolves to an ITour object.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const createExcursion = async (excursion: IExcursion): Promise<JSON | Error> => {
-	return await fetchApi.post('/excursions', excursion);
+export const createTour = async (tour: ITour): Promise<JSON | Error> => {
+	return await fetchApi.post('/hotels', tour);
 };
 
 /**
- * Retrieves a single excursion from the server.
- * @param id - The ID of the excursion.
- * @returns A promise that resolves to an IExcursion object.
+ * Retrieves a single tour from the server.
+ * @param id - The ID of the tour.
+ * @returns A promise that resolves to an ITour object.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const deleteExcursion = async (id: string): Promise<void> => {
+export const deleteTour = async (id: string): Promise<void> => {
 	try {
-		await fetchApi.delete('/excursions/' + id);
+		await fetchApi.delete('/hotels/' + id);
 	} catch (err: any) {
 		console.error(err);
 		throw err;

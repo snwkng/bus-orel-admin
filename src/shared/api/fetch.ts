@@ -67,7 +67,7 @@ class FetchApi {
 		return res.json();
 	}
 
-	async getFile(url: string, fileName: string, dir: 'docs' | 'images', type: 'excursions' | 'hotels') {
+	async getFile(url: string, fileName: string, dir: FileDir, type: FileType) {
 		try {
 			const res: Response = await fetch(`${this.baseUrl}:${this.port}${url}?` +
 				new URLSearchParams({

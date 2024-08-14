@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+td, th {
+	padding: 0.25rem;
+	width: 200px;
+	text-align: left;
+}
+
 .link-active {
 	@apply bg-ligth-blue text-white !important;
 }

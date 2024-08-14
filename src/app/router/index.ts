@@ -14,6 +14,16 @@ const router = createRouter({
 			component: () => import('@/pages/bus-tours')
 		},
 		{
+			path: '/bus-tours/create',
+			name: 'create-tour',
+			component: () => import('@/pages/createBusTour')
+		},
+		{
+			path: '/bus-tours/edit/:id',
+			name: 'edit-tour',
+			component: () => import('@/pages/editBusTour')
+		},
+		{
 			path: '/excursions',
 			name: 'excursions',
 			component: () => import('@/pages/excursions')

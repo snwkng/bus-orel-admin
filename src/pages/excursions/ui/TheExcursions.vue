@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExcursionsTable from '@/entities/excursions/ui/ExcursionsTable.vue';
+import ExcursionsTable from '@/entities/excursions';
 </script>
 <template>
 	<div>
@@ -9,8 +9,8 @@ import ExcursionsTable from '@/entities/excursions/ui/ExcursionsTable.vue';
 				Добавляйте, редатируйте и удаляйте экскурсии
 			</h4>
 			<div class="flex items-center pt-3" title="Добавить экскурсию">
-			<router-link class="base-btn" to="/excursions/create">Добавить экскурсию</router-link>
-		</div>
+				<router-link class="base-btn" to="/excursions/create">Добавить экскурсию</router-link>
+			</div>
 		</div>
 
 		<ExcursionsTable />

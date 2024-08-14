@@ -21,7 +21,7 @@ watch(
 </script>
 <template>
 	<aside
-		class="relative flex h-[100vh] w-[300px] flex-col overflow-hidden bg-white transition-all"
+		class="flex h-[100vh] w-[300px] flex-col overflow-hidden bg-white transition-all sticky top-0"
 		:class="{ 'w-[60px]': !isExpanded }"
 	>
 		<div class="flex h-20 items-center justify-center">
