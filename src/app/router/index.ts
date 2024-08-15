@@ -11,7 +11,7 @@ const router = createRouter({
 		{
 			path: '/bus-tours',
 			name: 'bus-tours',
-			component: () => import('@/pages/bus-tours')
+			component: () => import('@/pages/busTours')
 		},
 		{
 			path: '/bus-tours/create',
@@ -41,7 +41,7 @@ const router = createRouter({
 		{
 			path: '/bus-rent',
 			name: 'bus-rent',
-			component: () => import('@/pages/bus-rent')
+			component: () => import('@/pages/busRent')
 		},
 	]
 });

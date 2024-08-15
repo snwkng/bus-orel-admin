@@ -2,10 +2,11 @@
 import dayjs from 'dayjs';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
-import { onMounted, ref, watch, type Ref } from 'vue';
-import DragAndDrop from '@/shared/ui/dragAndDrop';
-import { useExcursionStore } from '@/entities/excursions/model';
 import { useRoute, useRouter } from 'vue-router';
+import { onMounted, ref, watch, type Ref } from 'vue';
+import { useExcursionStore } from '@/entities/excursions/model';
+import DragAndDrop from '@/shared/ui/dragAndDrop';
+import { FilesPath } from '@/shared/lib/enums';
 
 export interface Props {
 	type: string;
@@ -77,10 +78,10 @@ const mappedFiles = (files: File[]): FormData => {
 const create = async (excursion: IExcursion) => {
 	try {
 		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), 'images/excursions');
+			await uploadFiles(mappedFiles(images.value), FilesPath.EXCURSION_IMAGE);
 		}
 		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), 'docs/excursions');
+			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
 		}
 		await createExcursion(excursion);
 		router.push('/excursions');
@@ -92,10 +93,10 @@ const create = async (excursion: IExcursion) => {
 const edit = async (excursion: IExcursion) => {
 	try {
 		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), 'images/excursions');
+			await uploadFiles(mappedFiles(images.value), FilesPath.EXCURSION_IMAGE);
 		}
 		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), 'docs/excursions');
+			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
 		}
 		await editExcursion(excursion);
 		router.push('/excursions');

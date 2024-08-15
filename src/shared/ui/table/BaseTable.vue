@@ -5,7 +5,7 @@ import { defineEmits, ref, watch } from 'vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 
 export interface Props {
-	headers: { title: string; name: string }[];
+	headers: { title: string; name: string, meta?: { classes?: string }}[];
 	tableData?: any[];
   imagePath?: string;
   showActions?: boolean;
@@ -46,6 +46,7 @@ const deleteACtion = (id: string) => {
 					<tr>
 						<th
 							class="relative bg-white text-left"
+							:class="header.meta?.classes"
 							v-for="header in props.headers"
 							:key="header.name"
 						>
@@ -73,7 +74,7 @@ const deleteACtion = (id: string) => {
                     :key="image._id"
                     :src="`${baseURl}:${basePort}/public/images/${imagePath}/${image.name}`"
                     alt=""
-                    width="50"
+                    width="80"
                   />
                 </div>
                 <div v-else-if="row[key.name] && typeof row[key.name] === 'string' && dayjs(row[key.name]).isValid()">
@@ -91,7 +92,7 @@ const deleteACtion = (id: string) => {
 									{{ row[key.name] }}
 								</div>
 								<div v-else>
-									{{ row[key.name] }}
+									{{ row[key.name] }}<span v-if="key.name.toLocaleLowerCase().includes('price')">&#8381;</span>
 								</div>
 							</slot>
 						</td>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BusToursTable from '@/entities/bus-tours';
+import BusToursTable from '@/entities/busTours';
 </script>
 <template>
 	<div>
