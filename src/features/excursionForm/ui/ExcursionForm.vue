@@ -76,6 +76,7 @@ const mappedFiles = (files: File[]): FormData => {
 };
 
 const create = async (excursion: IExcursion) => {
+	delete excursion._id;
 	try {
 		if (images.value && images.value.length) {
 			await uploadFiles(mappedFiles(images.value), FilesPath.EXCURSION_IMAGE);

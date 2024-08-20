@@ -26,7 +26,7 @@ export interface ITour {
   checkInConditions: string;
   address: string;
   price: number;
-  thePriceIncludes: string;
+  thePriceIncludes: string[];
   city: string;
   region: string;
   seaType: string;
