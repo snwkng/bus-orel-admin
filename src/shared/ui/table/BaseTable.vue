@@ -12,7 +12,6 @@ export interface Props {
 }
 
 const baseURl = import.meta.env.VITE_BASE_URL;
-const basePort = import.meta.env.VITE_BACKEND_PORT;
 
 const props = withDefaults(defineProps<Props>(), {
 	headers: () => [],
@@ -72,7 +71,7 @@ const deleteACtion = (id: string) => {
                   <img
                     v-for="image in row[key.name]"
                     :key="image._id"
-                    :src="`${baseURl}:${basePort}/public/images/${imagePath}/${image.name}`"
+                    :src="`${baseURl}/public/images/${imagePath}/${image.name}`"
                     alt=""
                     width="80"
                   />

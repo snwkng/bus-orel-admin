@@ -1,12 +1,11 @@
 class FetchApi {
-	private baseUrl = import.meta.env.VITE_BASE_URL;
-	private port = import.meta.env.VITE_BACKEND_PORT;
+	private readonly baseUrl = import.meta.env.VITE_BASE_URL;
 
 
 
 	async get(url: string, params?: any) {
 		const res = await fetch(
-			`${this.baseUrl}:${this.port}${url}` +
+			`${this.baseUrl}${url}` +
 			new URLSearchParams({
 				...params
 			})
@@ -16,7 +15,7 @@ class FetchApi {
 
 	async post(url: string, body?: any): Promise<JSON | Error> {
 		try {
-			const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -35,7 +34,7 @@ class FetchApi {
 
 	async put(url: string, body?: any): Promise<JSON | Error> {
 		try {
-			const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -53,14 +52,14 @@ class FetchApi {
 	}
 
 	async delete(url: string) {
-		const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+		const res = await fetch(`${this.baseUrl}${url}`, {
 			method: 'DELETE',
 		});
 		return res.json();
 	}
 
 	async uploadFiles(url: string, formData: FormData) {
-		const res = await fetch(`${this.baseUrl}:${this.port}${url}`, {
+		const res = await fetch(`${this.baseUrl}${url}`, {
 			method: 'POST',
 			body: formData
 		});
@@ -69,7 +68,7 @@ class FetchApi {
 
 	async getFile(url: string, fileName: string, dir: FileDir, type: FileType) {
 		try {
-			const res: Response = await fetch(`${this.baseUrl}:${this.port}${url}?` +
+			const res: Response = await fetch(`${this.baseUrl}${url}?` +
 				new URLSearchParams({
 					fileName,
 					dir,
