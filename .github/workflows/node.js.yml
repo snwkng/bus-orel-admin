@@ -1,6 +1,5 @@
 name: bus-orel-admin
 
-
 on:
   push:
     branches: [ "main" ]
