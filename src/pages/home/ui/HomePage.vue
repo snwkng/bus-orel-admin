@@ -1,4 +1,4 @@
 <script setup lang="ts"></script>
 <template>
-	<div>zcxzcxzczc</div>
+	<div>Hello!</div>
 </template>
