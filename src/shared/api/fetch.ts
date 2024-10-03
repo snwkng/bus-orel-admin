@@ -1,5 +1,5 @@
 class FetchApi {
-	private readonly baseUrl = import.meta.env.VITE_BASE_URL;
+	private readonly baseUrl = '/api';
 
 
 
