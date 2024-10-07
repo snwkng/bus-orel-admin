@@ -20,6 +20,9 @@ module.exports = {
       ]
     }
   ],
+  end: {
+    "node": true
+  },
   parserOptions: {
     ecmaVersion: 'latest'
   }
