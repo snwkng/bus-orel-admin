@@ -1,9 +1,9 @@
 module.exports = {
 	apps: [
 		{
-			name: 'bus-orel-admin',
+			name: 'admin',
 			port: '5174',
-			script: './dist/index.html'
+			script: 'serve'
 		}
 	]
 }
