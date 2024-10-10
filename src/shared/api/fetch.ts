@@ -1,14 +1,12 @@
 class FetchApi {
-	private readonly baseUrl = '/api';
-
-
+	private readonly baseUrl = import.meta.env.VITE_BASE_URL;
 
 	async get(url: string, params?: any) {
 		const res = await fetch(
 			`${this.baseUrl}${url}` +
-			new URLSearchParams({
-				...params
-			})
+				new URLSearchParams({
+					...params
+				})
 		);
 		return res.json();
 	}
@@ -53,7 +51,7 @@ class FetchApi {
 
 	async delete(url: string) {
 		const res = await fetch(`${this.baseUrl}${url}`, {
-			method: 'DELETE',
+			method: 'DELETE'
 		});
 		return res.json();
 	}
@@ -68,12 +66,13 @@ class FetchApi {
 
 	async getFile(url: string, fileName: string, dir: FileDir, type: FileType) {
 		try {
-			const res: Response = await fetch(`${this.baseUrl}${url}?` +
-				new URLSearchParams({
-					fileName,
-					dir,
-					type
-				}),
+			const res: Response = await fetch(
+				`${this.baseUrl}${url}?` +
+					new URLSearchParams({
+						fileName,
+						dir,
+						type
+					})
 			);
 			if (res.ok) {
 				const blob = await res.blob();

@@ -1,6 +1,14 @@
 import { defineStore } from 'pinia';
 import type { ITour } from './types';
-import { getTours, getTour, createTour, editTour, uploadFiles, deleteTour, getFile } from '../api/api';
+import {
+	getTours,
+	getTour,
+	createTour,
+	editTour,
+	uploadFiles,
+	deleteTour,
+	getFile
+} from '../api/api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
@@ -32,7 +40,11 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			await uploadFiles(Files, path);
 		},
 
-		async getFile(fileName: string, dir: FileDir, type: FileType): Promise<File> {
+		async getFile(
+			fileName: string,
+			dir: FileDir,
+			type: FileType
+		): Promise<File> {
 			return await getFile(fileName, dir, type);
 		}
 	}

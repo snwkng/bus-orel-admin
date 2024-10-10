@@ -1,11 +1,24 @@
 import { nextTick } from 'vue';
-import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
+import {
+	createRouter,
+	createWebHistory,
+	type RouteLocationNormalized
+} from 'vue-router';
+import { loadLayoutMiddleware } from '@/app/router/middleware/loadLayout';
 
 const DEFAULT_TITLE = 'Панель управления';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
+		{
+			path: '/login',
+			name: 'login',
+			component: () => import('@/pages/login'),
+			meta: {
+				layout: 'auth'
+			}
+		},
 		{
 			path: '/',
 			name: 'home',
@@ -66,14 +79,18 @@ const router = createRouter({
 			meta: {
 				title: 'Аренда микроавтобусов'
 			}
-		},
-	],
+		}
+	]
+});
+
+router.beforeEach((to, from, next) => {
+	loadLayoutMiddleware(to).then(() => next());
 });
 
 router.afterEach((to: RouteLocationNormalized) => {
-    nextTick(() => {
-        document.title = to?.meta?.title as string || DEFAULT_TITLE;
-    });
+	nextTick(() => {
+		document.title = (to?.meta?.title as string) || DEFAULT_TITLE;
+	});
 });
 
 export default router;

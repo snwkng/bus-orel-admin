@@ -81,7 +81,10 @@ export const deleteTour = async (id: string): Promise<void> => {
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const uploadFiles = async (Files: FormData, path: string): Promise<void> => {
+export const uploadFiles = async (
+	Files: FormData,
+	path: string
+): Promise<void> => {
 	try {
 		await fetchApi.uploadFiles(`/file/upload?path=${path}`, Files);
 	} catch (err: any) {
@@ -97,7 +100,11 @@ export const uploadFiles = async (Files: FormData, path: string): Promise<void> 
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const getFile = async (fileName: string, dir: FileDir, type: FileType): Promise<File> => {
+export const getFile = async (
+	fileName: string,
+	dir: FileDir,
+	type: FileType
+): Promise<File> => {
 	try {
 		return await fetchApi.getFile(`/file/download/`, fileName, dir, type);
 	} catch (err: any) {

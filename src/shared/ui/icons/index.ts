@@ -8,4 +8,14 @@ import DOCXIcon from './DOCXIcon.vue';
 import PDFIcon from './PDFIcon.vue';
 import DoubleArrowLeft from './DoubleArrowLeft.vue';
 
-export { SeaIcon, ExcursionIcon, BusIcon, TrashIcon, EditIcon, CloseIcon, DOCXIcon, PDFIcon, DoubleArrowLeft };
+export {
+	SeaIcon,
+	ExcursionIcon,
+	BusIcon,
+	TrashIcon,
+	EditIcon,
+	CloseIcon,
+	DOCXIcon,
+	PDFIcon,
+	DoubleArrowLeft
+};

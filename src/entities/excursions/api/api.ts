@@ -41,7 +41,9 @@ export const getExcursion = async (id: string): Promise<IExcursion> => {
  * @returns A promise that resolves to the JSON response from the server if the request succeeds, or rejects with an error if the request fails.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const editExcursion = async (excursion: IExcursion): Promise<JSON | Error> => {
+export const editExcursion = async (
+	excursion: IExcursion
+): Promise<JSON | Error> => {
 	// Construct the URL for the API endpoint.
 	const url = `/excursions/${excursion._id}`;
 
@@ -55,7 +57,9 @@ export const editExcursion = async (excursion: IExcursion): Promise<JSON | Error
  * @returns A promise that resolves to an IExcursion object.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const createExcursion = async (excursion: IExcursion): Promise<JSON | Error> => {
+export const createExcursion = async (
+	excursion: IExcursion
+): Promise<JSON | Error> => {
 	return await fetchApi.post('/excursions', excursion);
 };
 
@@ -81,7 +85,10 @@ export const deleteExcursion = async (id: string): Promise<void> => {
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const uploadFiles = async (Files: FormData, path: string): Promise<void> => {
+export const uploadFiles = async (
+	Files: FormData,
+	path: string
+): Promise<void> => {
 	try {
 		await fetchApi.uploadFiles(`/file/upload?path=${path}`, Files);
 	} catch (err: any) {
@@ -97,7 +104,11 @@ export const uploadFiles = async (Files: FormData, path: string): Promise<void> 
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const getFile = async (fileName: string, dir: FileDir, type: FileType): Promise<File> => {
+export const getFile = async (
+	fileName: string,
+	dir: FileDir,
+	type: FileType
+): Promise<File> => {
 	try {
 		return await fetchApi.getFile(`/file/download/`, fileName, dir, type);
 	} catch (err: any) {
