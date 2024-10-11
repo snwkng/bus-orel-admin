@@ -19,7 +19,8 @@ const store = useExcursionStore();
 const router = useRouter();
 const route = useRoute();
 
-const { createExcursion, editExcursion, uploadFiles, getExcursion, getFile } = store;
+const { createExcursion, editExcursion, uploadFiles, getExcursion, getFile } =
+	store;
 
 const excursion: Ref<IExcursion> = ref({
 	_id: '',
@@ -109,19 +110,21 @@ const edit = async (excursion: IExcursion) => {
 onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
 		excursion.value = await getExcursion(route.params.id as string);
-		const exImages = excursion.value.images.map((image) => {
-			return getFile(image.name, 'images', 'excursions');
+		const exImages = excursion.value?.images?.map((image) => {
+			if (image) {
+				return getFile(image.name, 'images', 'excursions');
+			}
 		});
 
-		images.value = await Promise.all(exImages);
+		if (exImages?.length) {
+			images.value = await Promise.all(exImages) as File[];
+		}
 
-		await getFile(
-			excursion.value.documentName,
-			'docs',
-			'excursions'
-		)
-		.then((res) => price.value[0] = res)
-		.catch((err) => console.log(err));
+		if (excursion.value.documentName) {
+			await getFile(excursion.value.documentName, 'docs', 'excursions')
+				.then((res) => (price.value[0] = res))
+				.catch((err) => console.log(err));
+		}
 	}
 });
 </script>
@@ -242,6 +245,8 @@ onMounted(async () => {
 			:value="price"
 		/>
 
-		<button class="base-btn w-[300px]" type="submit">{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}</button>
+		<button class="base-btn w-[300px]" type="submit">
+			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
+		</button>
 	</form>
 </template>

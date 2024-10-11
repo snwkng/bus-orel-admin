@@ -116,14 +116,20 @@ onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
 		busTour.value = await getTour(route.params.id as string);
 		const busTourImages = busTour.value?.images?.map((image) => {
-			return getFile(image.name, 'images', 'hotels');
+			if (image) {
+				return getFile(image.name, 'images', 'hotels');
+			}
 		});
 
-		images.value = await Promise.all(busTourImages ?? []);
+		if (busTourImages?.length) {
+			images.value = (await Promise.all(busTourImages)) as File[];
+		}
 
-		await getFile(busTour.value.documentName, 'docs', 'hotels')
-			.then((res: File) => (price.value[0] = res))
-			.catch((err: unknown) => console.log(err));
+		if (busTour.value.documentName) {
+			await getFile(busTour.value.documentName, 'docs', 'hotels')
+				.then((res: File) => (price.value[0] = res))
+				.catch((err: unknown) => console.log(err));
+		}
 	}
 });
 </script>

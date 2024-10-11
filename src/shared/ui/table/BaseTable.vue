@@ -9,15 +9,17 @@ export interface Props {
 	tableData?: any[];
   imagePath?: string;
   showActions?: boolean;
+	emptyText?: string;
 }
 
-const baseURl = import.meta.env.VITE_BASE_URL;
+const baseURl = import.meta.env.VITE_FILE_PATH;
 
 const props = withDefaults(defineProps<Props>(), {
 	headers: () => [],
 	tableData: () => [],
   imagePath: '',
-  showActions: true
+  showActions: true,
+	emptyText: 'Здесь пусто...'
 });
 
 const emit = defineEmits(['edit', 'delete'])
@@ -32,14 +34,14 @@ const editAction = (id: string) => {
   emit('edit', id)
 }
 
-const deleteACtion = (id: string) => {
+const deleteAction = (id: string) => {
   emit('delete', id)
 }
 
 </script>
 <template>
 	<div class="mb-2 mt-6 rounded-xl bg-white p-8 shadow lg:mt-0 overflow-hidden">
-		<div class="relative grid max-w-full overflow-auto">
+		<div class="relative grid max-w-full overflow-auto pb-5">
 			<table class="w-full table-fixed">
 				<thead class="w-fit select-none">
 					<tr>
@@ -60,7 +62,7 @@ const deleteACtion = (id: string) => {
           <tr class="h-52 w-full flex items-center justify-center" v-if="loading">
             ...loading
           </tr>
-					<tr class="border-b border-neutral-300" v-for="row in props.tableData" :key="row" v-else>
+					<tr class="border-b border-neutral-300" v-for="row in props.tableData" :key="row" v-else-if="props.tableData?.length">
 						<td
 							class="break-words align-top"
 							v-for="key in headers"
@@ -97,24 +99,28 @@ const deleteACtion = (id: string) => {
 						</td>
             <td class="whitespace-pre-line break-words align-top" v-if="showActions">
               <div class="flex items-center gap-3">
-							<div
+							<button
+								type="button"
 								class="cursor-pointer"
 								title="Редактировать"
 								@click="editAction(row._id)"
 							>
 								<EditIcon fill="#009EFF" />
-							</div>
+							</button>
 							<button
 								type="button"
 								class="cursor-pointer"
 								title="Удалить"
-								@click="deleteACtion(row._id)"
+								@click="deleteAction(row._id)"
 							>
 								<TrashIcon fill="red" />
 							</button>
 						</div>
             </td>
 					</tr>
+					<tr class="h-52 w-full flex items-center justify-center" v-else>
+            <span>{{ emptyText }}</span>
+          </tr>
 				</tbody>
 			</table>
 		</div>
