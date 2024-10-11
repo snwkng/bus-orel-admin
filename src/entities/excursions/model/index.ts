@@ -8,7 +8,7 @@ import {
 	uploadFiles,
 	deleteExcursion,
 	getFile
-} from '../api/api';
+} from '../api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({

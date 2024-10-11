@@ -8,7 +8,7 @@ import {
 	uploadFiles,
 	deleteTour,
 	getFile
-} from '../api/api';
+} from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({

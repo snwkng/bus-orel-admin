@@ -1,3 +1,3 @@
-import TheLogin from './ui/TheLogin.vue';
+import LoginPage from './ui/LoginPage.vue';
 
-export default TheLogin;
+export default LoginPage;

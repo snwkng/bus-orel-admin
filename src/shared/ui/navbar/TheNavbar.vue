@@ -26,11 +26,11 @@ watch(
 	>
 		<div class="flex h-20 items-center justify-center">
 			<RouterLink
-				class="flex flex-row items-center justify-center rounded-full bg-slate-100 p-2"
+				class="flex flex-row items-center justify-center rounded-full bg-slate-100 py-2 px-3"
 				to="/"
 			>
-				<span class="text-2xl font-semibold text-deep-orange">G</span
-				><span class="text-2xl font-semibold text-ligth-blue">T</span>
+				<span class="text-2xl font-semibold text-deep-orange">Г</span
+				><span class="text-2xl font-semibold text-ligth-blue">Т</span>
 			</RouterLink>
 		</div>
 		<nav :class="['flex flex-col gap-2', isExpanded ? 'px-6' : 'px-2']">
