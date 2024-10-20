@@ -1,12 +1,20 @@
 class FetchApi {
 	private readonly baseUrl = import.meta.env.VITE_BASE_URL;
-
+	private headers = {
+		'Content-Type': 'application/json',
+		'Authorization': `Bearer ${localStorage.getItem('token')}`
+	};
 	async get(url: string, params?: any) {
 		const res = await fetch(
 			`${this.baseUrl}${url}` +
 				new URLSearchParams({
 					...params
-				})
+				}),
+				{
+					method: 'GET',
+					headers: new Headers(this.headers),
+				}
+
 		);
 		return res.json();
 	}
@@ -15,9 +23,7 @@ class FetchApi {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: this.headers,
 				body: JSON.stringify(body)
 			});
 			if (res.ok) {
@@ -34,9 +40,7 @@ class FetchApi {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: this.headers,
 				body: JSON.stringify(body)
 			});
 			if (res.ok) {
@@ -51,7 +55,8 @@ class FetchApi {
 
 	async delete(url: string) {
 		const res = await fetch(`${this.baseUrl}${url}`, {
-			method: 'DELETE'
+			method: 'DELETE',
+			headers: this.headers,
 		});
 		return res.json();
 	}
@@ -59,6 +64,7 @@ class FetchApi {
 	async uploadFiles(url: string, formData: FormData) {
 		const res = await fetch(`${this.baseUrl}${url}`, {
 			method: 'POST',
+			headers: this.headers,
 			body: formData
 		});
 		return res.json();
@@ -72,7 +78,10 @@ class FetchApi {
 						fileName,
 						dir,
 						type
-					})
+					}),
+					{
+						headers: this.headers,
+					}
 			);
 			if (res.ok) {
 				const blob = await res.blob();
@@ -82,6 +91,13 @@ class FetchApi {
 			}
 		} catch (err: unknown) {
 			throw new Error(err as string);
+		}
+	}
+
+	setToken() {
+		this.headers = {
+			...this.headers,
+			'Authorization': `Bearer ${localStorage.getItem('token')}`
 		}
 	}
 }

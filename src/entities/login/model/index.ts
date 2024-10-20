@@ -12,7 +12,6 @@ export const useLoginStore = defineStore('useLoginStore', {
 		async login(username: string, password: string): Promise<void> {
 			try {
         this.token = await login(username, password);
-        localStorage.setItem('token', this.token);
       } catch (error: unknown) {
         this.token = null;
         throw error;
