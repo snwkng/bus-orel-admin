@@ -4,9 +4,19 @@ class FetchApi {
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
 	};
+
+	errorHandler(err: unknown): Error {
+		if ((err as any)?.status === 401) {
+			localStorage.removeItem('token');
+			location.replace(location.host + '/login');
+		}
+		return err as Error;
+	}
+
 	async get(url: string, params?: any) {
-		const res = await fetch(
-			`${this.baseUrl}${url}` +
+		try {
+			const res = await fetch(
+				`${this.baseUrl}${url}` +
 				new URLSearchParams({
 					...params
 				}),
@@ -15,8 +25,14 @@ class FetchApi {
 					headers: new Headers(this.headers),
 				}
 
-		);
-		return res.json();
+			);
+			if (!res.ok) {
+				throw res;
+			}
+			return res.json();
+		} catch (err: unknown) {
+			throw this.errorHandler(err);
+		}
 	}
 
 	async post(url: string, body?: any): Promise<JSON | Error> {
@@ -26,13 +42,12 @@ class FetchApi {
 				headers: this.headers,
 				body: JSON.stringify(body)
 			});
-			if (res.ok) {
-				return res.json();
-			} else {
-				throw new Error(res.statusText);
+			if (!res.ok) {
+				throw res;
 			}
+			return res.json();
 		} catch (err: unknown) {
-			throw new Error(err as string);
+			throw this.errorHandler(err);
 		}
 	}
 
@@ -43,22 +58,28 @@ class FetchApi {
 				headers: this.headers,
 				body: JSON.stringify(body)
 			});
-			if (res.ok) {
-				return res.json();
-			} else {
-				throw new Error(res.statusText);
+			if (!res.ok) {
+				throw res;
 			}
+			return res.json();
 		} catch (err: unknown) {
-			throw new Error(err as string);
+			throw this.errorHandler(err);
 		}
 	}
 
 	async delete(url: string) {
-		const res = await fetch(`${this.baseUrl}${url}`, {
-			method: 'DELETE',
-			headers: this.headers,
-		});
-		return res.json();
+		try {
+			const res = await fetch(`${this.baseUrl}${url}`, {
+				method: 'DELETE',
+				headers: this.headers,
+			});
+			if (!res.ok) {
+				throw res;
+			}
+			return res.json();
+		} catch (err: unknown) {
+			throw this.errorHandler(err);
+		}
 	}
 
 	async uploadFiles(url: string, formData: FormData) {
@@ -74,23 +95,22 @@ class FetchApi {
 		try {
 			const res: Response = await fetch(
 				`${this.baseUrl}${url}?` +
-					new URLSearchParams({
-						fileName,
-						dir,
-						type
-					}),
-					{
-						headers: this.headers,
-					}
+				new URLSearchParams({
+					fileName,
+					dir,
+					type
+				}),
+				{
+					headers: this.headers,
+				}
 			);
-			if (res.ok) {
-				const blob = await res.blob();
-				return new File([blob], fileName);
-			} else {
-				throw new Error(res.statusText);
+			if (!res.ok) {
+				throw res;
 			}
+			const blob = await res.blob();
+			return new File([blob], fileName);
 		} catch (err: unknown) {
-			throw new Error(err as string);
+			throw this.errorHandler(err);
 		}
 	}
 
@@ -98,7 +118,7 @@ class FetchApi {
 		this.headers = {
 			...this.headers,
 			'Authorization': `Bearer ${localStorage.getItem('token')}`
-		}
+		};
 	}
 }
 
