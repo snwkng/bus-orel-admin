@@ -12,7 +12,7 @@ export interface Props {
 	emptyText?: string;
 }
 
-const baseURl = import.meta.env.VITE_FILE_PATH;
+const baseURl = import.meta.env.VITE_BASE_URL;
 
 const props = withDefaults(defineProps<Props>(), {
 	headers: () => [],
