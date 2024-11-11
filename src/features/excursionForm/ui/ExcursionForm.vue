@@ -45,7 +45,7 @@ watch(
 		if (images.value.length) {
 			excursion.value.images = images.value.map((image: File) => ({
 				name: image.name.split('.')[0] + '.webp'
-			}));
+			})) as {name: string}[];
 		}
 	}
 );
@@ -54,7 +54,7 @@ watch(
 	() => price.value,
 	() => {
 		if (price.value.length) {
-			excursion.value.documentName = price.value[0].name;
+			excursion.value.documentName = price.value[0].name as string;
 		}
 	}
 );
@@ -100,6 +100,7 @@ const edit = async (excursion: IExcursion) => {
 		if (price.value && price.value.length) {
 			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
 		}
+		console.log(excursion)
 		await editExcursion(excursion);
 		router.push('/excursions');
 	} catch (err) {
@@ -245,7 +246,7 @@ onMounted(async () => {
 			:value="price"
 		/>
 
-		<button class="base-btn w-[300px]" type="submit">
+		<button class="base-btn max-w-[300px]" type="submit">
 			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
 		</button>
 	</form>

@@ -1,5 +1,5 @@
 class FetchApi {
-	private readonly baseUrl = import.meta.env.VITE_BASE_URL + '/api';
+	private readonly baseUrl = process.env.NODE_ENV === 'development' ? import.meta.env.VITE_DEV_BASE_URL + '/api' : import.meta.env.VITE_BASE_URL + '/api';
 	private headers = {
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -85,7 +85,9 @@ class FetchApi {
 	async uploadFiles(url: string, formData: FormData) {
 		const res = await fetch(`${this.baseUrl}${url}`, {
 			method: 'POST',
-			headers: this.headers,
+			headers: {
+				'Authorization': this.headers['Authorization']
+			},
 			body: formData
 		});
 		return res.json();

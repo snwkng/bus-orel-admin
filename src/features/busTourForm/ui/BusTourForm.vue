@@ -209,7 +209,7 @@ onMounted(async () => {
 			:value="price"
 		/>
 
-		<button class="base-btn w-[300px]" type="submit">
+		<button class="base-btn max-w-[300px]" type="submit">
 			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
 		</button>
 	</form>

@@ -12,7 +12,7 @@ export interface Props {
 	emptyText?: string;
 }
 
-const baseURl = import.meta.env.VITE_BASE_URL;
+const baseURl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_DEV_BASE_URL : import.meta.env.VITE_BASE_URL;
 
 const props = withDefaults(defineProps<Props>(), {
 	headers: () => [],

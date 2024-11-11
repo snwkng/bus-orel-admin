@@ -21,15 +21,6 @@ export default defineConfig(({ mode }: { mode: string }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
-    },
-    server: {
-      proxy: {
-        '/api': {
-          target: env.VITE_DEV_BASE_URL,
-          changeOrigin: true,
-          secure: false,
-        },
-      }
     }
   }
 })
