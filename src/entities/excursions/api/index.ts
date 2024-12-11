@@ -59,8 +59,13 @@ export const editExcursion = async (
  */
 export const createExcursion = async (
 	excursion: IExcursion
-): Promise<JSON | Error> => {
-	return await fetchApi.post('/excursions', excursion);
+): Promise<void | Error> => {
+	try {
+		await fetchApi.post('/excursions', excursion);
+	} catch (err: any) {
+		console.error(err);
+		throw err;
+	}
 };
 
 /**
@@ -80,17 +85,16 @@ export const deleteExcursion = async (id: string): Promise<void> => {
 
 /**
  * Uploads files to the server.
- * @param Files - The files to upload.
- * @param path - The path to upload the files to.
+ * @param File - The files to upload.
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const uploadFiles = async (
-	Files: FormData,
-	path: string
-): Promise<void> => {
+export const uploadFile = async (
+	File: FormData,
+): Promise<string> => {
 	try {
-		await fetchApi.uploadFiles(`/file/upload?path=${path}`, Files);
+		const res: string = await fetchApi.upload('/s3/upload', File);
+		return res;
 	} catch (err: any) {
 		console.error(err);
 		throw err;
@@ -99,18 +103,16 @@ export const uploadFiles = async (
 
 /**
  * Uploads files to the server.
- * @param Files - The files to upload.
- * @param path - The path to upload the files to.
+ * @param fileName - The file name to upload.
  * @returns A promise that resolves when the files are uploaded.
  * @throws If the request fails, the promise is rejected with an error.
  */
 export const getFile = async (
 	fileName: string,
-	dir: FileDir,
-	type: FileType
 ): Promise<File> => {
 	try {
-		return await fetchApi.getFile(`/file/download/`, fileName, dir, type);
+		const res: File = await fetchApi.download(`/s3/download/`, fileName);
+		return res;
 	} catch (err: any) {
 		console.error(err);
 		throw err;

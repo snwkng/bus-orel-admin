@@ -104,7 +104,7 @@ onMounted(() => {
 		>
 			<input
 				type="file"
-				:multiple="typeof props.multiple === 'string' || props.multiple"
+				:multiple="props.multiple"
 				:name="props.name"
 				:id="props.name"
 				class="absolute h-[1px] w-[1px] overflow-hidden opacity-0"

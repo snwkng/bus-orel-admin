@@ -35,7 +35,7 @@ class FetchApi {
 		}
 	}
 
-	async post(url: string, body?: any): Promise<JSON | Error> {
+	async post(url: string, body?: any): Promise<void | JSON | Error> {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'POST',
@@ -45,7 +45,10 @@ class FetchApi {
 			if (!res.ok) {
 				throw res;
 			}
-			return res.json();
+			const textData = await res.text();
+			if (textData.length) {
+				return res?.json();
+			}
 		} catch (err: unknown) {
 			throw this.errorHandler(err);
 		}
@@ -82,7 +85,7 @@ class FetchApi {
 		}
 	}
 
-	async uploadFiles(url: string, formData: FormData) {
+	async upload(url: string, formData: FormData) {
 		const res = await fetch(`${this.baseUrl}${url}`, {
 			method: 'POST',
 			headers: {
@@ -90,20 +93,17 @@ class FetchApi {
 			},
 			body: formData
 		});
-		return res.json();
+		return res.text();
 	}
 
-	async getFile(url: string, fileName: string, dir: FileDir, type: FileType) {
+	async download(url: string, fileName: string) {
 		try {
 			const res: Response = await fetch(
-				`${this.baseUrl}${url}?` +
-				new URLSearchParams({
-					fileName,
-					dir,
-					type
-				}),
+				`${this.baseUrl}${url}${fileName}`,
 				{
-					headers: this.headers,
+					headers: {
+						'Authorization': this.headers['Authorization']
+					},
 				}
 			);
 			if (!res.ok) {

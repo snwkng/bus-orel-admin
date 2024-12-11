@@ -128,7 +128,7 @@ onMounted(async () => {
 		if (busTour.value.documentName) {
 			await getFile(busTour.value.documentName, 'docs', 'hotels')
 				.then((res: File) => (price.value[0] = res))
-				.catch((err: unknown) => console.log(err));
+				.catch((err: unknown) => console.error(err));
 		}
 	}
 });

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { TheInput, TheTextArea } from '@/shared/ui/forms';
+import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { useExcursionStore } from '@/entities/excursions/model';
-import DragAndDrop from '@/shared/ui/dragAndDrop';
+// import DragAndDrop from '@/shared/ui/dragAndDrop';
 import { FilesPath } from '@/shared/lib/enums';
 
 export interface Props {
@@ -19,7 +19,7 @@ const store = useExcursionStore();
 const router = useRouter();
 const route = useRoute();
 
-const { createExcursion, editExcursion, uploadFiles, getExcursion, getFile } =
+const { createExcursion, editExcursion, getExcursion, getFile } =
 	store;
 
 const excursion: Ref<IExcursion> = ref({
@@ -36,19 +36,7 @@ const excursion: Ref<IExcursion> = ref({
 	thePriceIncludes: Array.from(' ')
 });
 
-const images: Ref<File[]> = ref([]);
 const price: Ref<File[]> = ref([]);
-
-watch(
-	() => images.value,
-	() => {
-		if (images.value.length) {
-			excursion.value.images = images.value.map((image: File) => ({
-				name: image.name.split('.')[0] + '.webp'
-			})) as {name: string}[];
-		}
-	}
-);
 
 watch(
 	() => price.value,
@@ -58,10 +46,6 @@ watch(
 		}
 	}
 );
-
-const updateImages = ($event: File[]) => {
-	images.value = $event;
-};
 
 const updatePrice = ($event: File[]) => {
 	price.value[0] = $event[0];
@@ -79,9 +63,6 @@ const mappedFiles = (files: File[]): FormData => {
 const create = async (excursion: IExcursion) => {
 	delete excursion._id;
 	try {
-		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), FilesPath.EXCURSION_IMAGE);
-		}
 		if (price.value && price.value.length) {
 			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
 		}
@@ -94,13 +75,9 @@ const create = async (excursion: IExcursion) => {
 
 const edit = async (excursion: IExcursion) => {
 	try {
-		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), FilesPath.EXCURSION_IMAGE);
-		}
 		if (price.value && price.value.length) {
 			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
 		}
-		console.log(excursion)
 		await editExcursion(excursion);
 		router.push('/excursions');
 	} catch (err) {
@@ -111,20 +88,11 @@ const edit = async (excursion: IExcursion) => {
 onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
 		excursion.value = await getExcursion(route.params.id as string);
-		const exImages = excursion.value?.images?.map((image) => {
-			if (image) {
-				return getFile(image.name, 'images', 'excursions');
-			}
-		});
-
-		if (exImages?.length) {
-			images.value = await Promise.all(exImages) as File[];
-		}
 
 		if (excursion.value.documentName) {
 			await getFile(excursion.value.documentName, 'docs', 'excursions')
 				.then((res) => (price.value[0] = res))
-				.catch((err) => console.log(err));
+				.catch((err) => console.error(err));
 		}
 	}
 });
@@ -229,7 +197,25 @@ onMounted(async () => {
 			</div>
 		</div>
 
-		<DragAndDrop
+		<TheFileInput
+			title="Изображения эксркусии"
+			name="images"
+			accept="image/*"
+			multiple
+			place="excursion"
+			@change="(images: string[]) => excursion.images = images"
+			:value="excursion.images"
+		/>
+		<TheFileInput
+			title="Прайс"
+			name="document"
+			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+			place="excursion"
+			@change="updatePrice"
+			:value="price"
+		/>
+
+		<!-- <DragAndDrop
 			title="Изображения эксркусии"
 			name="images"
 			accept="image/*"
@@ -244,7 +230,7 @@ onMounted(async () => {
 			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			@change="updatePrice"
 			:value="price"
-		/>
+		/> -->
 
 		<button class="base-btn max-w-[300px]" type="submit">
 			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
