@@ -47,7 +47,7 @@ class FetchApi {
 			}
 			const textData = await res.text();
 			if (textData.length) {
-				return res?.json();
+				return JSON.parse(textData);
 			}
 		} catch (err: unknown) {
 			throw this.errorHandler(err);
