@@ -118,3 +118,21 @@ export const getFile = async (
 		throw err;
 	}
 };
+
+/**
+ * Uploads files to the server.
+ * @param fileName - The file name to upload.
+ * @returns A promise that resolves when the files are uploaded.
+ * @throws If the request fails, the promise is rejected with an error.
+ */
+export const deleteFile = async (
+	fileName: string,
+): Promise<boolean> => {
+	try {
+		const res: boolean = await fetchApi.delete(`/s3/delete?uuid=${fileName}`);
+		return res;
+	} catch (err: any) {
+		console.error(err);
+		throw err;
+	}
+};

@@ -7,7 +7,8 @@ import {
 	editExcursion,
 	uploadFile,
 	deleteExcursion,
-	getFile
+	getFile,
+	deleteFile
 } from '../api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
@@ -45,6 +46,12 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			fileName: string,
 		): Promise<File> {
 			return await getFile(fileName);
+		},
+
+		async deleteFile(
+			fileName: string,
+		): Promise<boolean> {
+			return await deleteFile(fileName);
 		}
 	}
 });

@@ -4,6 +4,8 @@ import { CloseIcon } from '@/shared/ui/icons';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { useBusTourStore } from '@/entities/busTours/model';
 
+import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
+
 export interface Props {
 	title?: string;
 	accept?: string;
@@ -25,7 +27,7 @@ const emit = defineEmits<(event: 'change', payload: string[]) => void>();
 
 const store =
 	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
-const { getFile, uploadFile } = store;
+const { getFile, uploadFile, deleteFile } = store;
 const files = ref<File[]>([]);
 const file = ref<any>(null);
 
@@ -45,26 +47,18 @@ watch(
 	}
 );
 
-const generatePreview = (file: File): string => {
-	let fileSrc = '';
-	if (
-		file?.type?.includes('openxmlformats') ||
-		file?.name?.includes('.docx') ||
-		file?.name?.includes('.doc')
-	) {
-		fileSrc = '/src/app/assets/icons/docxIcon.svg';
-	} else if (file?.type?.includes('pdf') || file?.name?.includes('.pdf')) {
-		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
-	} else if (file?.name) {
-		fileSrc = URL.createObjectURL(file);
+const remove = async (index: number, fileName: string) => {
+	try {
+		console.log(fileName);
+		await deleteFile(fileName);
+		files.value.splice(index, 1);
+		emit(
+			'change',
+			files.value.map((x: File) => x.name)
+		);
+	} catch (error) {
+		console.error('err');
 	}
-	setTimeout(() => URL.revokeObjectURL(fileSrc), 1000 * 60);
-	return fileSrc;
-};
-
-const remove = (index: number) => {
-	files.value.splice(index, 1);
-	// emit('change', files.value);
 };
 
 const onChange = () => {
@@ -96,32 +90,7 @@ const onChange = () => {
 		<div class="mb-1 text-slate-700">{{ props.title }}</div>
 		<div class="flex w-full flex-wrap gap-5" v-if="props.value.length">
 			<div class="relative" v-for="file in files" :key="file.name">
-				<div
-					:class="{
-						'flex items-center justify-center gap-x-1':
-							file?.type?.includes('openxmlformats') ||
-							file?.type?.includes('pdf')
-					}"
-				>
-					<img
-						:src="generatePreview(file)"
-						:alt="file.name"
-						:class="[
-							file?.type?.includes('openxmlformats') ||
-							file?.type?.includes('pdf')
-								? 'h-7 w-7'
-								: 'h-[200px] w-[220px] rounded-xl object-fill'
-						]"
-					/>
-					<span
-						v-if="
-							file?.type?.includes('openxmlformats') ||
-							file?.type?.includes('pdf')
-						"
-					>
-						{{ file.name }}
-					</span>
-				</div>
+				<GenerateFilePreview :file="file" />
 				<button
 					:class="[
 						file?.type?.includes('openxmlformats') ||
@@ -131,7 +100,7 @@ const onChange = () => {
 						'absolute rounded-full bg-slate-100 p-2 shadow-md'
 					]"
 					type="button"
-					@click="remove(files.indexOf(file))"
+					@click="remove(files.indexOf(file), file.name)"
 					title="Удалить файл"
 				>
 					<CloseIcon :width="12" :height="12" />
