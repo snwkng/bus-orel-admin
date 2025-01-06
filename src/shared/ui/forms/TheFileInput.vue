@@ -90,7 +90,7 @@ const onChange = () => {
 		<div class="mb-1 text-slate-700">{{ props.title }}</div>
 		<div class="flex w-full flex-wrap gap-5" v-if="props.value.length">
 			<div class="relative" v-for="file in files" :key="file.name">
-				<GenerateFilePreview :file="file" />
+				<GenerateFilePreview :get-file="file" />
 				<button
 					:class="[
 						file?.type?.includes('openxmlformats') ||
@@ -109,7 +109,9 @@ const onChange = () => {
 		</div>
 		<div class="mt-2">
 			<label :for="props.name" class="block">
-				<span class="secondary-btn cursor-pointer">{{ props.multiple ? 'Добавить файлы' : 'Добавить файл'}}</span>
+				<span class="secondary-btn cursor-pointer">{{
+					props.multiple ? 'Добавить файлы' : 'Добавить файл'
+				}}</span>
 				<input
 					type="file"
 					:multiple="props.multiple"

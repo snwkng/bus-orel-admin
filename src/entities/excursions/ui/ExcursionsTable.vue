@@ -33,11 +33,8 @@ const tableHeaders = reactive([
 	}
 ]);
 
-const getImage = async (imageName: string): Promise<File | void> => {
-	const file: File = await getFile(imageName);
-	if (file) {
-		return file;
-	}
+const getImage = async (imageName: string): Promise<File | undefined> => {
+	return await getFile(imageName);
 };
 
 const deleteExcursion = async (id: string) => {
@@ -72,10 +69,7 @@ const deleteExcursion = async (id: string) => {
 				v-for="imageName in row?.row.images"
 				:key="imageName"
 			>
-				<GenerateFilePreview
-					v-if="getImage(imageName)"
-					:file="getImage(imageName)"
-				/>
+				<GenerateFilePreview :get-file="getImage(imageName)" />
 			</div>
 		</template>
 	</BaseTable>

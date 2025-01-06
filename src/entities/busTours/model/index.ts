@@ -8,6 +8,7 @@ import {
 	uploadFile,
 	getFile,
 	deleteTour,
+	deleteFile
 } from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
@@ -29,7 +30,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async editTour(tour: ITour): Promise<void | Error> {
-			console.log(tour)
+			console.log(tour);
 			await editTour(tour);
 		},
 
@@ -46,6 +47,12 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			fileName: string,
 		): Promise<File> {
 			return await getFile(fileName);
+		},
+
+		async deleteFile(
+			fileName: string,
+		): Promise<boolean> {
+			return await deleteFile(fileName);
 		}
 	}
 });

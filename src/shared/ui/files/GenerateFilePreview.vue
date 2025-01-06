@@ -1,32 +1,39 @@
 <script setup lang="ts">
+import { onMounted, ref, type Ref } from 'vue';
+
 export interface Props {
-	file: File | null;
+	getFile: Promise<File | void> | File;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	file: null
+	getFile: async () => {}
 });
 
+const file: Ref<File | null> = ref(null);
+
 const generatePreview = (): string => {
-	console.log(props.file);
 	let fileSrc = '';
 	if (
-		props.file?.type?.includes('openxmlformats') ||
-		props.file?.name?.includes('.docx') ||
-		props.file?.name?.includes('.doc')
+		file.value?.type?.includes('openxmlformats') ||
+		file.value?.name?.includes('.docx') ||
+		file.value?.name?.includes('.doc')
 	) {
 		fileSrc = '/src/app/assets/icons/docxIcon.svg';
 	} else if (
-		props.file?.type?.includes('pdf') ||
-		props.file?.name?.includes('.pdf')
+		file.value?.type?.includes('pdf') ||
+		file.value?.name?.includes('.pdf')
 	) {
 		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
-	} else if (props.file?.name) {
-		fileSrc = URL.createObjectURL(props.file);
+	} else if (file.value?.name) {
+		fileSrc = URL.createObjectURL(file.value);
 	}
 	setTimeout(() => URL.revokeObjectURL(fileSrc), 1000 * 60);
 	return fileSrc;
 };
+
+onMounted(async () => {
+	file.value = (await props.getFile) || null;
+});
 </script>
 <template>
 	<div
@@ -37,21 +44,19 @@ const generatePreview = (): string => {
 	>
 		<img
 			:src="generatePreview()"
-			:alt="props.file?.name"
+			:alt="file?.name"
 			:class="[
-				props.file?.type?.includes('openxmlformats') ||
-				props.file?.type?.includes('pdf')
+				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
 					? 'h-7 w-7'
 					: 'h-[200px] w-[220px] rounded-xl object-fill'
 			]"
 		/>
 		<span
 			v-if="
-				props.file?.type?.includes('openxmlformats') ||
-				props.file?.type?.includes('pdf')
+				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
 			"
 		>
-			{{ props.file?.name }}
+			{{ file?.name }}
 		</span>
 	</div>
 </template>
