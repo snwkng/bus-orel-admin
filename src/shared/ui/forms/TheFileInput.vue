@@ -140,7 +140,7 @@ const onChange = () => {
 		</div>
 		<div class="mt-2">
 			<label :for="props.name" class="block">
-				<span class="base-btn cursor-pointer">Добавить файл</span>
+				<span class="secondary-btn cursor-pointer">{{ props.multiple ? 'Добавить файлы' : 'Добавить файл'}}</span>
 				<input
 					type="file"
 					:multiple="props.multiple"
