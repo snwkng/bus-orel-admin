@@ -5,9 +5,9 @@ import {
 	getTour,
 	createTour,
 	editTour,
-	uploadFiles,
+	uploadFile,
+	getFile,
 	deleteTour,
-	getFile
 } from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
@@ -24,28 +24,28 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			return await getTour(id);
 		},
 
-		async createTour(Tour: ITour): Promise<void | Error> {
-			await createTour(Tour);
+		async createTour(tour: ITour): Promise<void | Error> {
+			await createTour(tour);
 		},
 
-		async editTour(Tour: ITour): Promise<void | Error> {
-			await editTour(Tour);
+		async editTour(tour: ITour): Promise<void | Error> {
+			console.log(tour)
+			await editTour(tour);
 		},
 
 		async deleteTour(id: string): Promise<void> {
 			await deleteTour(id);
 		},
 
-		async uploadFiles(Files: FormData, path: string): Promise<void> {
-			await uploadFiles(Files, path);
+		async uploadFile(Files: FormData): Promise<string> {
+			const res = await uploadFile(Files);
+			return res;
 		},
 
 		async getFile(
 			fileName: string,
-			dir: FileDir,
-			type: FileType
 		): Promise<File> {
-			return await getFile(fileName, dir, type);
+			return await getFile(fileName);
 		}
 	}
 });

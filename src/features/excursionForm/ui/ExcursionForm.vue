@@ -3,10 +3,8 @@ import dayjs from 'dayjs';
 import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { useExcursionStore } from '@/entities/excursions/model';
-// import DragAndDrop from '@/shared/ui/dragAndDrop';
-import { FilesPath } from '@/shared/lib/enums';
 
 export interface Props {
 	type: string;
@@ -36,36 +34,9 @@ const excursion: Ref<IExcursion> = ref({
 	thePriceIncludes: Array.from(' ')
 });
 
-const price: Ref<File[]> = ref([]);
-
-watch(
-	() => price.value,
-	() => {
-		if (price.value.length) {
-			excursion.value.documentName = price.value[0].name as string;
-		}
-	}
-);
-
-const updatePrice = ($event: File[]) => {
-	price.value[0] = $event[0];
-};
-
-const mappedFiles = (files: File[]): FormData => {
-	const formData = new FormData();
-	files.forEach((file) => {
-		formData.append('file', file);
-	});
-
-	return formData;
-};
-
 const create = async (excursion: IExcursion) => {
 	delete excursion._id;
 	try {
-		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
-		}
 		await createExcursion(excursion);
 		router.push('/excursions');
 	} catch (err) {
@@ -75,9 +46,6 @@ const create = async (excursion: IExcursion) => {
 
 const edit = async (excursion: IExcursion) => {
 	try {
-		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), FilesPath.EXCURSION_DOCS);
-		}
 		await editExcursion(excursion);
 		router.push('/excursions');
 	} catch (err) {
@@ -88,12 +56,6 @@ const edit = async (excursion: IExcursion) => {
 onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
 		excursion.value = await getExcursion(route.params.id as string);
-
-		if (excursion.value.documentName) {
-			await getFile(excursion.value.documentName, 'docs', 'excursions')
-				.then((res) => (price.value[0] = res))
-				.catch((err) => console.error(err));
-		}
 	}
 });
 </script>
@@ -151,14 +113,14 @@ onMounted(async () => {
 			<div class="flex flex-row gap-x-3">
 				<button
 					type="button"
-					class="base-btn mt-3"
+					class="secondary-btn mt-3"
 					@click="() => excursion.description.push('')"
 				>
 					Добавить день
 				</button>
 				<button
 					type="button"
-					class="secondary-btn mt-3"
+					class="delete-btn mt-3"
 					@click="() => excursion.description.pop()"
 				>
 					Удалить день
@@ -182,14 +144,14 @@ onMounted(async () => {
 			<div class="flex flex-row gap-x-3">
 				<button
 					type="button"
-					class="base-btn mt-3"
+					class="secondary-btn mt-3"
 					@click="() => excursion.thePriceIncludes.push('')"
 				>
 					Добавить опцию
 				</button>
 				<button
 					type="button"
-					class="secondary-btn mt-3"
+					class="delete-btn mt-3"
 					@click="() => excursion.thePriceIncludes.pop()"
 				>
 					Удалить опцию
@@ -211,29 +173,12 @@ onMounted(async () => {
 			name="document"
 			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			place="excursion"
-			@change="updatePrice"
-			:value="price"
+			@change="(doc: string[]) => excursion.documentName = doc[0]"
+			:value="excursion.documentName ? [excursion.documentName] : []"
 		/>
 
-		<!-- <DragAndDrop
-			title="Изображения эксркусии"
-			name="images"
-			accept="image/*"
-			multiple
-			@change="updateImages"
-			:value="images"
-		/>
-
-		<DragAndDrop
-			title="Прайс"
-			name="document"
-			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			@change="updatePrice"
-			:value="price"
-		/> -->
-
-		<button class="base-btn max-w-[300px]" type="submit">
-			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
+		<button class="base-btn max-w-[300px] mt-5" type="submit">
+			{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
 		</button>
 	</form>
 </template>

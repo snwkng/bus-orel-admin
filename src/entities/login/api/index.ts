@@ -10,7 +10,7 @@ import { fetchApi } from '@/shared/api';
 export const login = async (username: string, password: string): Promise<string> => {
   try {
     const res = await fetchApi.post('/auth/login', {username, password});
-    if ('access_token' in res) {
+    if (res && 'access_token' in res) {
       localStorage.setItem('token', res.access_token as string);
       fetchApi.setToken();
       return res.access_token as string;

@@ -5,9 +5,7 @@ export interface ITour {
 	name: string;
 	type: string;
 	locationDescription: string;
-	images?: {
-		name: string;
-	}[];
+	images?: string[];
 	tours: {
 		type: string;
 		roomName: string;

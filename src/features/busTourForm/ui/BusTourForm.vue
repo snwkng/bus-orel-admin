@@ -1,12 +1,9 @@
 <script setup lang="ts">
-// import dayjs from 'dayjs';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import type { ITour } from '@/entities/busTours/model/types';
-import DragAndDrop from '@/shared/ui/dragAndDrop';
 import { useBusTourStore } from '@/entities/busTours/model';
-import { FilesPath } from '@/shared/lib/enums';
-import { TheInput, TheTextArea } from '@/shared/ui/forms';
+import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
 
 export interface Props {
 	type: string;
@@ -19,7 +16,7 @@ const store = useBusTourStore();
 const router = useRouter();
 const route = useRoute();
 
-const { createTour, editTour, uploadFiles, getTour, getFile } = store;
+const { createTour, editTour, uploadFile, getTour, getFile } = store;
 
 const busTour: Ref<ITour> = ref({
 	_id: '',
@@ -41,55 +38,9 @@ const busTour: Ref<ITour> = ref({
 	documentName: ''
 });
 
-const images: Ref<File[]> = ref([]);
-const price: Ref<File[]> = ref([]);
-
-watch(
-	() => images.value,
-	() => {
-		if (images.value.length) {
-			busTour.value.images = images.value.map((image: File) => ({
-				name: image.name.split('.')[0] + '.webp'
-			}));
-		}
-	}
-);
-
-watch(
-	() => price.value,
-	() => {
-		if (price.value.length) {
-			busTour.value.documentName = price.value[0].name;
-		}
-	}
-);
-
-const updateImages = ($event: File[]) => {
-	images.value = $event;
-};
-
-const updatePrice = ($event: File[]) => {
-	price.value[0] = $event[0];
-};
-
-const mappedFiles = (files: File[]): FormData => {
-	const formData = new FormData();
-	files.forEach((file) => {
-		formData.append('file', file);
-	});
-
-	return formData;
-};
-
 const create = async (busTour: ITour) => {
 	try {
 		delete busTour._id;
-		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), FilesPath.BUS_TOUR_IMAGE);
-		}
-		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), FilesPath.BUS_TOUR_DOCS);
-		}
 		await createTour(busTour);
 		router.push('/bus-tours');
 	} catch (err) {
@@ -99,12 +50,6 @@ const create = async (busTour: ITour) => {
 
 const edit = async (busTour: ITour) => {
 	try {
-		if (images.value && images.value.length) {
-			await uploadFiles(mappedFiles(images.value), FilesPath.BUS_TOUR_IMAGE);
-		}
-		if (price.value && price.value.length) {
-			await uploadFiles(mappedFiles(price.value), FilesPath.BUS_TOUR_DOCS);
-		}
 		await editTour(busTour);
 		router.push('/bus-tours');
 	} catch (err) {
@@ -115,21 +60,6 @@ const edit = async (busTour: ITour) => {
 onMounted(async () => {
 	if (props.type === 'edit' && route.params.id) {
 		busTour.value = await getTour(route.params.id as string);
-		const busTourImages = busTour.value?.images?.map((image) => {
-			if (image) {
-				return getFile(image.name, 'images', 'hotels');
-			}
-		});
-
-		if (busTourImages?.length) {
-			images.value = (await Promise.all(busTourImages)) as File[];
-		}
-
-		if (busTour.value.documentName) {
-			await getFile(busTour.value.documentName, 'docs', 'hotels')
-				.then((res: File) => (price.value[0] = res))
-				.catch((err: unknown) => console.error(err));
-		}
 	}
 });
 </script>
@@ -177,14 +107,14 @@ onMounted(async () => {
 			<div class="flex flex-row gap-x-3">
 				<button
 					type="button"
-					class="base-btn mt-3"
+					class="secondary-btn mt-3"
 					@click="() => busTour.thePriceIncludes.push('')"
 				>
 					Добавить опцию
 				</button>
 				<button
 					type="button"
-					class="secondary-btn mt-3"
+					class="delete-btn mt-3"
 					@click="() => busTour.thePriceIncludes.pop()"
 				>
 					Удалить опцию
@@ -192,25 +122,26 @@ onMounted(async () => {
 			</div>
 		</div>
 
-		<DragAndDrop
-			title="Изображения эксркусии"
+		<TheFileInput
+			title="Изображения гостиницы"
 			name="images"
 			accept="image/*"
 			multiple
-			@change="updateImages"
-			:value="images"
+			place="busTour"
+			@change="(images: string[]) => busTour.images = images"
+			:value="busTour.images"
 		/>
-
-		<DragAndDrop
+		<TheFileInput
 			title="Прайс"
 			name="document"
 			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			@change="updatePrice"
-			:value="price"
+			place="busTour"
+			@change="(doc: string[]) => busTour.documentName = doc[0]"
+			:value="busTour.documentName ? [busTour.documentName] : []"
 		/>
 
 		<button class="base-btn max-w-[300px]" type="submit">
-			{{ type === 'create' ? 'Создать экскурсию' : 'Редактировать экскурсию' }}
+			{{ type === 'create' ? 'Создать гостиницу' : 'Сохранить' }}
 		</button>
 	</form>
 </template>
