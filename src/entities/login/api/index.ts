@@ -7,10 +7,10 @@ import { fetchApi } from '@/shared/api';
  * @returns возвращает токен
  * @throws ошибку если что-то пошло не так
  */
-export const login = async (username: string, password: string): Promise<string> => {
+export const login = async (username: string, password: string): Promise<string | Error> => {
   try {
     const res = await fetchApi.post('/auth/login', {username, password});
-    if ('access_token' in res) {
+    if (res && 'access_token' in res) {
       localStorage.setItem('token', res.access_token as string);
       fetchApi.setToken();
       return res.access_token as string;
