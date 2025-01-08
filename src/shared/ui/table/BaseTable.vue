@@ -58,7 +58,7 @@ const deleteAction = (id: string) => {
 						>
 							<div>{{ header.title }}</div>
 						</th>
-						<th class="relative bg-white text-left" v-if="showActions">
+						<th class="bg-white text-center sticky right-0 w-24" v-if="showActions">
 							<div>Действия</div>
 						</th>
 					</tr>
@@ -132,17 +132,17 @@ const deleteAction = (id: string) => {
 							</slot>
 						</td>
 						<td
-							class="whitespace-pre-line break-words align-top"
+							class="bg-white whitespace-pre-line break-words align-top text-center sticky right-0 w-24"
 							v-if="showActions"
 						>
-							<div class="flex items-center gap-3">
+							<div class="flex justify-center items-center gap-2">
 								<button
 									type="button"
 									class="cursor-pointer"
 									title="Редактировать"
 									@click="editAction(row._id)"
 								>
-									<EditIcon fill="#009EFF" />
+									<EditIcon fill="#009EFF" :width="30" :height="30" />
 								</button>
 								<button
 									type="button"
@@ -150,7 +150,7 @@ const deleteAction = (id: string) => {
 									title="Удалить"
 									@click="deleteAction(row._id)"
 								>
-									<TrashIcon fill="red" />
+									<TrashIcon fill="red" :width="30" :height="30" />
 								</button>
 							</div>
 						</td>

@@ -64,12 +64,18 @@ const deleteExcursion = async (id: string) => {
 			</RouterLink>
 		</template>
 		<template #images="row">
-			<div
-				class="relative"
-				v-for="imageName in row?.row.images"
-				:key="imageName"
-			>
-				<GenerateFilePreview :get-file="getImage(imageName)" />
+			<div class="flex flex-row flex-wrap gap-1">
+				<div
+					class="relative"
+					v-for="imageName in row?.row.images"
+					:key="imageName"
+				>
+					<GenerateFilePreview
+						:get-file="getImage(imageName)"
+						preview-width="w-[80px]"
+						preview-height="h-[70px]"
+					/>
+				</div>
 			</div>
 		</template>
 	</BaseTable>

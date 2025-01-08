@@ -3,10 +3,14 @@ import { onMounted, ref, type Ref } from 'vue';
 
 export interface Props {
 	getFile: Promise<File | void> | File;
+	previewWidth?: string;
+	previewHeight?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	getFile: async () => {}
+	getFile: async () => {},
+	previewWidth: 'w-[220px]',
+	previewHeight: 'h-[200px]'
 });
 
 const file: Ref<File | null> = ref(null);
@@ -48,7 +52,7 @@ onMounted(async () => {
 			:class="[
 				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
 					? 'h-7 w-7'
-					: 'h-[200px] w-[220px] rounded-xl object-fill'
+					: `${previewHeight} ${previewWidth} rounded-xl object-fill`
 			]"
 		/>
 		<span
