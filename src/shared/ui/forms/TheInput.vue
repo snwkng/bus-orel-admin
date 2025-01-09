@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// import dayjs from 'dayjs';
 import { computed } from 'vue';
 
 
@@ -20,10 +21,22 @@ const emit = defineEmits<(event: 'update:modelValue', payload: string) => void>(
 
 const value = computed({
 	get() {
+		// if (props.type === 'date') {
+		// 	return dayjs(props.modelValue).format('YYYY-MM-DD')
+		// } else {
+		// 	return props.modelValue
+		// }
 		return props.modelValue
 	},
 
 	set(newValue: string) {
+		// if (props.type === 'date') {
+		// 	if (dayjs(newValue).isValid()) {
+		// 		emit('update:modelValue', dayjs(newValue).format('YYYY-MM-DD'))
+		// 	}
+		// } else {
+		// 	emit('update:modelValue', newValue)
+		// }
 		emit('update:modelValue', newValue)
 	}
 })

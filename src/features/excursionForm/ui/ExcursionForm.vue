@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
@@ -85,10 +84,9 @@ onMounted(async () => {
 		<TheInput
 			label="Дата отправления"
 			type="date"
-			:modelValue="dayjs(excursion.excursionStart).format('YYYY-MM-DD')"
+			:modelValue="excursion.excursionStart"
 			@update:modelValue="
-				($event) =>
-					(excursion.excursionStart = dayjs($event).format('YYYY-MM-DD'))
+				($event) => (excursion.excursionStart = $event)
 			"
 		/>
 		<TheInput
