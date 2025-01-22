@@ -80,6 +80,10 @@ onMounted(async () => {
 			label="Расстояние до пляжа в метрах или минутах"
 			v-model="busTour.distanceToBeach"
 		/>
+		<TheInput
+			label="Условия заселения / выселения"
+			v-model="busTour.checkInConditions"
+		/>
 		<TheInput label="Адрес гостиницы" v-model="busTour.address" />
 		<TheInput
 			label="Минимальная цена заезда"
