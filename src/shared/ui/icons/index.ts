@@ -7,6 +7,7 @@ import CloseIcon from './CloseIcon.vue';
 import DOCXIcon from './DOCXIcon.vue';
 import PDFIcon from './PDFIcon.vue';
 import DoubleArrowLeft from './DoubleArrowLeft.vue';
+import ArrowDown from './ArrowDown.vue';
 
 export {
 	SeaIcon,
@@ -17,5 +18,6 @@ export {
 	CloseIcon,
 	DOCXIcon,
 	PDFIcon,
-	DoubleArrowLeft
+	DoubleArrowLeft,
+	ArrowDown
 };

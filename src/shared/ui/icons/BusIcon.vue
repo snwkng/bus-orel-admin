@@ -1,11 +1,11 @@
 <script setup lang="ts">
-export interface Props {
+export interface IProps {
   fill?: string
   width?: number,
   height?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<IProps>(), {
   fill: '#020202',
   width: 32,
   height: 32
@@ -13,9 +13,9 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 <template>
 	<svg
-		:fill="props.fill"
-		:width="props.width"
-		:height="props.height"
+		:fill="fill"
+		:width="width"
+		:height="height"
 		viewBox="0 0 50 50"
 		xmlns="http://www.w3.org/2000/svg"
 		xmlns:xlink="http://www.w3.org/1999/xlink"

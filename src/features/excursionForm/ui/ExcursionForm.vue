@@ -63,6 +63,11 @@ onMounted(async () => {
 		class="flex flex-col gap-y-5"
 		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
 	>
+		<!-- <TheSelect
+			label="Город"
+			:modelValue="[excursion.city]"
+			@update:modelValue="($event) => (excursion.duration = Number($event))"
+		/> -->
 		<TheInput label="Название экскурсии" v-model="excursion.name" />
 		<TheInput
 			label="Длительность экскурсии (в днях)"
