@@ -80,7 +80,7 @@ onMounted(async () => {
 			label="Расстояние до пляжа в метрах или минутах"
 			v-model="busTour.distanceToBeach"
 		/>
-		<TheInput
+		<TheTextArea
 			label="Условия заселения / выселения"
 			v-model="busTour.checkInConditions"
 		/>
