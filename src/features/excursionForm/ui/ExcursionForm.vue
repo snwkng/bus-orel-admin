@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
+import { TheInput, TheTextArea, TheFileInput, TheSelect } from '@/shared/ui/forms';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, type Ref } from 'vue';
@@ -28,7 +28,7 @@ const excursion: Ref<IExcursion> = ref({
 	price: 0,
 	documentName: '',
 	excursionStart: '',
-	city: '',
+	cities: [] as SelectItem[],
 	hotelName: '',
 	thePriceIncludes: Array.from(' ')
 });
@@ -63,11 +63,11 @@ onMounted(async () => {
 		class="flex flex-col gap-y-5"
 		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
 	>
-		<!-- <TheSelect
+		<TheSelect
 			label="Город"
-			:modelValue="[excursion.city]"
-			@update:modelValue="($event) => (excursion.duration = Number($event))"
-		/> -->
+			:modelValue="excursion.cities"
+			@update:modelValue="($event) => (excursion.cities = $event)"
+		/>
 		<TheInput label="Название экскурсии" v-model="excursion.name" />
 		<TheInput
 			label="Длительность экскурсии (в днях)"
@@ -75,11 +75,11 @@ onMounted(async () => {
 			:modelValue="excursion.duration.toString()"
 			@update:modelValue="($event) => (excursion.duration = Number($event))"
 		/>
-		<TheInput
+		<!-- <TheInput
 			label="Город"
 			:modelValue="excursion.city"
 			@update:modelValue="($event) => (excursion.city = $event)"
-		/>
+		/> -->
 		<TheInput
 			label="Стоимость экскрусии"
 			type="number"
