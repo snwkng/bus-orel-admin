@@ -58,7 +58,10 @@ const deleteAction = (id: string) => {
 						>
 							<div>{{ header.title }}</div>
 						</th>
-						<th class="bg-white text-center sticky right-0 w-24" v-if="showActions">
+						<th
+							class="sticky right-0 w-24 bg-white text-center"
+							v-if="showActions"
+						>
 							<div>Действия</div>
 						</th>
 					</tr>
@@ -111,7 +114,10 @@ const deleteAction = (id: string) => {
 										v-for="(arrayData, index) in row[key.name]"
 										:key="index"
 									>
-										{{ arrayData }}<br />
+										<span v-if="arrayData instanceof Object">
+											{{ arrayData?.name }} <br />
+										</span>
+										<span v-else>{{ arrayData }}<br /></span>
 									</span>
 								</div>
 								<div
@@ -132,10 +138,10 @@ const deleteAction = (id: string) => {
 							</slot>
 						</td>
 						<td
-							class="bg-white whitespace-pre-line break-words align-top text-center sticky right-0 w-24"
+							class="sticky right-0 w-24 whitespace-pre-line break-words bg-white text-center align-top"
 							v-if="showActions"
 						>
-							<div class="flex justify-center items-center gap-2">
+							<div class="flex items-center justify-center gap-2">
 								<button
 									type="button"
 									class="cursor-pointer"

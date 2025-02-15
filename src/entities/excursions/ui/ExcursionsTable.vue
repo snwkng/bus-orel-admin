@@ -25,7 +25,7 @@ const tableHeaders = reactive([
 	{ title: 'Отель', name: 'hotelName' },
 	{ title: 'Название прайса', name: 'documentName' },
 	{ title: 'Начало экскурсии', name: 'excursionStart' },
-	{ title: 'Город', name: 'city' },
+	{ title: 'Город', name: 'cities' },
 	{
 		title: 'В стоимость включено',
 		name: 'thePriceIncludes',
