@@ -2,33 +2,62 @@
 import { computed, ref } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
+import { TheInput } from '@/shared/ui/forms';
 
 export interface Props {
 	label?: string;
 	placeholder?: string;
-	modelValue: string[];
+	modelValue: SelectItem[] | string[];
+	list?: SelectItem[];
 	type?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	label: '',
 	placeholder: '',
-	modelValue: () => [],
+	modelValue: () => [] as SelectItem[],
+	list: () => [],
 	type: 'text'
 });
 
-const emit =
-	defineEmits<(event: 'update:modelValue', payload: string[]) => void>();
+const emit = defineEmits<{
+	(event: 'update:modelValue', payload: SelectItem[]): void;
+	(event: 'add', value: string): void;
+}>();
 
 const showSelect = ref(false);
+const inputValue = ref('');
 
 const value = computed({
 	get() {
-		return props.modelValue;
+		return props.modelValue as SelectItem[];
 	},
 
-	set(newValue: string[]) {
+	set(newValue: SelectItem[]) {
 		emit('update:modelValue', newValue);
+	}
+});
+
+const selectedItem = computed(() =>
+	props.list.filter(
+		(x: SelectItem) =>
+			value.value.findIndex((y: SelectItem) => y._id === x._id) !== -1
+	)
+);
+
+const searchableList = computed(() => {
+	// const filtered = props.list.filter((x: SelectItem) => selectedItem.value.findIndex((y: SelectItem) => y.id === x.id) === -1)
+	if (inputValue.value) {
+		return props.list.filter(
+			(x: SelectItem) =>
+				x.name?.toLowerCase().includes(inputValue.value.toLowerCase()) &&
+				selectedItem.value.findIndex((y: SelectItem) => y._id === x._id) === -1
+		);
+	} else {
+		return props.list.filter(
+			(x: SelectItem) =>
+				selectedItem.value.findIndex((y: SelectItem) => y._id === x._id) === -1
+		);
 	}
 });
 
@@ -39,24 +68,85 @@ const toggle = () => {
 const close = () => {
 	showSelect.value = false;
 };
+
+const addItem = (item: SelectItem) => {
+	if (value.value.findIndex((x: SelectItem) => x._id === item._id) === -1)
+		value.value.push(item);
+};
+
+const removeItem = (item: SelectItem) => {
+	const index = value.value.findIndex((x: SelectItem) => x._id === item._id);
+	value.value.splice(index, 1);
+};
+
+const add = () => {
+	emit('add', inputValue.value);
+	inputValue.value = ''
+
+};
 </script>
 <template>
-	<div class="block" @click="toggle" @keydown.enter="toggle">
+	<div class="block" v-click-away="close">
 		<span class="text-slate-700">{{ label }}</span>
 		<div
-			class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+			class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 			:class="[
 				{ 'border-indigo-300 ring ring-indigo-200 ring-opacity-50': showSelect }
 			]"
-			v-click-away="close"
 		>
-			<div>
-				<div v-for="item in value" :key="item">
-					{{ item }}
+			<div
+				class="flex min-h-[42px] w-full flex-wrap gap-2 px-3 py-2"
+				@click="toggle"
+				@keydown.enter="toggle"
+			>
+				<div
+					v-for="item in selectedItem"
+					:key="item._id"
+					@click.stop="removeItem(item)"
+					class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
+				>
+					{{ item.name }}
 				</div>
-        <div v-if="showSelect">adsassda</div>
 			</div>
-			<ArrowDown class="transition-all" :class="{ 'rotate-180': showSelect }" />
+			<div
+				class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
+				v-if="showSelect"
+			>
+				<div class="py-2">
+					<div class="relative">
+						<TheInput
+							class="px-2"
+							label=""
+							type="text"
+							:modelValue="inputValue"
+							@update:modelValue="($event) => (inputValue = $event)"
+						/>
+						<button
+							v-if="!searchableList.length"
+							type="button"
+							class="base-btn absolute right-0 top-0 z-10 mx-2 h-[42px] shadow-lg"
+							@click="add"
+						>
+							Добавить
+						</button>
+					</div>
+					<div v-if="searchableList.length">
+						<div
+							v-for="item in searchableList"
+							:key="item._id"
+							class="p-2 hover:bg-gray-50"
+							@click.stop="addItem(item)"
+						>
+							<span>{{ item.name }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<ArrowDown
+				class="transition-all"
+				:class="{ 'rotate-180': showSelect }"
+				@click="toggle"
+			/>
 		</div>
 	</div>
 </template>
