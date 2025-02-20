@@ -80,9 +80,10 @@ const removeItem = (item: SelectItem) => {
 };
 
 const add = () => {
-	emit('add', inputValue.value);
-	inputValue.value = ''
-
+	if (inputValue.value) {
+		emit('add', inputValue.value);
+		inputValue.value = '';
+	}
 };
 </script>
 <template>
@@ -120,17 +121,21 @@ const add = () => {
 							type="text"
 							:modelValue="inputValue"
 							@update:modelValue="($event) => (inputValue = $event)"
+							@keydown.enter.prevent="add"
 						/>
 						<button
 							v-if="!searchableList.length"
 							type="button"
 							class="base-btn absolute right-0 top-0 z-10 mx-2 h-[42px] shadow-lg"
-							@click="add"
+							@click.stop="add"
 						>
 							Добавить
 						</button>
 					</div>
-					<div v-if="searchableList.length">
+					<div
+						class="mt-2 max-h-52 overflow-y-auto"
+						v-if="searchableList.length"
+					>
 						<div
 							v-for="item in searchableList"
 							:key="item._id"
