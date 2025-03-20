@@ -27,3 +27,7 @@ td, th {
 .delete-btn {
 	@apply py-2 px-4 bg-red-500 text-white rounded-lg transition-all hover:bg-red-500/85;
 }
+
+.form-container {
+	@apply h-full flex flex-col overflow-auto gap-y-5
+}

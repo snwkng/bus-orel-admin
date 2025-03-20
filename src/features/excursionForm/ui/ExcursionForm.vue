@@ -9,7 +9,7 @@ import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, type Ref } from 'vue';
 import { useExcursionStore } from '@/entities/excursions/model';
-import { useCityStore } from '@/entities/cities/model';
+import { useExcursionCityStore } from '@/entities/excursionCities/model';
 import { storeToRefs } from 'pinia';
 
 export interface Props {
@@ -19,9 +19,9 @@ export interface Props {
 const props = defineProps<Props>();
 
 const { createExcursion, editExcursion, getExcursion } = useExcursionStore();
-const { getCities, addCity } = useCityStore();
+const { getCities, addCity } = useExcursionCityStore();
 
-const { cities } = storeToRefs(useCityStore());
+const { cities } = storeToRefs(useExcursionCityStore());
 
 const router = useRouter();
 const route = useRoute();
@@ -77,9 +77,10 @@ onMounted(async () => {
 </script>
 <template>
 	<form
-		class="flex flex-col gap-y-5"
+		class="form-container"
 		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
 	>
+	<div class="px-6 py-6 md:px-12 md:py-12">
 		<TheInput label="Название экскурсии" v-model="excursion.name" />
 		<TheInput
 			label="Длительность экскурсии (в днях)"
@@ -191,9 +192,11 @@ onMounted(async () => {
 			@change="(doc: string[]) => (excursion.documentName = doc[0])"
 			:value="excursion.documentName ? [excursion.documentName] : []"
 		/>
-
-		<button class="base-btn mt-5 max-w-[300px]" type="submit">
-			{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
-		</button>
+	</div>
+		<div class="sticky bottom-0 w-full bg-white flex items-center px-6 py-4">
+			<button class="base-btn max-w-[300px]" type="submit">
+				{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
+			</button>
+		</div>
 	</form>
 </template>

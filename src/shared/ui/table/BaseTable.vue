@@ -45,8 +45,8 @@ const deleteAction = (id: string) => {
 };
 </script>
 <template>
-	<div class="mb-2 mt-6 overflow-hidden rounded-xl bg-white p-8 shadow lg:mt-0">
-		<div class="relative grid max-w-full overflow-auto pb-5">
+	<div class="mb-2 mt-6 h-full rounded-xl bg-white p-8 shadow lg:mt-0 overflow-hidden">
+		<div class="relative grid max-w-full overflow-auto pb-5 h-full">
 			<table class="w-full table-fixed">
 				<thead class="w-fit select-none">
 					<tr>
@@ -118,6 +118,14 @@ const deleteAction = (id: string) => {
 											{{ arrayData?.name }} <br />
 										</span>
 										<span v-else>{{ arrayData }}<br /></span>
+									</span>
+								</div>
+								<div
+									class="line-clamp-4"
+									v-else-if="row[key.name] instanceof Object"
+								>
+									<span v-if="row[key.name] instanceof Object">
+										{{ row[key.name]?.name }} <br />
 									</span>
 								</div>
 								<div

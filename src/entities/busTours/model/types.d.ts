@@ -9,7 +9,7 @@ export interface ITour {
 	tours: {
 		type: string;
 		roomName: string;
-		numberOfSeats: number;
+		capacity: number;
 		inRoom: string;
 		datesAndPrices: {
 			startDate: Date;
@@ -24,7 +24,7 @@ export interface ITour {
 	address: string;
 	price: number;
 	thePriceIncludes: string[];
-	city: string;
+	city: SelectItem;
 	region: string;
 	seaType: string;
 	documentName: string;

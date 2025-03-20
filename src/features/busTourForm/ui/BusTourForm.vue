@@ -3,7 +3,14 @@ import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, type Ref } from 'vue';
 import type { ITour } from '@/entities/busTours/model/types';
 import { useBusTourStore } from '@/entities/busTours/model';
-import { TheInput, TheTextArea, TheFileInput } from '@/shared/ui/forms';
+import { useBusTourCityStore } from '@/entities/busTourCities/model';
+import { storeToRefs } from 'pinia';
+import {
+	TheInput,
+	TheTextArea,
+	TheFileInput,
+	TheSelect
+} from '@/shared/ui/forms';
 
 export interface Props {
 	type: string;
@@ -17,6 +24,9 @@ const router = useRouter();
 const route = useRoute();
 
 const { createTour, editTour, uploadFile, getTour, getFile } = store;
+const { getCities, addCity } = useBusTourCityStore();
+
+const { cities } = storeToRefs(useBusTourCityStore());
 
 const busTour: Ref<ITour> = ref({
 	_id: '',
@@ -32,7 +42,7 @@ const busTour: Ref<ITour> = ref({
 	address: '',
 	price: 0,
 	thePriceIncludes: Array.from(' '),
-	city: '',
+	city: {},
 	region: '',
 	seaType: '',
 	documentName: ''
@@ -57,7 +67,13 @@ const edit = async (busTour: ITour) => {
 	}
 };
 
+const changeCity = async (newCity: string) => {
+	const city = await addCity(newCity);
+	(excursion.value.cities as SelectItem[]).push(city);
+};
+
 onMounted(async () => {
+	await getCities();
 	if (props.type === 'edit' && route.params.id) {
 		busTour.value = await getTour(route.params.id as string);
 	}
@@ -65,87 +81,96 @@ onMounted(async () => {
 </script>
 <template>
 	<form
-		class="flex flex-col gap-y-5"
+		class="form-container"
 		@submit.prevent="type === 'create' ? create(busTour) : edit(busTour)"
 	>
-		<TheInput label="Название Гостиницы" v-model="busTour.name" />
-		<TheInput label="Тип (отель, гостиница и т.д)" v-model="busTour.type" />
-		<TheTextArea
-			label="Описание гостиницы"
-			v-model="busTour.locationDescription"
-		/>
-		<TheInput label="Питание" v-model="busTour.food" />
-		<TheInput label="Тип пляжа" v-model="busTour.beach" />
-		<TheInput
-			label="Расстояние до пляжа в метрах или минутах"
-			v-model="busTour.distanceToBeach"
-		/>
-		<TheTextArea
-			label="Условия заселения / выселения"
-			v-model="busTour.checkInConditions"
-		/>
-		<TheInput label="Адрес гостиницы" v-model="busTour.address" />
-		<TheInput
-			label="Минимальная цена заезда"
-			type="number"
-			:modelValue="busTour.price.toString()"
-			@update:modelValue="($event) => (busTour.price = Number($event))"
-		/>
-		<TheInput label="Регион" v-model="busTour.region" />
-		<TheInput label="Город" v-model="busTour.city" />
-		<TheInput label="Море" v-model="busTour.seaType" />
+		<div class="px-6 py-6 md:px-12 md:py-12">
+			<TheInput label="Название Гостиницы" v-model="busTour.name" />
+			<TheInput label="Тип (отель, гостиница и т.д)" v-model="busTour.type" />
+			<TheTextArea
+				label="Описание гостиницы"
+				v-model="busTour.locationDescription"
+			/>
+			<TheInput label="Питание" v-model="busTour.food" />
+			<TheInput label="Тип пляжа" v-model="busTour.beach" />
+			<TheInput
+				label="Расстояние до пляжа в метрах или минутах"
+				v-model="busTour.distanceToBeach"
+			/>
+			<TheTextArea
+				label="Условия заселения / выселения"
+				v-model="busTour.checkInConditions"
+			/>
+			<TheInput label="Адрес гостиницы" v-model="busTour.address" />
+			<TheInput
+				label="Минимальная цена заезда"
+				type="number"
+				:modelValue="busTour.price.toString()"
+				@update:modelValue="($event) => (busTour.price = Number($event))"
+			/>
+			<TheInput label="Регион" v-model="busTour.region" />
+			<TheSelect
+				label="Город"
+				:modelValue="[busTour.city]"
+				:list="cities"
+				@update:modelValue="($event) => busTour.city = $event"
+				@add="changeCity($event)"
+			/>
+			<TheInput label="Море" v-model="busTour.seaType" />
 
-		<div class="flex w-full flex-col items-start">
-			<div class="mb-1 text-slate-700">В стоимость включено</div>
-			<div class="flex w-full flex-col gap-y-2">
-				<TheTextArea
-					v-for="(inc, index) in busTour.thePriceIncludes"
-					:key="index"
-					:placeholder="`Опция ${index + 1}`"
-					:modelValue="inc"
-					@update:modelValue="
-						($event) => (busTour.thePriceIncludes[index] = $event)
-					"
-				/>
+			<div class="flex w-full flex-col items-start">
+				<div class="mb-1 text-slate-700">В стоимость включено</div>
+				<div class="flex w-full flex-col gap-y-2">
+					<TheTextArea
+						v-for="(inc, index) in busTour.thePriceIncludes"
+						:key="index"
+						:placeholder="`Опция ${index + 1}`"
+						:modelValue="inc"
+						@update:modelValue="
+							($event) => (busTour.thePriceIncludes[index] = $event)
+						"
+					/>
+				</div>
+				<div class="flex flex-row gap-x-3">
+					<button
+						type="button"
+						class="secondary-btn mt-3"
+						@click="() => busTour.thePriceIncludes.push('')"
+					>
+						Добавить опцию
+					</button>
+					<button
+						type="button"
+						class="delete-btn mt-3"
+						@click="() => busTour.thePriceIncludes.pop()"
+					>
+						Удалить опцию
+					</button>
+				</div>
 			</div>
-			<div class="flex flex-row gap-x-3">
-				<button
-					type="button"
-					class="secondary-btn mt-3"
-					@click="() => busTour.thePriceIncludes.push('')"
-				>
-					Добавить опцию
-				</button>
-				<button
-					type="button"
-					class="delete-btn mt-3"
-					@click="() => busTour.thePriceIncludes.pop()"
-				>
-					Удалить опцию
-				</button>
-			</div>
+
+			<TheFileInput
+				title="Изображения гостиницы"
+				name="images"
+				accept="image/*"
+				multiple
+				place="busTour"
+				@change="(images: string[]) => (busTour.images = images)"
+				:value="busTour.images"
+			/>
+			<TheFileInput
+				title="Прайс"
+				name="document"
+				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				place="busTour"
+				@change="(doc: string[]) => (busTour.documentName = doc[0])"
+				:value="busTour.documentName ? [busTour.documentName] : []"
+			/>
 		</div>
-
-		<TheFileInput
-			title="Изображения гостиницы"
-			name="images"
-			accept="image/*"
-			multiple
-			place="busTour"
-			@change="(images: string[]) => busTour.images = images"
-			:value="busTour.images"
-		/>
-		<TheFileInput
-			title="Прайс"
-			name="document"
-			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			place="busTour"
-			@change="(doc: string[]) => busTour.documentName = doc[0]"
-			:value="busTour.documentName ? [busTour.documentName] : []"
-		/>
-
-		<button class="base-btn max-w-[300px]" type="submit">
-			{{ type === 'create' ? 'Создать гостиницу' : 'Сохранить' }}
-		</button>
+		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
+			<button class="base-btn max-w-[300px]" type="submit">
+				{{ type === 'create' ? 'Создать гостиницу' : 'Сохранить' }}
+			</button>
+		</div>
 	</form>
 </template>
