@@ -29,5 +29,5 @@ td, th {
 }
 
 .form-container {
-	@apply h-full flex flex-col overflow-auto gap-y-5
+	@apply h-full flex flex-col
 }

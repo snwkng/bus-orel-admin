@@ -84,7 +84,7 @@ onMounted(async () => {
 		class="form-container"
 		@submit.prevent="type === 'create' ? create(busTour) : edit(busTour)"
 	>
-		<div class="px-6 py-6 md:px-12 md:py-12">
+		<div class="px-6 py-6 md:px-12 md:py-12 overflow-auto h-full">
 			<TheInput label="Название Гостиницы" v-model="busTour.name" />
 			<TheInput label="Тип (отель, гостиница и т.д)" v-model="busTour.type" />
 			<TheTextArea
