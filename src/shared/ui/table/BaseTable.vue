@@ -48,7 +48,7 @@ const deleteAction = (id: string) => {
 	<div class="mb-2 mt-6 h-full rounded-xl bg-white p-8 shadow lg:mt-0 overflow-hidden">
 		<div class="relative grid max-w-full overflow-auto pb-5 h-full">
 			<table class="w-full table-fixed">
-				<thead class="w-fit select-none">
+				<thead class="w-fit select-none sticky top-0 z-10">
 					<tr>
 						<th
 							class="relative bg-white text-left"

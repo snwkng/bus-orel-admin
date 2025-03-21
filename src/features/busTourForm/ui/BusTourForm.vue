@@ -69,7 +69,7 @@ const edit = async (busTour: ITour) => {
 
 const changeCity = async (newCity: string) => {
 	const city = await addCity(newCity);
-	(excursion.value.cities as SelectItem[]).push(city);
+	busTour.value.city = city;
 };
 
 onMounted(async () => {
@@ -84,7 +84,7 @@ onMounted(async () => {
 		class="form-container"
 		@submit.prevent="type === 'create' ? create(busTour) : edit(busTour)"
 	>
-		<div class="px-6 py-6 md:px-12 md:py-12 overflow-auto h-full">
+		<div class="form-container-content">
 			<TheInput label="Название Гостиницы" v-model="busTour.name" />
 			<TheInput label="Тип (отель, гостиница и т.д)" v-model="busTour.type" />
 			<TheTextArea
@@ -111,9 +111,14 @@ onMounted(async () => {
 			<TheInput label="Регион" v-model="busTour.region" />
 			<TheSelect
 				label="Город"
-				:modelValue="[busTour.city]"
+				:modelValue="(busTour.city as SelectItem)"
 				:list="cities"
-				@update:modelValue="($event) => busTour.city = $event"
+				:limit="1"
+				@update:modelValue="($event) => { 
+					return busTour.city = Object.keys($event as SelectItem).length === 0
+						? null 
+						: $event as SelectItem
+				}"
 				@add="changeCity($event)"
 			/>
 			<TheInput label="Море" v-model="busTour.seaType" />

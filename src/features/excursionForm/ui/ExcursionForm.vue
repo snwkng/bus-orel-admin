@@ -80,7 +80,7 @@ onMounted(async () => {
 		class="form-container"
 		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
 	>
-	<div class="px-6 py-6 md:px-12 md:py-12 overflow-auto h-full rounded-lg">
+	<div class="form-container-content">
 		<TheInput label="Название экскурсии" v-model="excursion.name" />
 		<TheInput
 			label="Длительность экскурсии (в днях)"

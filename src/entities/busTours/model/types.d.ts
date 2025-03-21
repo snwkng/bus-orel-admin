@@ -24,7 +24,7 @@ export interface ITour {
 	address: string;
 	price: number;
 	thePriceIncludes: string[];
-	city: SelectItem;
+	city: SelectItem | null;
 	region: string;
 	seaType: string;
 	documentName: string;

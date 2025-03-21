@@ -7,9 +7,10 @@ import { TheInput } from '@/shared/ui/forms';
 export interface Props {
 	label?: string;
 	placeholder?: string;
-	modelValue: SelectItem[] | string[];
+	modelValue: SelectItem[] | string[] | SelectItem;
 	list?: SelectItem[];
 	type?: string;
+	limit?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-	(event: 'update:modelValue', payload: SelectItem[]): void;
+	(event: 'update:modelValue', payload: SelectItem[] | SelectItem): void;
 	(event: 'add', value: string): void;
 }>();
 
@@ -39,14 +40,16 @@ const value = computed({
 });
 
 const selectedItem = computed(() =>
-	props.list.filter(
-		(x: SelectItem) =>
-			value.value.findIndex((y: SelectItem) => y._id === x._id) !== -1
-	)
+	props.list.filter((x: SelectItem) => {
+		if (props.limit === 1) {
+			return x._id === (value.value as SelectItem)?._id || null;
+		} else {
+			return value.value.findIndex((y: SelectItem) => y._id === x._id) !== -1;
+		}
+	})
 );
 
 const searchableList = computed(() => {
-	// const filtered = props.list.filter((x: SelectItem) => selectedItem.value.findIndex((y: SelectItem) => y.id === x.id) === -1)
 	if (inputValue.value) {
 		return props.list.filter(
 			(x: SelectItem) =>
@@ -70,13 +73,20 @@ const close = () => {
 };
 
 const addItem = (item: SelectItem) => {
-	if (value.value.findIndex((x: SelectItem) => x._id === item._id) === -1)
+	if (props.limit !== 1 && value.value.findIndex((x: SelectItem) => x._id === item._id) === -1) {
 		value.value.push(item);
+	} else {
+		(value.value as SelectItem) = item
+	}
 };
 
 const removeItem = (item: SelectItem) => {
-	const index = value.value.findIndex((x: SelectItem) => x._id === item._id);
-	value.value.splice(index, 1);
+	if (props.limit === 1) {
+		(value.value as SelectItem) = {} as SelectItem
+	} else {
+		const index = value.value.findIndex((x: SelectItem) => x._id === item._id);
+		value.value.splice(index, 1);
+	}
 };
 
 const add = () => {
