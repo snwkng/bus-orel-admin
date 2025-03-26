@@ -26,7 +26,6 @@ const value = computed({
 		} else {
 			return props.modelValue
 		}
-		return props.modelValue
 	},
 
 	set(newValue: string) {

@@ -6,17 +6,6 @@ export interface ITour {
 	type: string;
 	locationDescription: string;
 	images?: string[];
-	tours: {
-		type: string;
-		roomName: string;
-		capacity: number;
-		inRoom: string;
-		datesAndPrices: {
-			startDate: Date;
-			endDate: Date;
-			price: number;
-		}[];
-	}[];
 	food: string;
 	beach: string;
 	distanceToBeach: string;
@@ -28,4 +17,19 @@ export interface ITour {
 	region: string;
 	seaType: string;
 	documentName: string;
+	tours?: IHotelRoomInfo[];
+}
+
+export interface IHotelRoomInfo {
+	type?: string;
+	roomName?: string;
+	capacity?: number;
+	inRoom?: string;
+	datesAndPrices?: IDatesAndPrices[];
+}
+
+export interface IDatesAndPrices {
+	startDate?: Date | string;
+	endDate?: Date | string;
+	price?: number;
 }

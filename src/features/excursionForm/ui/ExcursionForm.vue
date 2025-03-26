@@ -92,7 +92,7 @@ onMounted(async () => {
 			label="Город"
 			:modelValue="excursion.cities"
 			:list="cities"
-			@update:modelValue="($event) => (excursion.cities = $event)"
+			@update:modelValue="($event) => (excursion.cities = $event as SelectItem[])"
 			@add="changeCity($event)"
 		/>
 		<TheInput

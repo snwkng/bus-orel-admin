@@ -11,6 +11,7 @@ import {
 	TheFileInput,
 	TheSelect
 } from '@/shared/ui/forms';
+import HotelRoom from '@/widgets/hotelRoom';
 
 export interface Props {
 	type: string;
@@ -111,14 +112,17 @@ onMounted(async () => {
 			<TheInput label="Регион" v-model="busTour.region" />
 			<TheSelect
 				label="Город"
-				:modelValue="(busTour.city as SelectItem)"
+				:modelValue="busTour.city as SelectItem"
 				:list="cities"
 				:limit="1"
-				@update:modelValue="($event) => { 
-					return busTour.city = Object.keys($event as SelectItem).length === 0
-						? null 
-						: $event as SelectItem
-				}"
+				@update:modelValue="
+					($event) => {
+						return (busTour.city =
+							Object.keys($event as SelectItem).length === 0
+								? null
+								: ($event as SelectItem));
+					}
+				"
 				@add="changeCity($event)"
 			/>
 			<TheInput label="Море" v-model="busTour.seaType" />
@@ -170,6 +174,17 @@ onMounted(async () => {
 				place="busTour"
 				@change="(doc: string[]) => (busTour.documentName = doc[0])"
 				:value="busTour.documentName ? [busTour.documentName] : []"
+			/>
+			<HotelRoom v-if="type === 'create'" />
+			<HotelRoom
+				v-else
+				v-for="(item, index) in busTour.tours"
+				:key="index"
+				:type="item?.type"
+				:room-name="item?.roomName"
+				:capacity="item?.capacity"
+				:in-room="item?.inRoom"
+				:dates-and-prices="item?.datesAndPrices"
 			/>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
