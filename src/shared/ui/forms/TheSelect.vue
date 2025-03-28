@@ -1,50 +1,48 @@
 <script setup lang="ts">
+defineOptions({
+	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
+});
+
 import { computed, ref } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
 import { TheInput } from '@/shared/ui/forms';
 
 export interface Props {
-	label?: string;
-	placeholder?: string;
-	modelValue: SelectItem[] | string[] | SelectItem;
+	selected: SelectItem[] | string[] | SelectItem;
 	list?: SelectItem[];
-	type?: string;
 	limit?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	label: '',
-	placeholder: '',
-	modelValue: () => [] as SelectItem[],
-	list: () => [],
-	type: 'text'
+	selected: () => [] as SelectItem[],
+	list: () => []
 });
 
 const emit = defineEmits<{
-	(event: 'update:modelValue', payload: SelectItem[] | SelectItem): void;
+	(event: 'update', payload: SelectItem[] | SelectItem): void;
 	(event: 'add', value: string): void;
 }>();
 
 const showSelect = ref(false);
 const inputValue = ref('');
 
-const value = computed({
+const data = computed({
 	get() {
-		return props.modelValue as SelectItem[];
+		return props.selected as SelectItem[];
 	},
 
 	set(newValue: SelectItem[]) {
-		emit('update:modelValue', newValue);
+		emit('update', newValue);
 	}
 });
 
 const selectedItem = computed(() =>
 	props.list.filter((x: SelectItem) => {
 		if (props.limit === 1) {
-			return x._id === (value.value as SelectItem)?._id || null;
+			return x._id === (data.value as SelectItem)?._id || null;
 		} else {
-			return value.value.findIndex((y: SelectItem) => y._id === x._id) !== -1;
+			return data.value.findIndex((y: SelectItem) => y._id === x._id) !== -1;
 		}
 	})
 );
@@ -73,19 +71,22 @@ const close = () => {
 };
 
 const addItem = (item: SelectItem) => {
-	if (props.limit !== 1 && value.value.findIndex((x: SelectItem) => x._id === item._id) === -1) {
-		value.value.push(item);
+	if (
+		props.limit !== 1 &&
+		data.value.findIndex((x: SelectItem) => x._id === item._id) === -1
+	) {
+		data.value.push(item);
 	} else {
-		(value.value as SelectItem) = item
+		(data.value as SelectItem) = item;
 	}
 };
 
 const removeItem = (item: SelectItem) => {
 	if (props.limit === 1) {
-		(value.value as SelectItem) = {} as SelectItem
+		(data.value as SelectItem) = {} as SelectItem;
 	} else {
-		const index = value.value.findIndex((x: SelectItem) => x._id === item._id);
-		value.value.splice(index, 1);
+		const index = data.value.findIndex((x: SelectItem) => x._id === item._id);
+		data.value.splice(index, 1);
 	}
 };
 
@@ -97,8 +98,7 @@ const add = () => {
 };
 </script>
 <template>
-	<div class="block" v-click-away="close">
-		<span class="text-slate-700">{{ label }}</span>
+	<div v-click-away="close">
 		<div
 			class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 			:class="[
@@ -125,14 +125,14 @@ const add = () => {
 			>
 				<div class="py-2">
 					<div class="relative">
-						<TheInput
-							class="px-2"
-							label=""
-							type="text"
-							:modelValue="inputValue"
-							@update:modelValue="($event) => (inputValue = $event)"
-							@keydown.enter.prevent="add"
-						/>
+						<div class="px-2">
+							<TheInput
+								type="text"
+								:modelValue="inputValue"
+								@update:modelValue="($event) => (inputValue = $event)"
+								@keydown.enter.prevent="add"
+							/>
+						</div>
 						<button
 							v-if="!searchableList.length"
 							type="button"
