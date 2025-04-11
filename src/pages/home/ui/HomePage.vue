@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import FormField from '@/entities/formField/ui/FormField.vue';
-import { TheInput, TheSelect } from '@/shared/ui/forms';
+import { TheInput, TheSelect, TheTextArea } from '@/shared/ui/forms';
 import { ref } from 'vue';
 
 const formData = ref('');
 const formData2 = ref('');
+const formData3 = ref('');
 
 const selectModel = ref<SelectItem[]>([
 	{ _id: 'asdasdasda', name: 'Селект1' },
@@ -39,6 +40,13 @@ const selectModelValues = ref<SelectItem[]>([]);
 				:selected="selectModelValues"
 				:list="selectModel"
 				@update="($event) => (selectModelValues = $event as SelectItem[])"
+			/>
+		</FormField>
+		<FormField name="textarea" label="Тестовый label textarea" column>
+			<TheTextArea
+				name="textarea"
+				placeholder="textarea"
+				v-model="formData3"
 			/>
 		</FormField>
 	</div>

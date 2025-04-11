@@ -3,11 +3,13 @@ import {
 	TheInput,
 	TheTextArea,
 	TheFileInput,
-	TheSelect
+	TheSelect,
+	TheDatePicker
 } from '@/shared/ui/forms';
+import FormField from '@/entities/formField/ui/FormField.vue';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { useExcursionCityStore } from '@/entities/excursionCities/model';
 import { storeToRefs } from 'pinia';
@@ -26,7 +28,7 @@ const { cities } = storeToRefs(useExcursionCityStore());
 const router = useRouter();
 const route = useRoute();
 
-const excursion: Ref<IExcursion> = ref({
+const excursion = ref<IExcursion>({
 	_id: '',
 	name: '',
 	description: Array.from(' '),
@@ -80,120 +82,114 @@ onMounted(async () => {
 		class="form-container"
 		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
 	>
-	<div class="form-container-content">
-		<TheInput label="Название экскурсии" v-model="excursion.name" />
-		<TheInput
-			label="Длительность экскурсии (в днях)"
-			type="number"
-			:modelValue="excursion.duration.toString()"
-			@update:modelValue="($event) => (excursion.duration = Number($event))"
-		/>
-		<TheSelect
-			label="Город"
-			:modelValue="excursion.cities"
-			:list="cities"
-			@update:modelValue="($event) => (excursion.cities = $event as SelectItem[])"
-			@add="changeCity($event)"
-		/>
-		<TheInput
-			label="Стоимость экскрусии"
-			type="number"
-			:modelValue="excursion.price.toString()"
-			@update:modelValue="($event) => (excursion.price = Number($event))"
-		/>
-		<TheInput
-			label="Дата отправления"
-			type="date"
-			:modelValue="excursion.excursionStart"
-			@update:modelValue="($event) => (excursion.excursionStart = $event)"
-		/>
-		<TheInput
-			label="Название отеля (если есть)"
-			:modelValue="excursion.hotelName"
-			@update:modelValue="($event) => (excursion.hotelName = $event)"
-		/>
-
-		<div class="flex w-full flex-col items-start">
-			<div class="mb-1 text-slate-700">Программа экскурсии</div>
-			<div class="flex w-full flex-col gap-y-2">
-				<TheTextArea
-					v-for="(inc, index) in excursion.description"
-					:key="index"
-					:placeholder="`День ${index + 1}`"
-					:modelValue="inc"
-					@update:modelValue="
-						($event) => (excursion.description[index] = $event)
-					"
+		<div class="form-container-content">
+			<FormField name="name" label="Название экскурсии" column>
+				<TheInput name="name" type="text" v-model="excursion.name" />
+			</FormField>
+			<FormField name="duration" label="Длительность экскурсии (в днях)" column>
+				<TheInput name="duration" type="number" v-model="excursion.duration" />
+			</FormField>
+			<FormField name="city" label="Город" column>
+				<TheSelect
+					name="city"
+					label="Город"
+					:selected="excursion.cities"
+					:list="cities"
+					@update="($event) => (excursion.cities = $event as SelectItem[])"
+					@add="changeCity($event)"
 				/>
-			</div>
-			<div class="flex flex-row gap-x-3">
-				<button
-					type="button"
-					class="secondary-btn mt-3"
-					@click="() => excursion.description.push('')"
-				>
-					Добавить день
-				</button>
-				<button
-					type="button"
-					class="delete-btn mt-3"
-					@click="() => excursion.description.pop()"
-				>
-					Удалить день
-				</button>
-			</div>
-		</div>
-
-		<div class="flex w-full flex-col items-start">
-			<div class="mb-1 text-slate-700">В стоимость включено</div>
-			<div class="flex w-full flex-col gap-y-2">
-				<TheTextArea
-					v-for="(inc, index) in excursion.thePriceIncludes"
-					:key="index"
-					:placeholder="`Опция ${index + 1}`"
-					:modelValue="inc"
-					@update:modelValue="
-						($event) => (excursion.thePriceIncludes[index] = $event)
-					"
+			</FormField>
+			<FormField name="price" label="Стоимость экскрусии" column>
+				<TheInput name="price" type="number" v-model="excursion.price" />
+			</FormField>
+			<FormField name="excursionStart" label="Дата отправления" column>
+				<TheDatePicker
+					v-model="excursion.excursionStart"
 				/>
+			</FormField>
+			<FormField name="hotelName" label="Название отеля (если есть)" column>
+				<TheInput
+					name="hotelName"
+					type="number"
+					v-model="excursion.hotelName"
+				/>
+			</FormField>
+			<div>
+				<FormField name="description" label="Программа экскурсии" column>
+					<TheTextArea
+						v-for="(inc, index) in excursion.description"
+						:key="index"
+						name="description"
+						placeholder="textarea"
+						v-model="excursion.description[index]"
+					/>
+				</FormField>
+				<div class="flex flex-row gap-x-3">
+					<button
+						type="button"
+						class="secondary-btn mt-3"
+						@click="() => excursion.description.push('')"
+					>
+						Добавить день
+					</button>
+					<button
+						type="button"
+						class="delete-btn mt-3"
+						@click="() => excursion.description.pop()"
+					>
+						Удалить день
+					</button>
+				</div>
 			</div>
-			<div class="flex flex-row gap-x-3">
-				<button
-					type="button"
-					class="secondary-btn mt-3"
-					@click="() => excursion.thePriceIncludes.push('')"
-				>
-					Добавить опцию
-				</button>
-				<button
-					type="button"
-					class="delete-btn mt-3"
-					@click="() => excursion.thePriceIncludes.pop()"
-				>
-					Удалить опцию
-				</button>
-			</div>
-		</div>
 
-		<TheFileInput
-			title="Изображения эксркусии"
-			name="images"
-			accept="image/*"
-			multiple
-			place="excursion"
-			@change="(images: string[]) => (excursion.images = images)"
-			:value="excursion.images"
-		/>
-		<TheFileInput
-			title="Прайс"
-			name="document"
-			accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			place="excursion"
-			@change="(doc: string[]) => (excursion.documentName = doc[0])"
-			:value="excursion.documentName ? [excursion.documentName] : []"
-		/>
-	</div>
-		<div class="sticky bottom-0 w-full bg-white flex items-center px-6 py-4">
+			<div>
+				<FormField name="thePriceIncludes" label="В стоимость включено" column>
+					<TheTextArea
+						v-for="(inc, index) in excursion.thePriceIncludes"
+						:key="index"
+						name="thePriceIncludes"
+						placeholder="textarea"
+						v-model="excursion.thePriceIncludes[index]"
+					/>
+				</FormField>
+				<div class="flex flex-row gap-x-3">
+					<button
+						type="button"
+						class="secondary-btn mt-3"
+						@click="() => excursion.thePriceIncludes.push('')"
+					>
+						Добавить опцию
+					</button>
+					<button
+						type="button"
+						class="delete-btn mt-3"
+						@click="() => excursion.thePriceIncludes.pop()"
+					>
+						Удалить опцию
+					</button>
+				</div>
+			</div>
+			<FormField name="images" label="Изображения эксркусии" column>
+				<TheFileInput
+					name="images"
+					accept="image/*"
+					multiple
+					place="excursion"
+					@change="(images: string[]) => (excursion.images = images)"
+					:value="excursion.images"
+				/>
+			</FormField>
+			<FormField name="document" label="Файл прайса" column>
+				<TheFileInput
+					name="document"
+					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					place="excursion"
+					@change="(doc: string[]) => (excursion.documentName = doc[0])"
+					:value="excursion.documentName ? [excursion.documentName] : []"
+				/>
+			</FormField>
+		</div>
+		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button class="base-btn max-w-[300px]" type="submit">
 				{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
 			</button>

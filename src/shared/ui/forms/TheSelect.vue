@@ -71,9 +71,10 @@ const close = () => {
 };
 
 const addItem = (item: SelectItem) => {
+	console.log(data.value)
 	if (
 		props.limit !== 1 &&
-		data.value.findIndex((x: SelectItem) => x._id === item._id) === -1
+		data.value?.findIndex((x: SelectItem) => x._id === item._id) === -1
 	) {
 		data.value.push(item);
 	} else {
@@ -123,14 +124,14 @@ const add = () => {
 				class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
 				v-if="showSelect"
 			>
+			<!-- TODO: пофиксить добавление через enter -->
 				<div class="py-2">
 					<div class="relative">
 						<div class="px-2">
 							<TheInput
-								type="text"
-								:modelValue="inputValue"
-								@update:modelValue="($event) => (inputValue = $event)"
-								@keydown.enter.prevent="add"
+								name="searchSelect"
+								v-model.trim="inputValue"
+								@keyup.enter.prevent="add"
 							/>
 						</div>
 						<button

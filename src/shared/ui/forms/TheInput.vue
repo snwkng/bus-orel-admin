@@ -3,8 +3,6 @@ defineOptions({
   inheritAttrs: false // Отключаем автоматическую передачу атрибутов
 });
 
-const model = defineModel();
-
 export interface Props {
 	placeholder?: string;
 	type?: string;
@@ -14,21 +12,23 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
 	type: 'text'
 });
+
+const model = defineModel();
 </script>
 <template>
 	<input
-		v-if="type === 'text'"
-		:id="name"
-		:name="name"
+		v-if="props.type === 'text'"
+		:id="props.name"
+		:name="props.name"
 		:type="props.type"
 		:placeholder="props.placeholder"
 		class="the-input"
 		v-model.trim="model"
 	/>
 	<input
-		v-if="type === 'number'"
-		:id="name"
-		:name="name"
+		v-if="props.type === 'number'"
+		:id="props.name"
+		:name="props.name"
 		:type="props.type"
 		:placeholder="props.placeholder"
 		class="the-input"
