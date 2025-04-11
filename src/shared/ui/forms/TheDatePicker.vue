@@ -4,14 +4,6 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { ru } from 'date-fns/locale';
 
 const model = defineModel<Date | string>();
-
-const format = (date: Date) => {
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-
-  return `${day}-${month}-${year}`;
-}
 </script>
 
 <template>
