@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, type Ref } from 'vue';
-import type { ITour } from '@/entities/busTours/model/types';
+import type { IHotelRoomInfo, ITour } from '@/entities/busTours/model/types';
 import { useBusTourStore } from '@/entities/busTours/model';
 import { useBusTourCityStore } from '@/entities/busTourCities/model';
 import { storeToRefs } from 'pinia';
@@ -9,8 +9,9 @@ import {
 	TheInput,
 	TheTextArea,
 	TheFileInput,
-	TheSelect
+	TheSelect,
 } from '@/shared/ui/forms';
+import FormField from '@/entities/formField/ui/FormField.vue';
 import HotelRoom from '@/widgets/hotelRoom';
 
 export interface Props {
@@ -73,6 +74,10 @@ const changeCity = async (newCity: string) => {
 	busTour.value.city = city;
 };
 
+const updateTour = (tour: IHotelRoomInfo) => {
+	console.log(tour)
+}
+
 onMounted(async () => {
 	await getCities();
 	if (props.type === 'edit' && route.params.id) {
@@ -86,96 +91,117 @@ onMounted(async () => {
 		@submit.prevent="type === 'create' ? create(busTour) : edit(busTour)"
 	>
 		<div class="form-container-content">
-			<TheInput label="Название Гостиницы" v-model="busTour.name" />
-			<TheInput label="Тип (отель, гостиница и т.д)" v-model="busTour.type" />
-			<TheTextArea
-				label="Описание гостиницы"
-				v-model="busTour.locationDescription"
-			/>
-			<TheInput label="Питание" v-model="busTour.food" />
-			<TheInput label="Тип пляжа" v-model="busTour.beach" />
-			<TheInput
+			<FormField name="name" label="Название Гостиницы" column>
+				<TheInput name="name" type="text" v-model="busTour.name" />
+			</FormField>
+			<FormField name="type" label="Тип (отель, гостиница и т.д)" column>
+				<TheInput name="type" type="text" v-model="busTour.type" />
+			</FormField>
+			<FormField name="locationDescription" label="Описание гостиницы" column>
+				<TheInput
+					name="locationDescription"
+					type="text"
+					v-model="busTour.locationDescription"
+				/>
+			</FormField>
+			<FormField name="food" label="Питание" column>
+				<TheInput name="food" type="text" v-model="busTour.food" />
+			</FormField>
+			<FormField name="beach" label="Тип пляжа" column>
+				<TheInput name="beach" type="text" v-model="busTour.beach" />
+			</FormField>
+			<FormField
+				name="distanceToBeach"
 				label="Расстояние до пляжа в метрах или минутах"
-				v-model="busTour.distanceToBeach"
-			/>
-			<TheTextArea
+				column
+			>
+				<TheInput
+					name="distanceToBeach"
+					type="text"
+					v-model="busTour.distanceToBeach"
+				/>
+			</FormField>
+			<FormField
+				name="checkInConditions"
 				label="Условия заселения / выселения"
-				v-model="busTour.checkInConditions"
-			/>
-			<TheInput label="Адрес гостиницы" v-model="busTour.address" />
-			<TheInput
-				label="Минимальная цена заезда"
-				type="number"
-				:modelValue="busTour.price.toString()"
-				@update:modelValue="($event) => (busTour.price = Number($event))"
-			/>
-			<TheInput label="Регион" v-model="busTour.region" />
-			<TheSelect
-				label="Город"
-				:modelValue="busTour.city as SelectItem"
-				:list="cities"
-				:limit="1"
-				@update:modelValue="
-					($event) => {
-						return (busTour.city =
-							Object.keys($event as SelectItem).length === 0
-								? null
-								: ($event as SelectItem));
-					}
-				"
-				@add="changeCity($event)"
-			/>
-			<TheInput label="Море" v-model="busTour.seaType" />
+				column
+			>
+				<TheTextArea
+					name="checkInConditions"
+					v-model="busTour.checkInConditions"
+				/>
+			</FormField>
+			<FormField name="address" label="Адрес гостиницы" column>
+				<TheInput name="address" type="text" v-model="busTour.address" />
+			</FormField>
+			<FormField name="price" label="Минимальная цена заезда" column>
+				<TheInput name="price" type="number" v-model="busTour.price" />
+			</FormField>
+			<FormField name="region" label="Регион" column>
+				<TheInput name="region" type="text" v-model="busTour.region" />
+			</FormField>
+			<FormField name="city" label="Город" column>
+				<TheSelect
+					name="city"
+					label="Город"
+					:limit="1"
+					:selected="busTour.city as SelectItem"
+					:list="cities"
+					@update="($event) => (busTour.city = $event as SelectItem)"
+					@add="changeCity($event)"
+				/>
+			</FormField>
+			<FormField name="seaType" label="Море" column>
+				<TheInput name="seaType" type="text" v-model="busTour.seaType" />
+			</FormField>
 
-			<div class="flex w-full flex-col items-start">
-				<div class="mb-1 text-slate-700">В стоимость включено</div>
-				<div class="flex w-full flex-col gap-y-2">
+			<div>
+				<FormField name="thePriceIncludes" label="В стоимость включено" column>
 					<TheTextArea
 						v-for="(inc, index) in busTour.thePriceIncludes"
 						:key="index"
-						:placeholder="`Опция ${index + 1}`"
-						:modelValue="inc"
-						@update:modelValue="
-							($event) => (busTour.thePriceIncludes[index] = $event)
-						"
+						name="thePriceIncludes"
+						placeholder="textarea"
+						v-model="busTour.thePriceIncludes[index]"
 					/>
-				</div>
+				</FormField>
 				<div class="flex flex-row gap-x-3">
 					<button
 						type="button"
 						class="secondary-btn mt-3"
 						@click="() => busTour.thePriceIncludes.push('')"
 					>
-						Добавить опцию
+						Добавить день
 					</button>
 					<button
 						type="button"
 						class="delete-btn mt-3"
 						@click="() => busTour.thePriceIncludes.pop()"
 					>
-						Удалить опцию
+						Удалить день
 					</button>
 				</div>
 			</div>
-
-			<TheFileInput
-				title="Изображения гостиницы"
-				name="images"
-				accept="image/*"
-				multiple
-				place="busTour"
-				@change="(images: string[]) => (busTour.images = images)"
-				:value="busTour.images"
-			/>
-			<TheFileInput
-				title="Прайс"
-				name="document"
-				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-				place="busTour"
-				@change="(doc: string[]) => (busTour.documentName = doc[0])"
-				:value="busTour.documentName ? [busTour.documentName] : []"
-			/>
-			<HotelRoom v-if="type === 'create'" />
+			<FormField name="images" label="Изображения гостиницы" column>
+				<TheFileInput
+					name="images"
+					accept="image/*"
+					multiple
+					place="busTour"
+					@change="(images: string[]) => (busTour.images = images)"
+					:value="busTour.images"
+				/>
+			</FormField>
+			<FormField name="document" label="Файл прайса" column>
+				<TheFileInput
+					name="document"
+					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					place="busTour"
+					@change="(doc: string[]) => (busTour.documentName = doc[0])"
+					:value="busTour.documentName ? [busTour.documentName] : []"
+				/>
+			</FormField>
+			<HotelRoom v-if="type === 'create'" @update="updateTour" />
 			<HotelRoom
 				v-else
 				v-for="(item, index) in busTour.tours"
@@ -185,6 +211,7 @@ onMounted(async () => {
 				:capacity="item?.capacity"
 				:in-room="item?.inRoom"
 				:dates-and-prices="item?.datesAndPrices"
+				@update="updateTour"
 			/>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">

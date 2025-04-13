@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type {
 	IHotelRoomInfo,
 	IDatesAndPrices
 } from '@/entities/busTours/model/types';
 
-import { TheInput, TheTextArea } from '@/shared/ui/forms';
+import FormField from '@/entities/formField/ui/FormField.vue';
+import { TheInput, TheTextArea, TheDatePicker } from '@/shared/ui/forms';
+import { TrashIcon } from '@/shared/ui/icons';
 
 const props = defineProps<IHotelRoomInfo>();
+
+const emit = defineEmits<(event: 'update', payload: IHotelRoomInfo) => void>();
 
 const localData = ref({
 	type: props?.type || '',
@@ -19,59 +23,98 @@ const localData = ref({
 		: [{} as IDatesAndPrices]
 });
 
-const addTemplate = () => {
-  localData.value.datesAndPrices.push({} as IDatesAndPrices)
-}
+watch(
+	localData,
+	(newVal) => {
+		emit('update', newVal);
+	},
+	{ deep: true }
+);
+
+const addRow = () => {
+	localData.value.datesAndPrices.push({} as IDatesAndPrices);
+};
+
+const deleteRow = (index: number) => {
+	localData.value.datesAndPrices.splice(index, 1);
+};
 </script>
 <template>
-	<div class="">
-		<h4 class="font-bold">
-			Добавление / Редактирование дат заезда и информации о номерах
-		</h4>
-		<div>
-			<TheInput
-				label="Тип номера (стандарт, эконом и т.п.)"
-				v-model="localData.type"
-			/>
-			<TheInput label="Название номера" v-model="localData.roomName" />
-			<TheInput
-				label="Количество спальных мест"
-				:modelValue="localData.capacity.toString()"
-				@update:modelValue="($event) => (localData.capacity = Number($event))"
-			/>
-			<TheTextArea
-				label="Описание того, что в номере"
-				v-model="localData.inRoom"
-			/>
-			<div class="mt-2">
+	<div class="flex w-full flex-col gap-x-5 gap-y-2">
+		<h4 class="font-bold">Номера и заезды</h4>
+		<div class="flex flex-col gap-y-4 rounded-xl bg-white p-5">
+			<div class="flex w-full flex-row gap-x-5">
+				<FormField
+					name="typeRoom"
+					label="Тип номера (стандарт, эконом и т.п.)"
+					column
+				>
+					<TheInput name="typeRoom" type="text" v-model="localData.type" />
+				</FormField>
+				<FormField name="roomName" label="Название номера" column>
+					<TheInput name="roomName" type="text" v-model="localData.roomName" />
+				</FormField>
+				<FormField name="capacity" label="Количество спальных мест" column>
+					<TheInput
+						name="capacity"
+						type="number"
+						v-model="localData.capacity"
+					/>
+				</FormField>
+			</div>
+			<FormField name="inRoom" label="Описание того, что в номере" column>
+				<TheTextArea name="inRoom" type="text" v-model="localData.inRoom" />
+			</FormField>
+			<div class="mt-2 flex w-full flex-col gap-x-5 gap-y-2">
 				<h4 class="font-bold">Даты и цены номера</h4>
+				<div class="flex w-full flex-row gap-x-5">
+					<div class="w-full">
+						<h3 class="the-label">Дата отправления</h3>
+					</div>
+					<div class="w-full">
+						<h3 class="the-label">Дата приезда</h3>
+					</div>
+					<div class="w-full">
+						<h3 class="the-label">Цена за номер</h3>
+					</div>
+					<div class="w-[42px]">
+						<div class="h-full w-[42px]"></div>
+					</div>
+				</div>
 				<div
-					class="flex w-full flex-row gap-x-5"
+					class="flex w-full flex-row items-center justify-center gap-x-5"
 					v-for="(item, index) in localData.datesAndPrices"
 					:key="index"
 				>
-					<TheInput
-						class="w-full"
-						label="Дата отправления"
-						type="date"
-						:modelValue="item?.startDate?.toString()"
-						@update:modelValue="($event) => (item.startDate = $event)"
-					/>
-					<TheInput
-						class="w-full"
-						label="Дата приезда"
-						type="date"
-						:modelValue="item?.endDate?.toString()"
-						@update:modelValue="($event) => (item.endDate = $event)"
-					/>
-					<TheInput
-						class="w-full"
-						label="Цена за номер"
-						:modelValue="item?.price?.toString()"
-						@update:modelValue="($event) => (item.price = Number($event))"
-					/>
+					<FormField :name="`startDate-${index}`" column>
+						<TheDatePicker
+							:name="`startDate-${index}`"
+							v-model="item.startDate"
+						/>
+					</FormField>
+					<FormField :name="`endDate-${index}`" column>
+						<TheDatePicker :name="`endDate-${index}`" v-model="item.endDate" />
+					</FormField>
+					<FormField :name="`price-${index}`" column>
+						<TheInput
+							:name="`price-${index}`"
+							type="number"
+							v-model="item.price"
+						/>
+					</FormField>
+					<div
+						class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl bg-slate-200 p-2"
+						title="удалить"
+						@click="deleteRow(index)"
+					>
+						<TrashIcon fill="red" :width="32" :height="32" />
+					</div>
 				</div>
-        <button type="button" class="base-btn" @click.stop="addTemplate">Добавить заезд</button>
+				<div class="mt-2 flex">
+					<button type="button" class="base-btn w-fit" @click.stop="addRow">
+						Добавить заезд
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

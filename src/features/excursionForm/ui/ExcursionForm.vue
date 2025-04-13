@@ -92,7 +92,6 @@ onMounted(async () => {
 			<FormField name="city" label="Город" column>
 				<TheSelect
 					name="city"
-					label="Город"
 					:selected="excursion.cities"
 					:list="cities"
 					@update="($event) => (excursion.cities = $event as SelectItem[])"
@@ -110,7 +109,7 @@ onMounted(async () => {
 			<FormField name="hotelName" label="Название отеля (если есть)" column>
 				<TheInput
 					name="hotelName"
-					type="number"
+					type="text"
 					v-model="excursion.hotelName"
 				/>
 			</FormField>

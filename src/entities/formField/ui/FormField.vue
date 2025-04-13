@@ -8,8 +8,8 @@ export interface IProps {
 defineProps<IProps>();
 </script>
 <template>
-	<div :class="['flex gap-x-5 gap-y-2', { 'flex-col': column }]">
-		<label class="block text-nowrap font-semibold" :for="name">
+	<div :class="['flex gap-x-5 gap-y-2 w-full', { 'flex-col': column }]">
+		<label class="the-label" :for="name">
 			{{ label }}
 		</label>
 		<slot />
