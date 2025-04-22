@@ -9,19 +9,18 @@ import FormField from '@/entities/formField/ui/FormField.vue';
 import { TheInput, TheTextArea, TheDatePicker } from '@/shared/ui/forms';
 import { TrashIcon } from '@/shared/ui/icons';
 
-const props = defineProps<IHotelRoomInfo>();
+interface IHotelsInfo {
+	hotelsInfo: IHotelRoomInfo[];
+}
 
-const emit = defineEmits<(event: 'update', payload: IHotelRoomInfo) => void>();
-
-const localData = ref({
-	type: props?.type || '',
-	roomName: props?.roomName || '',
-	capacity: props?.capacity || 0,
-	inRoom: props?.inRoom || '',
-	datesAndPrices: props.datesAndPrices
-		? [...props.datesAndPrices]
-		: [{} as IDatesAndPrices]
+const props = withDefaults(defineProps<IHotelsInfo>(), {
+	hotelsInfo: () => [] as IHotelRoomInfo[]
 });
+
+const emit =
+	defineEmits<(event: 'update', payload: IHotelRoomInfo[]) => void>();
+
+const localData = ref([...props.hotelsInfo]);
 
 watch(
 	localData,
@@ -31,39 +30,49 @@ watch(
 	{ deep: true }
 );
 
-const addRow = () => {
-	localData.value.datesAndPrices.push({} as IDatesAndPrices);
+const addRow = (hotelIndex: number) => {
+	localData.value[hotelIndex].datesAndPrices.push({} as IDatesAndPrices);
 };
 
-const deleteRow = (index: number) => {
-	localData.value.datesAndPrices.splice(index, 1);
+const deleteRow = (index: number, hotelindex: number) => {
+	localData.value[hotelindex].datesAndPrices.splice(index, 1);
+};
+
+const addHotel = () => {
+	localData.value.push({
+		type: '',
+		roomName: '',
+		capacity: 0,
+		inRoom: '',
+		datesAndPrices: [{} as IDatesAndPrices]
+	});
 };
 </script>
 <template>
 	<div class="flex w-full flex-col gap-x-5 gap-y-2">
 		<h4 class="font-bold">Номера и заезды</h4>
-		<div class="flex flex-col gap-y-4 rounded-xl bg-white p-5">
+		<div
+			class="flex flex-col gap-y-4 rounded-xl bg-white p-5"
+			v-for="(hotel, hotelIndex) in localData"
+			:key="hotelIndex"
+		>
 			<div class="flex w-full flex-row gap-x-5">
 				<FormField
 					name="typeRoom"
 					label="Тип номера (стандарт, эконом и т.п.)"
 					column
 				>
-					<TheInput name="typeRoom" type="text" v-model="localData.type" />
+					<TheInput name="typeRoom" type="text" v-model="hotel.type" />
 				</FormField>
 				<FormField name="roomName" label="Название номера" column>
-					<TheInput name="roomName" type="text" v-model="localData.roomName" />
+					<TheInput name="roomName" type="text" v-model="hotel.roomName" />
 				</FormField>
 				<FormField name="capacity" label="Количество спальных мест" column>
-					<TheInput
-						name="capacity"
-						type="number"
-						v-model="localData.capacity"
-					/>
+					<TheInput name="capacity" type="number" v-model="hotel.capacity" />
 				</FormField>
 			</div>
 			<FormField name="inRoom" label="Описание того, что в номере" column>
-				<TheTextArea name="inRoom" type="text" v-model="localData.inRoom" />
+				<TheTextArea name="inRoom" type="text" v-model="hotel.inRoom" />
 			</FormField>
 			<div class="mt-2 flex w-full flex-col gap-x-5 gap-y-2">
 				<h4 class="font-bold">Даты и цены номера</h4>
@@ -83,7 +92,7 @@ const deleteRow = (index: number) => {
 				</div>
 				<div
 					class="flex w-full flex-row items-center justify-center gap-x-5"
-					v-for="(item, index) in localData.datesAndPrices"
+					v-for="(item, index) in hotel.datesAndPrices"
 					:key="index"
 				>
 					<FormField :name="`startDate-${index}`" column>
@@ -105,17 +114,24 @@ const deleteRow = (index: number) => {
 					<div
 						class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl bg-slate-200 p-2"
 						title="удалить"
-						@click="deleteRow(index)"
+						@click="deleteRow(index, hotelIndex)"
 					>
 						<TrashIcon fill="red" :width="32" :height="32" />
 					</div>
 				</div>
 				<div class="mt-2 flex">
-					<button type="button" class="base-btn w-fit" @click.stop="addRow">
+					<button
+						type="button"
+						class="secondary-btn w-fit"
+						@click.stop="addRow(hotelIndex)"
+					>
 						Добавить заезд
 					</button>
 				</div>
 			</div>
 		</div>
+		<button type="button" class="secondary-btn w-fit" @click.stop="addHotel">
+			Добавить номер
+		</button>
 	</div>
 </template>

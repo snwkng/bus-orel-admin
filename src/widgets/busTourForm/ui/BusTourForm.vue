@@ -1,7 +1,8 @@
+<!-- widgets/busTourForm/ui/BusTourForm.vue -->
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, type Ref } from 'vue';
-import type { IHotelRoomInfo, ITour } from '@/entities/busTours/model/types';
+import { onMounted } from 'vue';
+import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
 import { useBusTourStore } from '@/entities/busTours/model';
 import { useBusTourCityStore } from '@/entities/busTourCities/model';
 import { storeToRefs } from 'pinia';
@@ -9,10 +10,11 @@ import {
 	TheInput,
 	TheTextArea,
 	TheFileInput,
-	TheSelect,
+	TheSelect
 } from '@/shared/ui/forms';
 import FormField from '@/entities/formField/ui/FormField.vue';
 import HotelRoom from '@/widgets/hotelRoom';
+import { useBusTourForm } from '@/features/busTourForm/composables/useBusTourForm';
 
 export interface Props {
 	type: string;
@@ -20,53 +22,21 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const store = useBusTourStore();
-
 const router = useRouter();
 const route = useRoute();
 
-const { createTour, editTour, uploadFile, getTour, getFile } = store;
 const { getCities, addCity } = useBusTourCityStore();
 
 const { cities } = storeToRefs(useBusTourCityStore());
 
-const busTour: Ref<ITour> = ref({
-	_id: '',
-	name: '',
-	type: '',
-	locationDescription: '',
-	images: [],
-	tours: [],
-	food: '',
-	beach: '',
-	distanceToBeach: '',
-	checkInConditions: '',
-	address: '',
-	price: 0,
-	thePriceIncludes: Array.from(' '),
-	city: {},
-	region: '',
-	seaType: '',
-	documentName: ''
-});
+const { busTour, loadTour, saveTour } = useBusTourForm(
+  props.type as string,
+  route.params.id as string
+);
 
-const create = async (busTour: ITour) => {
-	try {
-		delete busTour._id;
-		await createTour(busTour);
-		router.push('/bus-tours');
-	} catch (err) {
-		console.error(err);
-	}
-};
-
-const edit = async (busTour: ITour) => {
-	try {
-		await editTour(busTour);
-		router.push('/bus-tours');
-	} catch (err) {
-		console.error(err);
-	}
+const handleSubmit = async () => {
+  await saveTour();
+  router.push('/bus-tours');
 };
 
 const changeCity = async (newCity: string) => {
@@ -74,21 +44,19 @@ const changeCity = async (newCity: string) => {
 	busTour.value.city = city;
 };
 
-const updateTour = (tour: IHotelRoomInfo) => {
-	console.log(tour)
-}
+const updateTour = (tour: IHotelRoomInfo[]) => {
+	console.log(tour);
+};
 
 onMounted(async () => {
 	await getCities();
-	if (props.type === 'edit' && route.params.id) {
-		busTour.value = await getTour(route.params.id as string);
-	}
+	await loadTour();
 });
 </script>
 <template>
 	<form
 		class="form-container"
-		@submit.prevent="type === 'create' ? create(busTour) : edit(busTour)"
+		@submit.prevent="handleSubmit"
 	>
 		<div class="form-container-content">
 			<FormField name="name" label="Название Гостиницы" column>
@@ -145,7 +113,7 @@ onMounted(async () => {
 					name="city"
 					label="Город"
 					:limit="1"
-					:selected="busTour.city as SelectItem"
+					:selected="(busTour.city as SelectItem)"
 					:list="cities"
 					@update="($event) => (busTour.city = $event as SelectItem)"
 					@add="changeCity($event)"
@@ -201,18 +169,12 @@ onMounted(async () => {
 					:value="busTour.documentName ? [busTour.documentName] : []"
 				/>
 			</FormField>
-			<HotelRoom v-if="type === 'create'" @update="updateTour" />
-			<HotelRoom
-				v-else
-				v-for="(item, index) in busTour.tours"
-				:key="index"
-				:type="item?.type"
-				:room-name="item?.roomName"
-				:capacity="item?.capacity"
-				:in-room="item?.inRoom"
-				:dates-and-prices="item?.datesAndPrices"
-				@update="updateTour"
-			/>
+			<div>
+				<HotelRoom
+					:hotels-info="busTour.tours"
+					@update="updateTour"
+				/>
+			</div>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button class="base-btn max-w-[300px]" type="submit">
