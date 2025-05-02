@@ -13,9 +13,7 @@ interface IHotelsInfo {
 	hotelsInfo: IHotelRoomInfo[];
 }
 
-const props = withDefaults(defineProps<IHotelsInfo>(), {
-	hotelsInfo: () => [] as IHotelRoomInfo[]
-});
+const props = defineProps<IHotelsInfo>()
 
 const emit =
 	defineEmits<(event: 'update', payload: IHotelRoomInfo[]) => void>();
