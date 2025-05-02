@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 import type {
 	IHotelRoomInfo,
 	IDatesAndPrices
@@ -13,30 +13,27 @@ interface IHotelsInfo {
 	hotelsInfo: IHotelRoomInfo[];
 }
 
-const props = defineProps<IHotelsInfo>()
+const props = defineProps<IHotelsInfo>();
 
 const emit =
 	defineEmits<(event: 'update', payload: IHotelRoomInfo[]) => void>();
 
-const localData = ref([...props.hotelsInfo]);
+const localData = computed({
+	get: () => props.hotelsInfo,
+	set: (value) => emit('update', value)
+});
 
-watch(
-	localData,
-	(newVal) => {
-		emit('update', newVal);
-	},
-	{ deep: true }
-);
-
-const addRow = (hotelIndex: number) => {
-	localData.value[hotelIndex].datesAndPrices.push({} as IDatesAndPrices);
+const addRow = (roomIndex: number) => {
+	if (localData.value[roomIndex].datesAndPrices)
+		localData.value[roomIndex].datesAndPrices.push({} as IDatesAndPrices);
 };
 
-const deleteRow = (index: number, hotelindex: number) => {
-	localData.value[hotelindex].datesAndPrices.splice(index, 1);
+const deleteRow = (index: number, roomIndex: number) => {
+	if (localData.value[roomIndex].datesAndPrices)
+		localData.value[roomIndex].datesAndPrices.splice(index, 1);
 };
 
-const addHotel = () => {
+const addRoom = () => {
 	localData.value.push({
 		type: '',
 		roomName: '',
@@ -45,14 +42,20 @@ const addHotel = () => {
 		datesAndPrices: [{} as IDatesAndPrices]
 	});
 };
+
+const deleteRoom = (roomIndex: number) => {
+	if (localData.value[roomIndex]) {
+		localData.value.splice(roomIndex, 1);
+	}
+}
 </script>
 <template>
 	<div class="flex w-full flex-col gap-x-5 gap-y-2">
 		<h4 class="font-bold">Номера и заезды</h4>
 		<div
 			class="flex flex-col gap-y-4 rounded-xl bg-white p-5"
-			v-for="(hotel, hotelIndex) in localData"
-			:key="hotelIndex"
+			v-for="(hotel, roomIndex) in localData"
+			:key="roomIndex"
 		>
 			<div class="flex w-full flex-row gap-x-5">
 				<FormField
@@ -112,7 +115,7 @@ const addHotel = () => {
 					<div
 						class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl bg-slate-200 p-2"
 						title="удалить"
-						@click="deleteRow(index, hotelIndex)"
+						@click="deleteRow(index, roomIndex)"
 					>
 						<TrashIcon fill="red" :width="32" :height="32" />
 					</div>
@@ -121,14 +124,19 @@ const addHotel = () => {
 					<button
 						type="button"
 						class="secondary-btn w-fit"
-						@click.stop="addRow(hotelIndex)"
+						@click.stop="addRow(roomIndex)"
 					>
 						Добавить заезд
 					</button>
 				</div>
 			</div>
+			<div class="flex w-full justify-end">
+				<button type="button" class="delete-btn w-fit" @click.stop="deleteRoom(roomIndex)">
+					Удалить номер
+				</button>
+			</div>
 		</div>
-		<button type="button" class="secondary-btn w-fit" @click.stop="addHotel">
+		<button type="button" class="secondary-btn w-fit" @click.stop="addRoom">
 			Добавить номер
 		</button>
 	</div>

@@ -3,7 +3,6 @@
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
-import { useBusTourStore } from '@/entities/busTours/model';
 import { useBusTourCityStore } from '@/entities/busTourCities/model';
 import { storeToRefs } from 'pinia';
 import {
@@ -45,7 +44,7 @@ const changeCity = async (newCity: string) => {
 };
 
 const updateTour = (tour: IHotelRoomInfo[]) => {
-	console.log(tour);
+	busTour.value.tours = tour
 };
 
 onMounted(async () => {
@@ -66,7 +65,7 @@ onMounted(async () => {
 				<TheInput name="type" type="text" v-model="busTour.type" />
 			</FormField>
 			<FormField name="locationDescription" label="Описание гостиницы" column>
-				<TheInput
+				<TheTextArea
 					name="locationDescription"
 					type="text"
 					v-model="busTour.locationDescription"

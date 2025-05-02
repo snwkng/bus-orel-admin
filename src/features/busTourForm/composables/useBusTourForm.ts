@@ -1,10 +1,10 @@
 // features/busTourForm/composables/useBusTourForm.ts
 import { ref } from 'vue';
 import { useBusTourStore } from '@/entities/busTours/model';
-import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
+import type { IHotelRoomInfo, ITour } from '@/entities/busTours/model/types';
 
 export function useBusTourForm(type: string, id?: string) {
-  const busTour = ref({
+  const busTour = ref<ITour>({
     _id: '',
     name: '',
     type: '',
@@ -18,7 +18,7 @@ export function useBusTourForm(type: string, id?: string) {
     address: '',
     price: 0,
     thePriceIncludes: [''],
-    city: {},
+    city: null,
     region: '',
     seaType: '',
     documentName: '',
@@ -35,6 +35,7 @@ export function useBusTourForm(type: string, id?: string) {
 
   const saveTour = async () => {
     if (type === 'create') {
+      delete busTour?.value?._id
       await createTour(busTour.value);
     } else {
       await editTour(busTour.value);
