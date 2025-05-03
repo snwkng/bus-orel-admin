@@ -170,7 +170,7 @@ const deleteAction = (id: string) => {
 						</td>
 					</tr>
 					<tr class="flex h-52 w-full items-center justify-center" v-else>
-						<span>{{ emptyText }}</span>
+						{{ emptyText }}
 					</tr>
 				</tbody>
 			</table>

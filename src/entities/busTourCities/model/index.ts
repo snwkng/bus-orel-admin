@@ -8,7 +8,7 @@ export const useBusTourCityStore = defineStore('useBusTourCityStore', {
   actions: {
     async getCities(): Promise<void> {
       try {
-        this.cities = await fetchApi.get('/bus-tours/cities');
+        this.cities = await fetchApi.get<SelectItem[]>('/bus-tours/cities');
       } catch (err: any) {
         console.error(err);
         throw err;
@@ -17,7 +17,7 @@ export const useBusTourCityStore = defineStore('useBusTourCityStore', {
 
     async addCity(name: string): Promise<SelectItem> {
       try {
-        const city = await fetchApi.post('/bus-tours/cities', { name });
+        const city = await fetchApi.post<SelectItem>('/bus-tours/cities', { name });
         this.cities.push(city as SelectItem);
         return city as SelectItem;
       } catch (err: any) {

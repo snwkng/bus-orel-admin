@@ -3,13 +3,10 @@ import { defineProps, defineEmits } from 'vue';
 import FormField from '@/entities/formField/ui/FormField.vue';
 import { TheInput, TheDatePicker } from '@/shared/ui/forms';
 import { TrashIcon } from '@/shared/ui/icons';
+import type { IDatesAndPrices } from '@/entities/busTours/model/types';
 
 interface IProps {
-	item: {
-		startDate: string;
-		endDate: string;
-		price: number;
-	};
+	item: IDatesAndPrices;
 }
 
 const props = defineProps<IProps>();

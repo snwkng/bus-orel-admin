@@ -9,7 +9,7 @@ const model = defineModel<Date | string>();
 <template>
    <VueDatePicker v-model="model" :format-locale="ru" :enable-time-picker="false" format="dd MMMM yyyy">
     <template #action-row="{ selectDate }">
-      <button class="w-full secondary-btn" @click="selectDate">Выбрать дату</button>
+      <button class="w-full secondary-btn" @click.stop.prevent="selectDate">Выбрать дату</button>
     </template>
    </VueDatePicker>
 </template>

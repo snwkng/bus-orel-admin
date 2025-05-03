@@ -11,7 +11,7 @@ export const getTours = async (
 	params?: Record<string, string | number | boolean>
 ): Promise<ITour[]> => {
 	try {
-		const response = await fetchApi.get('/bus-tours', params);
+		const response = await fetchApi.get<ITour[]>('/bus-tours', params);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -27,7 +27,7 @@ export const getTours = async (
  */
 export const getTour = async (id: string): Promise<ITour> => {
 	try {
-		const response: ITour = await fetchApi.get('/bus-tours/' + id);
+		const response = await fetchApi.get<ITour>('/bus-tours/' + id);
 		return response;
 	} catch (err: any) {
 		console.error(err);

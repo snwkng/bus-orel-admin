@@ -11,7 +11,7 @@ export const getExcursions = async (
 	params?: Record<string, string | number | boolean>
 ): Promise<IExcursion[]> => {
 	try {
-		const response = await fetchApi.get('/excursions', params);
+		const response = await fetchApi.get<IExcursion[]>('/excursions', params);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -27,7 +27,7 @@ export const getExcursions = async (
  */
 export const getExcursion = async (id: string): Promise<IExcursion> => {
 	try {
-		const response: IExcursion = await fetchApi.get('/excursions/' + id);
+		const response = await fetchApi.get<IExcursion>('/excursions/' + id);
 		return response;
 	} catch (err: any) {
 		console.error(err);
