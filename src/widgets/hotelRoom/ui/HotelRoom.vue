@@ -6,8 +6,8 @@ import type {
 } from '@/entities/busTours/model/types';
 
 import FormField from '@/entities/formField/ui/FormField.vue';
-import { TheInput, TheTextArea, TheDatePicker } from '@/shared/ui/forms';
-import { TrashIcon } from '@/shared/ui/icons';
+import { TheInput, TheTextArea } from '@/shared/ui/forms';
+import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue'
 
 interface IHotelsInfo {
 	hotelsInfo: IHotelRoomInfo[];
@@ -47,7 +47,7 @@ const deleteRoom = (roomIndex: number) => {
 	if (localData.value[roomIndex]) {
 		localData.value.splice(roomIndex, 1);
 	}
-}
+};
 </script>
 <template>
 	<div class="flex w-full flex-col gap-x-5 gap-y-2">
@@ -96,29 +96,7 @@ const deleteRoom = (roomIndex: number) => {
 					v-for="(item, index) in hotel.datesAndPrices"
 					:key="index"
 				>
-					<FormField :name="`startDate-${index}`" column>
-						<TheDatePicker
-							:name="`startDate-${index}`"
-							v-model="item.startDate"
-						/>
-					</FormField>
-					<FormField :name="`endDate-${index}`" column>
-						<TheDatePicker :name="`endDate-${index}`" v-model="item.endDate" />
-					</FormField>
-					<FormField :name="`price-${index}`" column>
-						<TheInput
-							:name="`price-${index}`"
-							type="number"
-							v-model="item.price"
-						/>
-					</FormField>
-					<div
-						class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl bg-slate-200 p-2"
-						title="удалить"
-						@click="deleteRow(index, roomIndex)"
-					>
-						<TrashIcon fill="red" :width="32" :height="32" />
-					</div>
+					<DatePriceRow :item="item" @delete="deleteRow(index, roomIndex)" />
 				</div>
 				<div class="mt-2 flex">
 					<button
@@ -131,7 +109,11 @@ const deleteRoom = (roomIndex: number) => {
 				</div>
 			</div>
 			<div class="flex w-full justify-end">
-				<button type="button" class="delete-btn w-fit" @click.stop="deleteRoom(roomIndex)">
+				<button
+					type="button"
+					class="delete-btn w-fit"
+					@click.stop="deleteRoom(roomIndex)"
+				>
 					Удалить номер
 				</button>
 			</div>

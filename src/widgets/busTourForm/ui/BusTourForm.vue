@@ -43,8 +43,8 @@ const changeCity = async (newCity: string) => {
 	busTour.value.city = city;
 };
 
-const updateTour = (tour: IHotelRoomInfo[]) => {
-	busTour.value.tours = tour
+const updateTour = (tours: IHotelRoomInfo[]) => {
+	busTour.value.tours = tours
 };
 
 onMounted(async () => {
@@ -128,7 +128,7 @@ onMounted(async () => {
 						v-for="(inc, index) in busTour.thePriceIncludes"
 						:key="index"
 						name="thePriceIncludes"
-						placeholder="textarea"
+						placeholder="Что включено в стоимость"
 						v-model="busTour.thePriceIncludes[index]"
 					/>
 				</FormField>

@@ -7,12 +7,11 @@ import {
 	TheDatePicker
 } from '@/shared/ui/forms';
 import FormField from '@/entities/formField/ui/FormField.vue';
-import type { IExcursion } from '@/entities/excursions/model/types';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref } from 'vue';
-import { useExcursionStore } from '@/entities/excursions/model';
+import { onMounted } from 'vue';
 import { useExcursionCityStore } from '@/entities/excursionCities/model';
 import { storeToRefs } from 'pinia';
+import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
 
 export interface Props {
 	type: string;
@@ -20,7 +19,6 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const { createExcursion, editExcursion, getExcursion } = useExcursionStore();
 const { getCities, addCity } = useExcursionCityStore();
 
 const { cities } = storeToRefs(useExcursionCityStore());
@@ -28,59 +26,30 @@ const { cities } = storeToRefs(useExcursionCityStore());
 const router = useRouter();
 const route = useRoute();
 
-const excursion = ref<IExcursion>({
-	_id: '',
-	name: '',
-	description: Array.from(' '),
-	images: [],
-	duration: 0,
-	price: 0,
-	documentName: '',
-	excursionStart: '',
-	cities: [] as SelectItem[] | string[],
-	hotelName: '',
-	thePriceIncludes: Array.from(' ')
-});
-
-const create = async (excursion: IExcursion) => {
-	delete excursion._id;
-	excursion.cities = excursion.cities.map((x: SelectItem) => x._id) as string[];
-	try {
-		await createExcursion(excursion);
-		router.push('/excursions');
-	} catch (err) {
-		console.error(err);
-	}
-};
-
-const edit = async (excursion: IExcursion) => {
-	try {
-		excursion.cities = excursion.cities.map(
-			(x: SelectItem) => x._id
-		) as string[];
-		await editExcursion(excursion);
-		router.push('/excursions');
-	} catch (err) {
-		console.error(err);
-	}
-};
+const { excursion, loadExcursion, saveExcursion } = useExcursionForm(
+  props.type as string,
+  route.params.id as string
+);
 
 const changeCity = async (newCity: string) => {
 	const city = await addCity(newCity);
 	(excursion.value.cities as SelectItem[]).push(city);
 };
 
+const handleSubmit = async () => {
+  await saveExcursion();
+  router.push('/excursions');
+};
+
 onMounted(async () => {
 	await getCities();
-	if (props.type === 'edit' && route.params.id) {
-		excursion.value = await getExcursion(route.params.id as string);
-	}
+	await loadExcursion();
 });
 </script>
 <template>
 	<form
 		class="form-container"
-		@submit.prevent="type === 'create' ? create(excursion) : edit(excursion)"
+		@submit.prevent="handleSubmit"
 	>
 		<div class="form-container-content">
 			<FormField name="name" label="Название экскурсии" column>
@@ -119,7 +88,7 @@ onMounted(async () => {
 						v-for="(inc, index) in excursion.description"
 						:key="index"
 						name="description"
-						placeholder="textarea"
+						placeholder="Введите программу экскурсии"
 						v-model="excursion.description[index]"
 					/>
 				</FormField>
@@ -147,7 +116,7 @@ onMounted(async () => {
 						v-for="(inc, index) in excursion.thePriceIncludes"
 						:key="index"
 						name="thePriceIncludes"
-						placeholder="textarea"
+						placeholder="Что включено в стоимость"
 						v-model="excursion.thePriceIncludes[index]"
 					/>
 				</FormField>

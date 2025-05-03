@@ -17,7 +17,7 @@ export interface ITour {
 	region: string;
 	seaType: string;
 	documentName: string;
-	tours?: IHotelRoomInfo[];
+	tours: IHotelRoomInfo[];
 }
 
 export interface IHotelRoomInfo {
