@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExcursionForm from '@/features/excursionForm';
+import ExcursionForm from '@/widgets/excursionForm';
 </script>
 <template>
 	<ExcursionForm type="create" />

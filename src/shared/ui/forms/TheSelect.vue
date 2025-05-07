@@ -1,52 +1,53 @@
 <script setup lang="ts">
+defineOptions({
+	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
+});
+
 import { computed, ref } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
 import { TheInput } from '@/shared/ui/forms';
 
 export interface Props {
-	label?: string;
-	placeholder?: string;
-	modelValue: SelectItem[] | string[];
+	selected: SelectItem[] | string[] | SelectItem;
 	list?: SelectItem[];
-	type?: string;
+	limit?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	label: '',
-	placeholder: '',
-	modelValue: () => [] as SelectItem[],
-	list: () => [],
-	type: 'text'
+	selected: () => [] as SelectItem[],
+	list: () => []
 });
 
 const emit = defineEmits<{
-	(event: 'update:modelValue', payload: SelectItem[]): void;
+	(event: 'update', payload: SelectItem[] | SelectItem): void;
 	(event: 'add', value: string): void;
 }>();
 
 const showSelect = ref(false);
 const inputValue = ref('');
 
-const value = computed({
+const data = computed({
 	get() {
-		return props.modelValue as SelectItem[];
+		return props.selected as SelectItem[];
 	},
 
 	set(newValue: SelectItem[]) {
-		emit('update:modelValue', newValue);
+		emit('update', newValue);
 	}
 });
 
 const selectedItem = computed(() =>
-	props.list.filter(
-		(x: SelectItem) =>
-			value.value.findIndex((y: SelectItem) => y._id === x._id) !== -1
-	)
+	props.list.filter((x: SelectItem) => {
+		if (props.limit === 1) {
+			return x._id === (data.value as SelectItem)?._id || null;
+		} else {
+			return data.value.findIndex((y: SelectItem) => y._id === x._id) !== -1;
+		}
+	})
 );
 
 const searchableList = computed(() => {
-	// const filtered = props.list.filter((x: SelectItem) => selectedItem.value.findIndex((y: SelectItem) => y.id === x.id) === -1)
 	if (inputValue.value) {
 		return props.list.filter(
 			(x: SelectItem) =>
@@ -70,13 +71,24 @@ const close = () => {
 };
 
 const addItem = (item: SelectItem) => {
-	if (value.value.findIndex((x: SelectItem) => x._id === item._id) === -1)
-		value.value.push(item);
+	console.log(data.value)
+	if (
+		props.limit !== 1 &&
+		data.value?.findIndex((x: SelectItem) => x._id === item._id) === -1
+	) {
+		data.value.push(item);
+	} else {
+		(data.value as SelectItem) = item;
+	}
 };
 
 const removeItem = (item: SelectItem) => {
-	const index = value.value.findIndex((x: SelectItem) => x._id === item._id);
-	value.value.splice(index, 1);
+	if (props.limit === 1) {
+		(data.value as SelectItem) = {} as SelectItem;
+	} else {
+		const index = data.value.findIndex((x: SelectItem) => x._id === item._id);
+		data.value.splice(index, 1);
+	}
 };
 
 const add = () => {
@@ -87,8 +99,7 @@ const add = () => {
 };
 </script>
 <template>
-	<div class="block" v-click-away="close">
-		<span class="text-slate-700">{{ label }}</span>
+	<div v-click-away="close">
 		<div
 			class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 			:class="[
@@ -113,16 +124,16 @@ const add = () => {
 				class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
 				v-if="showSelect"
 			>
+			<!-- TODO: пофиксить добавление через enter -->
 				<div class="py-2">
 					<div class="relative">
-						<TheInput
-							class="px-2"
-							label=""
-							type="text"
-							:modelValue="inputValue"
-							@update:modelValue="($event) => (inputValue = $event)"
-							@keydown.enter.prevent="add"
-						/>
+						<div class="px-2">
+							<TheInput
+								name="searchSelect"
+								v-model.trim="inputValue"
+								@keyup.enter.prevent="add"
+							/>
+						</div>
 						<button
 							v-if="!searchableList.length"
 							type="button"

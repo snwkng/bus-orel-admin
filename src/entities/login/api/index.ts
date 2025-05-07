@@ -9,11 +9,11 @@ import { fetchApi } from '@/shared/api';
  */
 export const login = async (username: string, password: string): Promise<string> => {
   try {
-    const res = await fetchApi.post('/auth/login', {username, password});
+    const res = await fetchApi.post<{access_token: string}>('/auth/login', {username, password});
     if (res && 'access_token' in res) {
-      localStorage.setItem('token', res.access_token as string);
-      fetchApi.setToken();
-      return res.access_token as string;
+      localStorage.setItem('token', res.access_token);
+      fetchApi.updateToken(res.access_token);
+      return res.access_token;
     } else {
       throw new Error('Access token not found in response');
     }

@@ -45,10 +45,10 @@ const deleteAction = (id: string) => {
 };
 </script>
 <template>
-	<div class="mb-2 mt-6 overflow-hidden rounded-xl bg-white p-8 shadow lg:mt-0">
-		<div class="relative grid max-w-full overflow-auto pb-5">
+	<div class="mb-2 mt-6 h-full rounded-xl bg-white p-8 shadow lg:mt-0 overflow-hidden">
+		<div class="relative grid max-w-full overflow-auto pb-5 h-full">
 			<table class="w-full table-fixed">
-				<thead class="w-fit select-none">
+				<thead class="w-fit select-none sticky top-0 z-10">
 					<tr>
 						<th
 							class="relative bg-white text-left"
@@ -122,6 +122,14 @@ const deleteAction = (id: string) => {
 								</div>
 								<div
 									class="line-clamp-4"
+									v-else-if="row[key.name] instanceof Object"
+								>
+									<span v-if="row[key.name] instanceof Object">
+										{{ row[key.name]?.name }} <br />
+									</span>
+								</div>
+								<div
+									class="line-clamp-4"
 									v-else-if="
 										typeof row[key.name] === 'string' &&
 										row[key.name].length > 100
@@ -162,7 +170,7 @@ const deleteAction = (id: string) => {
 						</td>
 					</tr>
 					<tr class="flex h-52 w-full items-center justify-center" v-else>
-						<span>{{ emptyText }}</span>
+						{{ emptyText }}
 					</tr>
 				</tbody>
 			</table>

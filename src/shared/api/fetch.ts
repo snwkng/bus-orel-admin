@@ -1,19 +1,16 @@
+import { handleError } from './errorHandler';
 class FetchApi {
-	private readonly baseUrl = process.env.NODE_ENV === 'development' ? import.meta.env.VITE_DEV_BASE_URL + '/api' : import.meta.env.VITE_BASE_URL + '/api';
+	private readonly baseUrl: string;
+
+	constructor(baseUrl: string) {
+		this.baseUrl = baseUrl;
+	}
 	private headers = {
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
 	};
 
-	errorHandler(err: unknown): Error {
-		if ((err as any)?.status === 401) {
-			localStorage.removeItem('token');
-			location.replace(location.host + '/login');
-		}
-		return err as Error;
-	}
-
-	async get(url: string, params?: any) {
+	async get<T>(url: string, params?: any): Promise<T> {
 		try {
 			const res = await fetch(
 				`${this.baseUrl}${url}` +
@@ -26,31 +23,27 @@ class FetchApi {
 				}
 
 			);
-			if (!res.ok) {
-				throw res;
-			}
+			if (!res.ok) throw handleError(res);
 			return res.json();
 		} catch (err: unknown) {
-			throw this.errorHandler(err);
+			handleError(err);
 		}
 	}
 
-	async post(url: string, body?: any): Promise<void | JSON | Error> {
+	async post<T>(url: string, body?: any): Promise<void | JSON | Error | T> {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'POST',
 				headers: this.headers,
 				body: JSON.stringify(body)
 			});
-			if (!res.ok) {
-				throw res;
-			}
+			if (!res.ok) throw handleError(res);
 			const textData = await res.text();
 			if (textData.length) {
 				return JSON.parse(textData);
 			}
 		} catch (err: unknown) {
-			throw this.errorHandler(err);
+			handleError(err);
 		}
 	}
 
@@ -61,12 +54,10 @@ class FetchApi {
 				headers: this.headers,
 				body: JSON.stringify(body)
 			});
-			if (!res.ok) {
-				throw res;
-			}
+			if (!res.ok) throw handleError(res);
 			return res.json();
 		} catch (err: unknown) {
-			throw this.errorHandler(err);
+			handleError(err);
 		}
 	}
 
@@ -76,24 +67,29 @@ class FetchApi {
 				method: 'DELETE',
 				headers: this.headers,
 			});
-			if (!res.ok) {
-				throw res;
-			}
+			if (!res.ok) throw handleError(res);
 			return res.json();
 		} catch (err: unknown) {
-			throw this.errorHandler(err);
+			handleError(err);
 		}
 	}
 
 	async upload(url: string, formData: FormData) {
-		const res = await fetch(`${this.baseUrl}${url}`, {
-			method: 'POST',
-			headers: {
-				'Authorization': this.headers['Authorization']
-			},
-			body: formData
-		});
-		return res.text();
+		try {
+			if (!(formData instanceof FormData)) {
+				throw new Error('Invalid FormData object');
+			}
+			const res = await fetch(`${this.baseUrl}${url}`, {
+				method: 'POST',
+				headers: {
+					'Authorization': this.headers['Authorization']
+				},
+				body: formData
+			});
+			return res.text();
+		} catch(err: unknown) {
+			handleError(err)
+		}
 	}
 
 	async download(url: string, fileName: string) {
@@ -106,22 +102,21 @@ class FetchApi {
 					},
 				}
 			);
-			if (!res.ok) {
-				throw res;
-			}
+			if (!res.ok) throw handleError(res);
 			const blob = await res.blob();
 			return new File([blob], fileName);
 		} catch (err: unknown) {
-			throw this.errorHandler(err);
+			handleError(err);
 		}
 	}
 
-	setToken() {
-		this.headers = {
-			...this.headers,
-			'Authorization': `Bearer ${localStorage.getItem('token')}`
-		};
+	updateToken(token: string): void {
+		this.headers['Authorization'] = `Bearer ${token}`;
 	}
 }
 
-export const fetchApi = new FetchApi();
+export const fetchApi = new FetchApi(
+	process.env.NODE_ENV === 'development'
+		? import.meta.env.VITE_DEV_BASE_URL + '/api'
+		: import.meta.env.VITE_BASE_URL + '/api'
+);
