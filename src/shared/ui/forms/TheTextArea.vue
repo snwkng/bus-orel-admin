@@ -1,13 +1,11 @@
 <script setup lang="ts">
 export interface Props {
 	placeholder?: string;
-	modelValue: string;
 	name?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	placeholder: '',
-	modelValue: ''
 });
 
 const model = defineModel<string>();
