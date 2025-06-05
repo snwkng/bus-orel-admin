@@ -3,24 +3,18 @@ import dayjs from 'dayjs';
 
 import { defineEmits, ref, watch } from 'vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
+import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
 
-export interface Props {
-	headers: { title: string; name: string; meta?: { classes?: string } }[];
+export interface IProps {
+	tableDataConfig: ITableDataConfig[];
 	tableData?: any[];
-	imagePath?: string;
 	showActions?: boolean;
 	emptyText?: string;
 }
 
-const baseURl =
-	import.meta.env.MODE === 'development'
-		? import.meta.env.VITE_DEV_BASE_URL
-		: import.meta.env.VITE_BASE_URL;
-
-const props = withDefaults(defineProps<Props>(), {
-	headers: () => [],
+const props = withDefaults(defineProps<IProps>(), {
+	tableDataConfig: () => [] as ITableDataConfig[],
 	tableData: () => [],
-	imagePath: '',
 	showActions: true,
 	emptyText: 'Здесь пусто...'
 });
@@ -43,23 +37,44 @@ const editAction = (id: string) => {
 const deleteAction = (id: string) => {
 	emit('delete', id);
 };
+
+const parsePropertyName = (propertyName: string, row: any) => {
+	if (propertyName.includes('.')) {
+		const properties = propertyName.split('.');
+		const value = properties.reduce((obj, key) => obj && obj[key], row);
+		return value;
+	} else {
+		return row[propertyName];
+	}
+};
 </script>
 <template>
-	<div class="mb-2 mt-6 h-full rounded-xl bg-white p-8 shadow lg:mt-0 overflow-hidden">
-		<div class="relative grid max-w-full overflow-auto pb-5 h-full">
-			<table class="w-full table-fixed">
-				<thead class="w-fit select-none sticky top-0 z-10">
+	<div
+		class="mb-2 mt-6 h-full overflow-hidden rounded-xl bg-white p-8 shadow lg:mt-0"
+	>
+		<div class="grid h-full max-w-full overflow-auto pb-5">
+			<table class="w-full table-auto border-collapse">
+				<colgroup>
+					<col
+						v-for="config in props.tableDataConfig"
+						:key="config.propertyName"
+						class="min-w-[150px]"
+						:style="config?.cellWidth ? `min-width: ${config.cellWidth}` : ''"
+					/>
+				</colgroup>
+				<thead
+					class="sticky top-0 z-10 table-header-group w-fit select-none bg-white"
+				>
 					<tr>
 						<th
-							class="relative bg-white text-left"
-							:class="header.meta?.classes"
-							v-for="header in props.headers"
-							:key="header.name"
+							class="p-3 text-left align-middle"
+							v-for="config in props.tableDataConfig"
+							:key="config.propertyName"
 						>
-							<div>{{ header.title }}</div>
+							{{ config.label }}
 						</th>
 						<th
-							class="sticky right-0 w-24 bg-white text-center"
+							class="sticky right-0 w-24 bg-white p-3 text-center"
 							v-if="showActions"
 						>
 							<div>Действия</div>
@@ -71,42 +86,57 @@ const deleteAction = (id: string) => {
 						class="flex h-52 w-full items-center justify-center"
 						v-if="loading"
 					>
-						...loading
+						<td :colspan="props.tableDataConfig.length" rowspan="5">
+							loading...
+						</td>
 					</tr>
 					<tr
-						class="border-b border-neutral-300"
-						v-for="row in props.tableData"
+						:class="{
+							'border-b border-neutral-300':
+								index !== props.tableData.length - 1
+						}"
+						v-for="(row, index) in props.tableData"
 						:key="row"
 						v-else-if="props.tableData?.length"
 					>
 						<td
-							class="break-words align-top"
-							v-for="key in headers"
-							:key="key.name"
+							class="p-3 text-left align-top"
+							v-for="config in tableDataConfig"
+							:key="config.propertyName"
 						>
-							<slot :name="key.name" :row="row">
+							<slot :name="config.propertyName" :row="row">
 								<div
-									class="flex flex-wrap gap-2"
-									v-if="key.name.toLocaleLowerCase().includes('image')"
+									:class="{
+										'line-clamp-4':
+											typeof parsePropertyName(config.propertyName, row) ===
+												'string' &&
+											parsePropertyName(config.propertyName, row)?.length > 100
+									}"
 								>
-									<img
-										v-for="image in row[key.name]"
-										:key="image._id"
-										:src="`${baseURl}/public/images/${imagePath}/${image.name}`"
-										alt=""
-										width="80"
-									/>
+									<template
+										v-if="!config?.dataType || config?.dataType === 'text'"
+									>
+										{{ parsePropertyName(config.propertyName, row) }}
+									</template>
+									<template v-else-if="config?.dataType === 'money'">
+										{{ parsePropertyName(config.propertyName, row) }}&#8381;
+									</template>
+									<template
+										v-else-if="
+											config?.dataType === 'date' &&
+											dayjs(
+												parsePropertyName(config.propertyName, row)
+											).isValid()
+										"
+									>
+										{{
+											dayjs(parsePropertyName(config.propertyName, row)).format(
+												'DD.MM.YYYY'
+											)
+										}}
+									</template>
 								</div>
-								<div
-									v-else-if="
-										row[key.name] &&
-										typeof row[key.name] === 'string' &&
-										dayjs(row[key.name]).isValid()
-									"
-								>
-									{{ dayjs(row[key.name]).format('DD.MM.YYYY') }}
-								</div>
-								<div
+								<!-- <div
 									class="line-clamp-4"
 									v-else-if="row[key.name] instanceof Array"
 								>
@@ -127,22 +157,7 @@ const deleteAction = (id: string) => {
 									<span v-if="row[key.name] instanceof Object">
 										{{ row[key.name]?.name }} <br />
 									</span>
-								</div>
-								<div
-									class="line-clamp-4"
-									v-else-if="
-										typeof row[key.name] === 'string' &&
-										row[key.name].length > 100
-									"
-								>
-									{{ row[key.name] }}
-								</div>
-								<div v-else>
-									{{ row[key.name]
-									}}<span v-if="key.name.toLocaleLowerCase().includes('price')"
-										>&#8381;</span
-									>
-								</div>
+								</div> -->
 							</slot>
 						</td>
 						<td
@@ -152,25 +167,27 @@ const deleteAction = (id: string) => {
 							<div class="flex items-center justify-center gap-2">
 								<button
 									type="button"
-									class="cursor-pointer"
+									class="cursor-pointer transition-transform hover:scale-150"
 									title="Редактировать"
 									@click="editAction(row._id)"
 								>
-									<EditIcon fill="#009EFF" :width="30" :height="30" />
+									<EditIcon fill="#009EFF" :width="25" :height="25" />
 								</button>
 								<button
 									type="button"
-									class="cursor-pointer"
+									class="cursor-pointer transition-transform hover:scale-150"
 									title="Удалить"
 									@click="deleteAction(row._id)"
 								>
-									<TrashIcon fill="red" :width="30" :height="30" />
+									<TrashIcon fill="red" :width="25" :height="25" />
 								</button>
 							</div>
 						</td>
 					</tr>
 					<tr class="flex h-52 w-full items-center justify-center" v-else>
-						{{ emptyText }}
+						{{
+							emptyText
+						}}
 					</tr>
 				</tbody>
 			</table>

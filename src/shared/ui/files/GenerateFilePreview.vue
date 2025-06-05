@@ -47,6 +47,7 @@ onMounted(async () => {
 		}"
 	>
 		<img
+			loading="lazy"
 			:src="generatePreview()"
 			:alt="file?.name"
 			:class="[
