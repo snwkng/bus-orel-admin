@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 
 import { defineEmits, ref, watch } from 'vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
+import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
 
 export interface IProps {
@@ -10,6 +11,7 @@ export interface IProps {
 	tableData?: any[];
 	showActions?: boolean;
 	emptyText?: string;
+	getImage?: Function;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -46,6 +48,11 @@ const parsePropertyName = (propertyName: string, row: any) => {
 	} else {
 		return row[propertyName];
 	}
+};
+
+const getFile = async (imageName: string) => {
+	console.log('zcxzxc');
+	if (props.getImage) await props.getImage(imageName);
 };
 </script>
 <template>
@@ -135,29 +142,27 @@ const parsePropertyName = (propertyName: string, row: any) => {
 											)
 										}}
 									</template>
-								</div>
-								<!-- <div
-									class="line-clamp-4"
-									v-else-if="row[key.name] instanceof Array"
-								>
-									<span
-										v-for="(arrayData, index) in row[key.name]"
-										:key="index"
+									<template
+										v-else-if="config?.dataType === 'image' && getImage"
 									>
-										<span v-if="arrayData instanceof Object">
-											{{ arrayData?.name }} <br />
-										</span>
-										<span v-else>{{ arrayData }}<br /></span>
-									</span>
+										<div class="flex flex-row flex-wrap gap-1">
+											<div
+												class="relative"
+												v-for="imageName in parsePropertyName(
+													config.propertyName,
+													row
+												)"
+												:key="imageName"
+											>
+												<GenerateFilePreview
+													:get-file="getImage(imageName)"
+													preview-width="w-[80px]"
+													preview-height="h-[70px]"
+												/>
+											</div>
+										</div>
+									</template>
 								</div>
-								<div
-									class="line-clamp-4"
-									v-else-if="row[key.name] instanceof Object"
-								>
-									<span v-if="row[key.name] instanceof Object">
-										{{ row[key.name]?.name }} <br />
-									</span>
-								</div> -->
 							</slot>
 						</td>
 						<td

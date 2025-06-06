@@ -7,10 +7,10 @@ import type {
 
 import FormField from '@/entities/formField/ui/FormField.vue';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
-import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue'
+import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue';
 
 interface IHotelsInfo {
-	hotelsInfo: IHotelRoomInfo[];
+	hotelsInfo?: IHotelRoomInfo[];
 }
 
 const props = defineProps<IHotelsInfo>();
@@ -19,7 +19,7 @@ const emit =
 	defineEmits<(event: 'update', payload: IHotelRoomInfo[]) => void>();
 
 const localData = computed({
-	get: () => props.hotelsInfo,
+	get: () => props.hotelsInfo || [],
 	set: (value) => emit('update', value)
 });
 
@@ -34,13 +34,7 @@ const deleteRow = (index: number, roomIndex: number) => {
 };
 
 const addRoom = () => {
-	localData.value.push({
-		type: '',
-		roomName: '',
-		capacity: 0,
-		inRoom: '',
-		datesAndPrices: [{} as IDatesAndPrices]
-	});
+	localData.value.push({} as IHotelRoomInfo);
 };
 
 const deleteRoom = (roomIndex: number) => {
