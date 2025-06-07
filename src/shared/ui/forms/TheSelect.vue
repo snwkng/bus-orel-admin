@@ -7,11 +7,10 @@ import { computed, ref } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
 import { TheInput } from '@/shared/ui/forms';
-
+type SelectedType = SelectItem[] | SelectItem | string[] | string;
 export interface Props {
-	selected: SelectItem[] | string[] | SelectItem;
+	selected: SelectedType;
 	list?: SelectItem[];
-	limit?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,8 +19,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-	(event: 'update', payload: SelectItem[] | SelectItem): void;
-	(event: 'add', value: string): void;
+	(event: 'addItem', payload: string | SelectItem): void;
+	(event: 'removeItem', payload: string | SelectItem): void;
 }>();
 
 const showSelect = ref(false);
@@ -29,36 +28,41 @@ const inputValue = ref('');
 
 const data = computed({
 	get() {
-		return props.selected as SelectItem[];
+		if (Array.isArray(props.selected)) {
+			return props.selected.map((x: SelectItem | string, index: number) => ({
+				id: typeof x === 'string' ? index : x.id,
+				name: x
+			})) as SelectItem[];
+		} else {
+			return [props.selected].map((x: SelectItem | string, index: number) => ({
+				id: typeof x === 'string' ? index : x.id,
+				name: x
+			})) as SelectItem[];
+		}
 	},
 
-	set(newValue: SelectItem[]) {
-		emit('update', newValue);
+	set(newValue: SelectItem) {
+		emit('addItem', newValue?.name || '');
 	}
 });
-
-const selectedItem = computed(() =>
-	props.list.filter((x: SelectItem) => {
-		if (props.limit === 1) {
-			return x._id === (data.value as SelectItem)?._id || null;
-		} else {
-			return data.value.findIndex((y: SelectItem) => y._id === x._id) !== -1;
-		}
-	})
-);
 
 const searchableList = computed(() => {
 	if (inputValue.value) {
 		return props.list.filter(
-			(x: SelectItem) =>
-				x.name?.toLowerCase().includes(inputValue.value.toLowerCase()) &&
-				selectedItem.value.findIndex((y: SelectItem) => y._id === x._id) === -1
+			(listItem: SelectItem) =>
+				listItem.name?.toLowerCase().includes(inputValue.value.toLowerCase()) &&
+				data.value.findIndex(
+					(dataItem: SelectItem) =>
+						dataItem?.name?.toLowerCase() === listItem?.name?.toLowerCase()
+				) === -1
 		);
 	} else {
-		return props.list.filter(
-			(x: SelectItem) =>
-				selectedItem.value.findIndex((y: SelectItem) => y._id === x._id) === -1
-		);
+		return props.list.filter((listItem: SelectItem) => {
+			return data.value.some(
+				(dataItem: SelectItem) =>
+					dataItem?.name?.toLowerCase() !== listItem?.name?.toLowerCase()
+			);
+		});
 	}
 });
 
@@ -70,30 +74,17 @@ const close = () => {
 	showSelect.value = false;
 };
 
-const addItem = (item: SelectItem) => {
-	console.log(data.value)
-	if (
-		props.limit !== 1 &&
-		data.value?.findIndex((x: SelectItem) => x._id === item._id) === -1
-	) {
-		data.value.push(item);
-	} else {
-		(data.value as SelectItem) = item;
-	}
+const addToSelected = (item: SelectItem) => {
+	data.value = item;
 };
 
 const removeItem = (item: SelectItem) => {
-	if (props.limit === 1) {
-		(data.value as SelectItem) = {} as SelectItem;
-	} else {
-		const index = data.value.findIndex((x: SelectItem) => x._id === item._id);
-		data.value.splice(index, 1);
-	}
+	emit('removeItem', item);
 };
 
 const add = () => {
 	if (inputValue.value) {
-		emit('add', inputValue.value);
+		emit('addItem', inputValue.value);
 		inputValue.value = '';
 	}
 };
@@ -109,11 +100,12 @@ const add = () => {
 			<div
 				class="flex min-h-[42px] w-full flex-wrap gap-2 px-3 py-2"
 				@click="toggle"
-				@keydown.enter="toggle"
+				@keydown.enter.stop="toggle"
 			>
 				<div
-					v-for="item in selectedItem"
-					:key="item._id"
+					v-if="data.length"
+					v-for="item in data"
+					:key="item.id"
 					@click.stop="removeItem(item)"
 					class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
 				>
@@ -124,14 +116,14 @@ const add = () => {
 				class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
 				v-if="showSelect"
 			>
-			<!-- TODO: пофиксить добавление через enter -->
+				<!-- TODO: пофиксить добавление через enter -->
 				<div class="py-2">
 					<div class="relative">
 						<div class="px-2">
 							<TheInput
 								name="searchSelect"
 								v-model.trim="inputValue"
-								@keyup.enter.prevent="add"
+								@keydown.enter.prevent.stop="add"
 							/>
 						</div>
 						<button
@@ -149,9 +141,9 @@ const add = () => {
 					>
 						<div
 							v-for="item in searchableList"
-							:key="item._id"
+							:key="item.id"
 							class="p-2 hover:bg-gray-50"
-							@click.stop="addItem(item)"
+							@click.stop="addToSelected(item)"
 						>
 							<span>{{ item.name }}</span>
 						</div>

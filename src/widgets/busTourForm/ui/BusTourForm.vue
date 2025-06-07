@@ -116,10 +116,10 @@ onMounted(async () => {
 				<TheSelect
 					name="city"
 					label="Город"
-					:limit="1"
 					:selected="busTour.address.city"
 					:list="citiesList"
-					@update="($event) => (busTour.address.city = $event as string)"
+					@addItem="($event) => (busTour.address.city = $event as string)"
+					@removeItem="() => (busTour.address.city = '')"
 				/>
 			</FormField>
 			<FormField name="seaType" label="Море" column>

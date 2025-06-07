@@ -49,11 +49,6 @@ const parsePropertyName = (propertyName: string, row: any) => {
 		return row[propertyName];
 	}
 };
-
-const getFile = async (imageName: string) => {
-	console.log('zcxzxc');
-	if (props.getImage) await props.getImage(imageName);
-};
 </script>
 <template>
 	<div
