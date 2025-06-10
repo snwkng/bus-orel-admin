@@ -53,7 +53,7 @@ onMounted(async () => {
 			:class="[
 				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
 					? 'h-7 w-7'
-					: `${previewHeight} ${previewWidth} rounded-xl object-fill`
+					: `${previewHeight} ${previewWidth} rounded-lg object-fill`
 			]"
 		/>
 		<span

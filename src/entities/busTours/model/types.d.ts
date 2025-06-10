@@ -40,13 +40,13 @@ export interface ITour {
 export interface IHotelRoomInfo {
 	type?: string;
 	roomName?: string;
-	capacity?: number;
-	inRoom?: string;
-	datesAndPrices?: IDatesAndPrices[];
+	beds?: number;
+	description?: string;
+	availability?: IDatesAndPrices[];
 }
 
 export interface IDatesAndPrices {
 	startDate?: Date | string;
 	endDate?: Date | string;
-	price?: number;
+	pricePerPerson?: number;
 }

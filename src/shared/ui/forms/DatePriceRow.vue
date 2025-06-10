@@ -25,11 +25,11 @@ const handleDelete = () => {
 		<FormField :name="`endDate-${item.endDate}`" column>
 			<TheDatePicker v-model="item.endDate" />
 		</FormField>
-		<FormField :name="`price-${item.price}`" column>
-			<TheInput type="number" v-model="item.price" />
+		<FormField :name="`price-${item.pricePerPerson}`" column>
+			<TheInput type="number" v-model="item.pricePerPerson" />
 		</FormField>
 		<div
-			class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl bg-slate-200 p-2"
+			class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-lg bg-slate-200 p-2 transition-all hover:scale-110 hover:bg-slate-300"
 			title="удалить"
 			@click="handleDelete"
 		>

@@ -52,7 +52,7 @@ const parsePropertyName = (propertyName: string, row: any) => {
 </script>
 <template>
 	<div
-		class="mb-2 mt-6 h-full overflow-hidden rounded-xl bg-white p-8 shadow lg:mt-0"
+		class="mb-2 mt-6 h-full overflow-hidden rounded-lg bg-white p-8 shadow lg:mt-0"
 	>
 		<div class="grid h-full max-w-full overflow-auto pb-5">
 			<table class="w-full table-auto border-collapse">
