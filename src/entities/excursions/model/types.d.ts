@@ -9,7 +9,7 @@ export interface IExcursion {
 	price: number;
 	documentName: string;
 	excursionStart: string;
-	cities: SelectItem[] | string[];
+	cities: string[];
 	hotelName: string;
 	thePriceIncludes: string[];
 }

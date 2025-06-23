@@ -3,8 +3,6 @@
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
-import { useBusTourCityStore } from '@/entities/busTourCities/model';
-import { storeToRefs } from 'pinia';
 import {
 	TheInput,
 	TheTextArea,
@@ -114,8 +112,6 @@ onMounted(async () => {
 			</FormField>
 			<FormField name="city" label="Город" column>
 				<TheSelect
-					name="city"
-					label="Город"
 					:selected="busTour.address.city"
 					:list="citiesList"
 					@addItem="($event) => (busTour.address.city = $event as string)"

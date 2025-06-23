@@ -58,10 +58,11 @@ const searchableList = computed(() => {
 		);
 	} else {
 		return props.list.filter((listItem: SelectItem) => {
-			return data.value.some(
+			const index = data.value.findIndex(
 				(dataItem: SelectItem) =>
-					dataItem?.name?.toLowerCase() !== listItem?.name?.toLowerCase()
+					dataItem.name?.toLocaleLowerCase() === listItem.name?.toLowerCase()
 			);
+			return index === -1;
 		});
 	}
 });
@@ -79,7 +80,7 @@ const addToSelected = (item: SelectItem) => {
 };
 
 const removeItem = (item: SelectItem) => {
-	emit('removeItem', item);
+	emit('removeItem', item?.name || '');
 };
 
 const add = () => {
@@ -116,7 +117,6 @@ const add = () => {
 				class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
 				v-if="showSelect"
 			>
-				<!-- TODO: пофиксить добавление через enter -->
 				<div class="py-2">
 					<div class="relative">
 						<div class="px-2">

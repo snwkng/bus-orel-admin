@@ -137,6 +137,9 @@ const parsePropertyName = (propertyName: string, row: any) => {
 											)
 										}}
 									</template>
+									<template v-if="config?.dataType === 'arrayString'">
+										{{ parsePropertyName(config.propertyName, row).join('\n') }}
+									</template>
 									<template
 										v-else-if="config?.dataType === 'image' && getImage"
 									>
