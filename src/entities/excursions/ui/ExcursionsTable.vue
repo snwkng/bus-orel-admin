@@ -32,7 +32,7 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 	{ label: 'Название прайса', propertyName: 'documentName' },
 	{
 		label: 'Начало экскурсии',
-		propertyName: 'excursionStart',
+		propertyName: 'excursionStartDates',
 		dataType: 'date'
 	},
 	{ label: 'Город', propertyName: 'cities', dataType: 'arrayString' },

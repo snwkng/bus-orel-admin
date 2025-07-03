@@ -13,7 +13,7 @@ export function useExcursionForm(type: string, id?: string) {
     duration: 0,
     price: 0,
     documentName: '',
-    excursionStart: '',
+    excursionStartDates: [],
     cities: [] as string[],
     hotelName: '',
     thePriceIncludes: []

@@ -63,8 +63,8 @@ onMounted(async () => {
 			<FormField name="price" label="Стоимость экскрусии" column>
 				<TheInput name="price" type="number" v-model="excursion.price" />
 			</FormField>
-			<FormField name="excursionStart" label="Дата отправления" column>
-				<TheDatePicker v-model="excursion.excursionStart" />
+			<FormField name="excursionStartDates" label="Дата отправления" column>
+				<TheDatePicker v-model="excursion.excursionStartDates" />
 			</FormField>
 			<FormField name="hotelName" label="Название отеля (если есть)" column>
 				<TheInput name="hotelName" type="text" v-model="excursion.hotelName" />
