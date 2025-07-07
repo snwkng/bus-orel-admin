@@ -60,10 +60,10 @@ onMounted(async () => {
 					@removeItem="removeCity"
 				/>
 			</FormField>
-			<FormField name="price" label="Стоимость экскрусии" column>
+			<FormField name="price" label="Стоимость экскрусии (от)" column>
 				<TheInput name="price" type="number" v-model="excursion.price" />
 			</FormField>
-			<FormField name="excursionStartDates" label="Дата отправления" column>
+			<FormField name="excursionStartDates" label="Даты отправления" column>
 				<TheDatePicker v-model="excursion.excursionStartDates" />
 			</FormField>
 			<FormField name="hotelName" label="Название отеля (если есть)" column>

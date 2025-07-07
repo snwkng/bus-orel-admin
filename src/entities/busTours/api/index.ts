@@ -11,7 +11,7 @@ export const getTours = async (
 	params?: Record<string, string | number | boolean>
 ): Promise<ITour[]> => {
 	try {
-		const response = await fetchApi.get<ITour[]>('/bus-tours', params);
+		const response = await fetchApi.get<ITour[]>('/admin/bus-tours', params);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -27,7 +27,7 @@ export const getTours = async (
  */
 export const getTour = async (id: string): Promise<ITour> => {
 	try {
-		const response = await fetchApi.get<ITour>('/bus-tours/' + id);
+		const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
 		return response;
 	} catch (err: any) {
 		console.error(err);
@@ -43,7 +43,7 @@ export const getTour = async (id: string): Promise<ITour> => {
  */
 export const editTour = async (tour: ITour): Promise<JSON | Error> => {
 	// Construct the URL for the API endpoint.
-	const url = `/bus-tours/${tour._id}`;
+	const url = `/admin/bus-tours/${tour._id}`;
 
 	// Send the request to the server.
 	return await fetchApi.put(url, tour);
@@ -56,7 +56,7 @@ export const editTour = async (tour: ITour): Promise<JSON | Error> => {
  * @throws If the request fails, the promise is rejected with an error.
  */
 export const createTour = async (tour: ITour): Promise<void | JSON | Error> => {
-	return await fetchApi.post('/bus-tours', tour);
+	return await fetchApi.post('/admin/bus-tours', tour);
 };
 
 /**
@@ -67,7 +67,7 @@ export const createTour = async (tour: ITour): Promise<void | JSON | Error> => {
  */
 export const deleteTour = async (id: string): Promise<void> => {
 	try {
-		await fetchApi.delete('/bus-tours/' + id);
+		await fetchApi.delete('/admin/bus-tours/' + id);
 	} catch (err: any) {
 		console.error(err);
 		throw err;

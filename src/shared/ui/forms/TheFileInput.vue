@@ -47,7 +47,6 @@ watch(
 
 const remove = async (index: number, fileName: string) => {
 	try {
-		console.log(fileName);
 		await deleteFile(fileName);
 		files.value.splice(index, 1);
 		emit(

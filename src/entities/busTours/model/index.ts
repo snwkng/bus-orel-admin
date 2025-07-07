@@ -24,7 +24,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 
 		async getTour(id: string): Promise<ITour> {
 			try {
-				const response = await fetchApi.get<ITour>('/bus-tours/' + id);
+				const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
 				return response;
 			} catch (err: any) {
 				console.error(err);
@@ -37,7 +37,6 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async editTour(tour: ITour): Promise<void | Error> {
-			console.log(tour);
 			await editTour(tour);
 		},
 
@@ -64,7 +63,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 
 		async getCitiesList(): Promise<void> {
 			try {
-				const response = await fetchApi.get<SelectItem[]>('/bus-tours/cities-list');
+				const response = await fetchApi.get<SelectItem[]>('/admin/bus-tours/cities-list');
 				this.citiesList = response;
 			} catch (err: any) {
 				console.error(err);

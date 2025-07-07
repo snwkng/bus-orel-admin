@@ -11,7 +11,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 	actions: {
 		async getExcursions(params?: Record<string, string | number | boolean>): Promise<void> {
 			try {
-				const response = await fetchApi.get<IExcursion[]>('/excursions', params);
+				const response = await fetchApi.get<IExcursion[]>('/admin/excursions', params);
 				this.excursions = response;
 			} catch (err: any) {
 				console.error(err);
@@ -21,7 +21,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getExcursion(id: string): Promise<IExcursion> {
 			try {
-				const response = await fetchApi.get<IExcursion>('/excursions/' + id);
+				const response = await fetchApi.get<IExcursion>('/admin/excursions/' + id);
 				return response;
 			} catch (err: any) {
 				console.error(err);
@@ -31,7 +31,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async createExcursion(excursion: IExcursion): Promise<void | Error> {
 			try {
-				await fetchApi.post('/excursions', excursion);
+				await fetchApi.post('/admin/excursions', excursion);
 			} catch (err: any) {
 				console.error(err);
 				throw err;
@@ -40,14 +40,14 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async editExcursion(excursion: IExcursion): Promise<JSON | Error> {
 			// Construct the URL for the API endpoint.
-			const url = `/excursions/${excursion._id}`;
+			const url = `/admin/excursions/${excursion._id}`;
 			// Send the request to the server.
 			return await fetchApi.put(url, excursion);
 		},
 
 		async deleteExcursion(id: string): Promise<void> {
 			try {
-				await fetchApi.delete('/excursions/' + id);
+				await fetchApi.delete('/admin/excursions/' + id);
 			} catch (err: any) {
 				console.error(err);
 				throw err;
@@ -90,7 +90,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getCitiesList(): Promise<void> {
 			try {
-				const response = await fetchApi.get<SelectItem[]>('/excursions/cities-list');
+				const response = await fetchApi.get<SelectItem[]>('/admin/excursions/cities-list');
 				this.citiesList = response;
 			} catch (err: any) {
 				console.error(err);
