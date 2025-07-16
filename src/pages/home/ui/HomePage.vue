@@ -8,8 +8,8 @@ const formData2 = ref('');
 const formData3 = ref('');
 
 const selectModel = ref<SelectItem[]>([
-	{ _id: 'asdasdasda', name: 'Селект1' },
-	{ _id: 'asdasdasdaa', name: 'Селект2' }
+	{ id: 'asdasdasda', name: 'Селект1' },
+	{ id: 'asdasdasdaa', name: 'Селект2' }
 ]);
 
 const selectModelValues = ref<SelectItem[]>([]);
@@ -39,7 +39,7 @@ const selectModelValues = ref<SelectItem[]>([]);
 				label="Город"
 				:selected="selectModelValues"
 				:list="selectModel"
-				@update="($event) => (selectModelValues = $event as SelectItem[])"
+				@update="($event: SelectItem[]) => (selectModelValues = $event as SelectItem[])"
 			/>
 		</FormField>
 		<FormField name="textarea" label="Тестовый label textarea" column>

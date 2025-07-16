@@ -114,8 +114,7 @@ onMounted(async () => {
 				<TheSelect
 					:selected="busTour.address.city"
 					:list="citiesList"
-					@addItem="($event) => (busTour.address.city = $event as string)"
-					@removeItem="() => (busTour.address.city = '')"
+					@addItem="($event: (string | SelectItem)) => (busTour.address.city = $event as string)"
 				/>
 			</FormField>
 			<FormField name="seaType" label="Море" column>
@@ -123,27 +122,27 @@ onMounted(async () => {
 			</FormField>
 
 			<div>
-				<FormField name="thePriceIncludes" label="В стоимость включено" column>
+				<FormField name="includedInThePrice" label="В стоимость включено" column>
 					<TheTextArea
-						v-for="(inc, index) in busTour.thePriceIncludes"
+						v-for="(inc, index) in busTour.includedInThePrice"
 						:key="index"
-						name="thePriceIncludes"
+						name="includedInThePrice"
 						placeholder="Что включено в стоимость"
-						v-model="busTour.thePriceIncludes[index]"
+						v-model="busTour.includedInThePrice[index].serviceName"
 					/>
 				</FormField>
 				<div class="flex flex-row gap-x-3">
 					<button
 						type="button"
 						class="secondary-btn mt-3"
-						@click="() => busTour.thePriceIncludes.push('')"
+						@click="() => busTour.includedInThePrice.push({serviceName: '', icon: ''})"
 					>
 						Добавить день
 					</button>
 					<button
 						type="button"
 						class="delete-btn mt-3"
-						@click="() => busTour.thePriceIncludes.pop()"
+						@click="() => busTour.includedInThePrice.pop()"
 					>
 						Удалить день
 					</button>

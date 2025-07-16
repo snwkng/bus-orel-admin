@@ -3,7 +3,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ru } from 'date-fns/locale';
 
-const model = defineModel<Date[] | string[]>();
+const model = defineModel<Date[] | string[] | Date | string>();
 </script>
 
 <template>
