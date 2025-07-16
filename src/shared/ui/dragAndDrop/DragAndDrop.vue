@@ -99,7 +99,7 @@ onMounted(() => {
 			@dragover.prevent="dragover"
 			@dragleave="dragleave"
 			@drop.prevent="drop"
-			class="flex min-h-[300px] grow flex-col items-center justify-center rounded-xl border border-gray-300 bg-white text-center shadow-sm"
+			class="flex min-h-[300px] grow flex-col items-center justify-center rounded-lg border border-gray-300 bg-white text-center shadow-sm"
 			:style="isDragging && 'border: 1px solid #006DF0;'"
 		>
 			<input
@@ -128,13 +128,13 @@ onMounted(() => {
 				<div
 					v-for="file in files"
 					:key="file.name"
-					class="relative ml-1 mt-4 flex rounded-xl p-1"
+					class="relative ml-1 mt-4 flex rounded-lg p-1"
 				>
 					<div class="flex w-[200px] flex-col overflow-hidden text-ellipsis">
 						<img
 							:src="generatePreview(file)"
 							:alt="file.name"
-							class="h-[200px] w-full rounded-xl object-fill"
+							class="h-[200px] w-full rounded-lg object-fill"
 						/>
 						<span class="text-ellipsis text-nowrap text-sm text-slate-600">
 							{{ file.name }}

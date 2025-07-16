@@ -3,8 +3,6 @@
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
-import { useBusTourCityStore } from '@/entities/busTourCities/model';
-import { storeToRefs } from 'pinia';
 import {
 	TheInput,
 	TheTextArea,
@@ -24,39 +22,25 @@ const props = defineProps<Props>();
 const router = useRouter();
 const route = useRoute();
 
-const { getCities, addCity } = useBusTourCityStore();
-
-const { cities } = storeToRefs(useBusTourCityStore());
-
-const { busTour, loadTour, saveTour } = useBusTourForm(
-  props.type as string,
-  route.params.id as string
-);
+const { busTour, citiesList, loadTour, saveTour, getCitiesList } =
+	useBusTourForm(props.type as string, route.params.id as string);
 
 const handleSubmit = async () => {
-  await saveTour();
-  router.push('/bus-tours');
-};
-
-const changeCity = async (newCity: string) => {
-	const city = await addCity(newCity);
-	busTour.value.city = city;
+	await saveTour();
+	router.push('/bus-tours');
 };
 
 const updateTour = (tours: IHotelRoomInfo[]) => {
-	busTour.value.tours = tours
+	busTour.value.tours = tours;
 };
 
 onMounted(async () => {
-	await getCities();
+	await getCitiesList();
 	await loadTour();
 });
 </script>
 <template>
-	<form
-		class="form-container"
-		@submit.prevent="handleSubmit"
-	>
+	<form class="form-container" @submit.prevent="handleSubmit">
 		<div class="form-container-content">
 			<FormField name="name" label="Название Гостиницы" column>
 				<TheInput name="name" type="text" v-model="busTour.name" />
@@ -68,24 +52,33 @@ onMounted(async () => {
 				<TheTextArea
 					name="locationDescription"
 					type="text"
-					v-model="busTour.locationDescription"
+					v-model="busTour.description"
 				/>
 			</FormField>
 			<FormField name="food" label="Питание" column>
-				<TheInput name="food" type="text" v-model="busTour.food" />
+				<TheInput
+					name="food"
+					type="text"
+					v-model="busTour.additionalInfo.food.type"
+				/>
 			</FormField>
 			<FormField name="beach" label="Тип пляжа" column>
-				<TheInput name="beach" type="text" v-model="busTour.beach" />
+				<TheInput
+					name="beach"
+					type="text"
+					v-model="busTour.additionalInfo.beach.type"
+				/>
 			</FormField>
 			<FormField
 				name="distanceToBeach"
-				label="Расстояние до пляжа в метрах или минутах"
+				label="Расстояние до пляжа в минутах"
 				column
 			>
 				<TheInput
 					name="distanceToBeach"
-					type="text"
-					v-model="busTour.distanceToBeach"
+					type="number"
+					placeholder="Время в минутах"
+					v-model="busTour.additionalInfo.beach.distanceMinutes"
 				/>
 			</FormField>
 			<FormField
@@ -93,29 +86,36 @@ onMounted(async () => {
 				label="Условия заселения / выселения"
 				column
 			>
-				<TheTextArea
+				<TheInput
 					name="checkInConditions"
-					v-model="busTour.checkInConditions"
+					placeholder="Время заселения"
+					v-model="busTour.additionalInfo.checkInOut.checkIn"
+				/>
+				<TheInput
+					name="checkInConditions"
+					placeholder="Время выселения"
+					v-model="busTour.additionalInfo.checkInOut.checkOut"
 				/>
 			</FormField>
 			<FormField name="address" label="Адрес гостиницы" column>
-				<TheInput name="address" type="text" v-model="busTour.address" />
+				<TheInput
+					name="address"
+					type="text"
+					v-model="busTour.address.fullAddress"
+				/>
 			</FormField>
 			<FormField name="price" label="Минимальная цена заезда" column>
-				<TheInput name="price" type="number" v-model="busTour.price" />
+				<TheInput name="price" type="number" v-model="busTour.minPrice" />
 			</FormField>
 			<FormField name="region" label="Регион" column>
-				<TheInput name="region" type="text" v-model="busTour.region" />
+				<TheInput name="region" type="text" v-model="busTour.address.region" />
 			</FormField>
 			<FormField name="city" label="Город" column>
 				<TheSelect
-					name="city"
-					label="Город"
-					:limit="1"
-					:selected="(busTour.city as SelectItem)"
-					:list="cities"
-					@update="($event) => (busTour.city = $event as SelectItem)"
-					@add="changeCity($event)"
+					:selected="busTour.address.city"
+					:list="citiesList"
+					@addItem="($event) => (busTour.address.city = $event as string)"
+					@removeItem="() => (busTour.address.city = '')"
 				/>
 			</FormField>
 			<FormField name="seaType" label="Море" column>
@@ -169,10 +169,7 @@ onMounted(async () => {
 				/>
 			</FormField>
 			<div>
-				<HotelRoom
-					:hotels-info="busTour.tours"
-					@update="updateTour"
-				/>
+				<HotelRoom :hotels-info="busTour.tours" @update="updateTour" />
 			</div>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">

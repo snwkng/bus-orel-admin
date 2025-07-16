@@ -9,8 +9,6 @@ import {
 import FormField from '@/entities/formField/ui/FormField.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
-import { useExcursionCityStore } from '@/entities/excursionCities/model';
-import { storeToRefs } from 'pinia';
 import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
 
 export interface Props {
@@ -19,38 +17,31 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const { getCities, addCity } = useExcursionCityStore();
-
-const { cities } = storeToRefs(useExcursionCityStore());
-
 const router = useRouter();
 const route = useRoute();
 
-const { excursion, loadExcursion, saveExcursion } = useExcursionForm(
-  props.type as string,
-  route.params.id as string
-);
+const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
+	useExcursionForm(props.type as string, route.params.id as string);
 
-const changeCity = async (newCity: string) => {
-	const city = await addCity(newCity);
-	(excursion.value.cities as SelectItem[]).push(city);
+const removeCity = (cityName: string | SelectItem): void => {
+	const index = excursion.value.cities.findIndex(
+		(city: string) => city.toLowerCase() === (cityName as string).toLowerCase()
+	);
+	if (index !== -1) excursion.value.cities.splice(index, 1);
 };
 
 const handleSubmit = async () => {
-  await saveExcursion();
-  router.push('/excursions');
+	await saveExcursion();
+	router.push('/excursions');
 };
 
 onMounted(async () => {
-	await getCities();
+	await getCitiesList();
 	await loadExcursion();
 });
 </script>
 <template>
-	<form
-		class="form-container"
-		@submit.prevent="handleSubmit"
-	>
+	<form class="form-container" @submit.prevent="handleSubmit">
 		<div class="form-container-content">
 			<FormField name="name" label="Название экскурсии" column>
 				<TheInput name="name" type="text" v-model="excursion.name" />
@@ -58,29 +49,25 @@ onMounted(async () => {
 			<FormField name="duration" label="Длительность экскурсии (в днях)" column>
 				<TheInput name="duration" type="number" v-model="excursion.duration" />
 			</FormField>
-			<FormField name="city" label="Город" column>
+			<FormField name="cities" label="Города" column>
 				<TheSelect
-					name="city"
 					:selected="excursion.cities"
-					:list="cities"
-					@update="($event) => (excursion.cities = $event as SelectItem[])"
-					@add="changeCity($event)"
+					:list="citiesList"
+					@addItem="
+						($event: string | SelectItem) =>
+							excursion.cities.push($event as string)
+					"
+					@removeItem="removeCity"
 				/>
 			</FormField>
-			<FormField name="price" label="Стоимость экскрусии" column>
+			<FormField name="price" label="Стоимость экскрусии (от)" column>
 				<TheInput name="price" type="number" v-model="excursion.price" />
 			</FormField>
-			<FormField name="excursionStart" label="Дата отправления" column>
-				<TheDatePicker
-					v-model="excursion.excursionStart"
-				/>
+			<FormField name="excursionStartDates" label="Даты отправления" column>
+				<TheDatePicker v-model="excursion.excursionStartDates" />
 			</FormField>
 			<FormField name="hotelName" label="Название отеля (если есть)" column>
-				<TheInput
-					name="hotelName"
-					type="text"
-					v-model="excursion.hotelName"
-				/>
+				<TheInput name="hotelName" type="text" v-model="excursion.hotelName" />
 			</FormField>
 			<div>
 				<FormField name="description" label="Программа экскурсии" column>

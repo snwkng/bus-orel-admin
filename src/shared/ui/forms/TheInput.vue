@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineOptions({
-  inheritAttrs: false // Отключаем автоматическую передачу атрибутов
+	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
 });
 
 export interface Props {
@@ -13,6 +13,8 @@ const props = withDefaults(defineProps<Props>(), {
 	type: 'text'
 });
 
+defineEmits(['update:model', 'keydown']);
+
 const model = defineModel();
 </script>
 <template>
@@ -24,6 +26,7 @@ const model = defineModel();
 		:placeholder="props.placeholder"
 		class="the-input"
 		v-model.trim="model"
+		@keydown="$emit('keydown', $event)"
 	/>
 	<input
 		v-if="props.type === 'number'"
@@ -33,5 +36,6 @@ const model = defineModel();
 		:placeholder="props.placeholder"
 		class="the-input"
 		v-model.trim.number="model"
+		@keydown="$emit('keydown', $event)"
 	/>
 </template>

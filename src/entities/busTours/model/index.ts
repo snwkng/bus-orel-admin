@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import type { ITour } from './types';
 import {
 	getTours,
-	getTour,
 	createTour,
 	editTour,
 	uploadFile,
@@ -10,11 +9,13 @@ import {
 	deleteTour,
 	deleteFile
 } from '../api';
+import { fetchApi } from '@/shared/api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
 		tours: [] as ITour[],
-		files: [] as File[]
+		files: [] as File[],
+		citiesList: [] as SelectItem[]
 	}),
 	actions: {
 		async getTours(params?: any): Promise<void> {
@@ -22,7 +23,13 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async getTour(id: string): Promise<ITour> {
-			return await getTour(id);
+			try {
+				const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
+				return response;
+			} catch (err: any) {
+				console.error(err);
+				throw err;
+			}
 		},
 
 		async createTour(tour: ITour): Promise<void | Error> {
@@ -30,7 +37,6 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async editTour(tour: ITour): Promise<void | Error> {
-			console.log(tour);
 			await editTour(tour);
 		},
 
@@ -53,6 +59,15 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			fileName: string,
 		): Promise<boolean> {
 			return await deleteFile(fileName);
+		},
+
+		async getCitiesList(): Promise<void> {
+			try {
+				const response = await fetchApi.get<SelectItem[]>('/admin/bus-tours/cities-list');
+				this.citiesList = response;
+			} catch (err: any) {
+				console.error(err);
+			}
 		}
 	}
 });

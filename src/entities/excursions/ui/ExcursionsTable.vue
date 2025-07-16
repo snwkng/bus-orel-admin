@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
+import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
 
 const router = useRouter();
 const store = useExcursionStore();
@@ -16,20 +17,30 @@ onMounted(async () => {
 
 const excursions = computed(() => store.excursions);
 
-const tableHeaders = reactive([
-	{ title: 'Название', name: 'name', meta: { classes: 'w-72' } },
-	{ title: 'Описание', name: 'description', meta: { classes: 'w-96' } },
-	{ title: 'Изображения', name: 'images' },
-	{ title: 'Длительность', name: 'duration' },
-	{ title: 'Цена', name: 'price', meta: { classes: 'w-30' } },
-	{ title: 'Отель', name: 'hotelName' },
-	{ title: 'Название прайса', name: 'documentName' },
-	{ title: 'Начало экскурсии', name: 'excursionStart' },
-	{ title: 'Город', name: 'cities' },
+const tableDataConfig = reactive<ITableDataConfig[]>([
+	{ label: 'Название', propertyName: 'name', cellWidth: '200px' },
 	{
-		title: 'В стоимость включено',
-		name: 'thePriceIncludes',
-		meta: { classes: 'w-96' }
+		label: 'Описание',
+		propertyName: 'description',
+		cellWidth: '300px',
+		dataType: 'arrayString'
+	},
+	{ label: 'Изображения', propertyName: 'images' },
+	{ label: 'Длительность', propertyName: 'duration' },
+	{ label: 'Цена', propertyName: 'price', cellWidth: '100px' },
+	{ label: 'Отель', propertyName: 'hotelName' },
+	{ label: 'Название прайса', propertyName: 'documentName' },
+	{
+		label: 'Начало экскурсии',
+		propertyName: 'excursionStartDates',
+		dataType: 'date'
+	},
+	{ label: 'Город', propertyName: 'cities', dataType: 'arrayString' },
+	{
+		label: 'В стоимость включено',
+		propertyName: 'thePriceIncludes',
+		cellWidth: '250px',
+		dataType: 'arrayString'
 	}
 ]);
 
@@ -50,7 +61,7 @@ const deleteExcursion = async (id: string) => {
 </script>
 <template>
 	<BaseTable
-		:headers="tableHeaders"
+		:table-data-config="tableDataConfig"
 		:table-data="excursions"
 		@edit="router.push({ name: 'edit-excursion', params: { id: $event } })"
 		@delete="deleteExcursion"

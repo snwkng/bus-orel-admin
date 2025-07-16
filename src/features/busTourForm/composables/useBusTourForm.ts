@@ -1,31 +1,44 @@
 // features/busTourForm/composables/useBusTourForm.ts
 import { ref } from 'vue';
 import { useBusTourStore } from '@/entities/busTours/model';
-import type { IHotelRoomInfo, ITour } from '@/entities/busTours/model/types';
+import type { ITour } from '@/entities/busTours/model/types';
+import { storeToRefs } from 'pinia';
 
 export function useBusTourForm(type: string, id?: string) {
   const busTour = ref<ITour>({
-    _id: '',
     name: '',
     type: '',
-    locationDescription: '',
-    images: [] as string[],
-    tours: [] as IHotelRoomInfo[],
-    food: '',
-    beach: '',
-    distanceToBeach: '',
-    checkInConditions: '',
-    address: '',
-    price: 0,
-    thePriceIncludes: [''],
-    city: null,
-    region: '',
+    description: '',
+    address: {
+      city: '',
+      region: '',
+      country: '',
+      fullAddress: '',
+    },
+    additionalInfo: {
+      food: {
+        included: false,
+        type: '',
+      },
+      beach: {
+        type: '',
+        distanceMinutes: NaN,
+      },
+      checkInOut: {
+        checkIn: '',
+        checkOut: '',
+      },
+    },
+    minPrice: NaN,
+    includedInThePrice: [],
+    images: [],
     seaType: '',
     documentName: '',
+    tours: [],
   });
 
-  const { createTour, editTour, getTour } = useBusTourStore();
-
+  const { createTour, editTour, getTour, getCitiesList } = useBusTourStore();
+  const { citiesList } = storeToRefs(useBusTourStore());
   const loadTour = async () => {
     if (type === 'edit' && id) {
       const tour = await getTour(id);
@@ -35,12 +48,12 @@ export function useBusTourForm(type: string, id?: string) {
 
   const saveTour = async () => {
     if (type === 'create') {
-      delete busTour?.value?._id
+      // delete busTour?.value?._id;
       await createTour(busTour.value);
     } else {
       await editTour(busTour.value);
     }
   };
 
-  return { busTour, loadTour, saveTour };
+  return { busTour, citiesList, loadTour, saveTour, getCitiesList };
 }

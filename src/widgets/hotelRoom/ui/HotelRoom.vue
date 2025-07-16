@@ -7,10 +7,10 @@ import type {
 
 import FormField from '@/entities/formField/ui/FormField.vue';
 import { TheInput, TheTextArea } from '@/shared/ui/forms';
-import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue'
+import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue';
 
 interface IHotelsInfo {
-	hotelsInfo: IHotelRoomInfo[];
+	hotelsInfo?: IHotelRoomInfo[];
 }
 
 const props = defineProps<IHotelsInfo>();
@@ -19,28 +19,24 @@ const emit =
 	defineEmits<(event: 'update', payload: IHotelRoomInfo[]) => void>();
 
 const localData = computed({
-	get: () => props.hotelsInfo,
+	get: () => props.hotelsInfo || [],
 	set: (value) => emit('update', value)
 });
 
 const addRow = (roomIndex: number) => {
-	if (localData.value[roomIndex].datesAndPrices)
-		localData.value[roomIndex].datesAndPrices.push({} as IDatesAndPrices);
+	if (!localData.value[roomIndex].availability) {
+		localData.value[roomIndex].availability = []
+	}
+	localData.value[roomIndex].availability.push({} as IDatesAndPrices);
 };
 
 const deleteRow = (index: number, roomIndex: number) => {
-	if (localData.value[roomIndex].datesAndPrices)
-		localData.value[roomIndex].datesAndPrices.splice(index, 1);
+	if (localData.value[roomIndex].availability)
+		localData.value[roomIndex].availability.splice(index, 1);
 };
 
 const addRoom = () => {
-	localData.value.push({
-		type: '',
-		roomName: '',
-		capacity: 0,
-		inRoom: '',
-		datesAndPrices: [{} as IDatesAndPrices]
-	});
+	localData.value.push({} as IHotelRoomInfo);
 };
 
 const deleteRoom = (roomIndex: number) => {
@@ -53,7 +49,7 @@ const deleteRoom = (roomIndex: number) => {
 	<div class="flex w-full flex-col gap-x-5 gap-y-2">
 		<h4 class="font-bold">Номера и заезды</h4>
 		<div
-			class="flex flex-col gap-y-4 rounded-xl bg-white p-5"
+			class="flex flex-col gap-y-4 rounded-lg bg-white p-5"
 			v-for="(hotel, roomIndex) in localData"
 			:key="roomIndex"
 		>
@@ -69,11 +65,11 @@ const deleteRoom = (roomIndex: number) => {
 					<TheInput name="roomName" type="text" v-model="hotel.roomName" />
 				</FormField>
 				<FormField name="capacity" label="Количество спальных мест" column>
-					<TheInput name="capacity" type="number" v-model="hotel.capacity" />
+					<TheInput name="beds" type="number" v-model="hotel.beds" />
 				</FormField>
 			</div>
 			<FormField name="inRoom" label="Описание того, что в номере" column>
-				<TheTextArea name="inRoom" type="text" v-model="hotel.inRoom" />
+				<TheTextArea name="inRoom" type="text" v-model="hotel.description" />
 			</FormField>
 			<div class="mt-2 flex w-full flex-col gap-x-5 gap-y-2">
 				<h4 class="font-bold">Даты и цены номера</h4>
@@ -93,7 +89,7 @@ const deleteRoom = (roomIndex: number) => {
 				</div>
 				<div
 					class="flex w-full flex-row items-center justify-center gap-x-5"
-					v-for="(item, index) in hotel.datesAndPrices"
+					v-for="(item, index) in hotel.availability"
 					:key="index"
 				>
 					<DatePriceRow :item="item" @delete="deleteRow(index, roomIndex)" />

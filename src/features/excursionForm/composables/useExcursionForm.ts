@@ -2,23 +2,25 @@
 import { ref } from 'vue';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { useExcursionStore } from '@/entities/excursions/model';
+import { storeToRefs } from 'pinia';
 
 export function useExcursionForm(type: string, id?: string) {
   const excursion = ref<IExcursion>({
     _id: '',
     name: '',
-    description: Array.from(' '),
+    description: [],
     images: [],
     duration: 0,
     price: 0,
     documentName: '',
-    excursionStart: '',
-    cities: [] as SelectItem[] | string[],
+    excursionStartDates: [],
+    cities: [] as string[],
     hotelName: '',
-    thePriceIncludes: Array.from(' ')
+    thePriceIncludes: []
   });
 
-  const { createExcursion, editExcursion, getExcursion } = useExcursionStore();
+  const { createExcursion, editExcursion, getExcursion, getCitiesList } = useExcursionStore();
+  const { citiesList } = storeToRefs(useExcursionStore());
 
   const loadExcursion = async () => {
     if (type === 'edit' && id) {
@@ -36,5 +38,5 @@ export function useExcursionForm(type: string, id?: string) {
     }
   };
 
-  return { excursion, loadExcursion, saveExcursion };
+  return { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList };
 }
