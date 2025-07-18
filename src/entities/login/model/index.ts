@@ -1,28 +1,42 @@
 import { defineStore } from 'pinia';
 import { fetchApi } from '@/shared/api';
 
+interface IState {
+  user: null | { _id: string, username: string; };
+  token: null | string;
+}
+
 export const useLoginStore = defineStore('useLoginStore', {
-  state: () => ({
-    token: null as (string | null)
+  state: (): IState => ({
+    user: null,
+    token: localStorage.getItem('token') || null,
   }),
   getters: {
-    isLoggedIn: (state) => !!state.token || !!localStorage.getItem('token'),
+    isLoggedIn: (state) => !!state.token
   },
   actions: {
+    setToken(token: string) {
+      this.token = token;
+      localStorage.setItem('token', token);
+    },
+    removeToken() {
+      this.token = null;
+      this.user = null;
+      localStorage.removeItem('token');
+    },
     /**
-     * Атунтификация пользователя.
+     * Логин пользователя.
      * @param {string} username логин
      * @param {string} password пароль
-     * @returns возвращает токен
-     * @throws ошибку если что-то пошло не так
+     * @returns {void}
+     * @throws 
      */
     async login(username: string, password: string): Promise<void> {
       try {
         const res = await fetchApi.post<{ access_token: string; }>('/auth/login', { username, password });
         if (res && 'access_token' in res) {
-          localStorage.setItem('token', res.access_token);
           fetchApi.updateToken(res.access_token);
-          this.token = res.access_token;
+          this.setToken(res.access_token);
         } else {
           throw new Error('Access token not found in response');
         }
@@ -31,5 +45,17 @@ export const useLoginStore = defineStore('useLoginStore', {
         throw err;
       }
     },
+
+    async checkAuth(): Promise<boolean> {
+      try {
+        const res = await fetchApi.get<{ _id: string, username: string; }>('/users/profile');
+        this.user = res;
+        return true;
+      } catch (err) {
+        this.removeToken();
+        console.error(err);
+        return false;
+      }
+    }
   }
 });
