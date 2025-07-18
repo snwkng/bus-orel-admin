@@ -32,7 +32,8 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 		label: 'Расстояние до пляжа (мин.)',
 		propertyName: 'additionalInfo.beach.distanceMinutes'
 	},
-	{ label: 'Заселение / Выселение', propertyName: 'checkInConditions' },
+	{ label: 'Заселение', propertyName: 'additionalInfo.checkInOut.checkIn' },
+	{ label: 'Выселение', propertyName: 'additionalInfo.checkInOut.checkOut' },
 	{ label: 'Адрес', propertyName: 'address.fullAddress', cellWidth: '300px' },
 	{ label: 'Цена (от)', propertyName: 'minPrice', dataType: 'money' },
 	{ label: 'В стоимость включено', propertyName: 'includedInThePrice' },
