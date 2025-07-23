@@ -6,7 +6,7 @@ defineOptions({
 import { computed, ref } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
-import { TheInput } from '@/shared/ui/forms';
+import { BaseInput } from '@/shared/ui/forms';
 type SelectedType = SelectItem[] | SelectItem | string[] | string;
 export interface Props {
 	selected: SelectedType;
@@ -72,6 +72,7 @@ const toggle = () => {
 };
 
 const close = () => {
+	inputValue.value = '';
 	showSelect.value = false;
 };
 
@@ -120,9 +121,10 @@ const add = () => {
 				<div class="py-2">
 					<div class="relative">
 						<div class="px-2">
-							<TheInput
+							<input
+								class="the-input"
 								name="searchSelect"
-								v-model.trim="inputValue"
+								v-model="inputValue"
 								@keydown.enter.prevent.stop="add"
 							/>
 						</div>

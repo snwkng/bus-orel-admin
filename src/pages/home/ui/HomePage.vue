@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormField from '@/entities/formField/ui/FormField.vue';
-import { TheInput, TheSelect, TheTextArea } from '@/shared/ui/forms';
+import { BaseInput, TheSelect, BaseTextArea } from '@/shared/ui/forms';
 import { ref } from 'vue';
 
 const formData = ref('');
@@ -18,7 +18,7 @@ const selectModelValues = ref<SelectItem[]>([]);
 	<div class="flex flex-col gap-y-5 mt-5 px-5">
 		<div>Hello! (test pm2 start after deploy)</div>
 		<FormField name="input1" label="Тестовый label">
-			<TheInput
+			<BaseInput
 				name="input1"
 				type="text"
 				placeholder="asdasda"
@@ -26,7 +26,7 @@ const selectModelValues = ref<SelectItem[]>([]);
 			/>
 		</FormField>
 		<FormField name="input2" label="Тестовый label" column>
-			<TheInput
+			<BaseInput
 				name="input2"
 				type="number"
 				placeholder="asdasda"
@@ -43,7 +43,7 @@ const selectModelValues = ref<SelectItem[]>([]);
 			/>
 		</FormField>
 		<FormField name="textarea" label="Тестовый label textarea" column>
-			<TheTextArea
+			<BaseTextArea
 				name="textarea"
 				placeholder="textarea"
 				v-model="formData3"

@@ -29,12 +29,12 @@ export function useExcursionForm(type: string, id?: string) {
     }
   };
 
-  const saveExcursion = async () => {
+  const saveExcursion = async (value: IExcursion) => {
     if (type === 'create') {
-      delete excursion.value._id;
-      await createExcursion(excursion.value);
+      delete value._id;
+      await createExcursion(value);
     } else {
-      await editExcursion(excursion.value);
+      await editExcursion(value);
     }
   };
 
