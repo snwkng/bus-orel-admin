@@ -12,27 +12,29 @@ export interface IProps {
 	label?: string;
 	placeholder?: string;
 	validator?: StringSchema<string>;
-	initialValue: string;
+	value?: string | number;
 	column?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-	type: 'text',
+	type: 'text'
 });
 
 const name = toRef(props, 'name');
 
-const {
-  value,
-  errorMessage,
-  meta,
-} = useField(name, props.validator, {initialValue: props.initialValue})
-
+const { value, errorMessage, meta } = useField(name, props.validator, {
+	initialValue: props.type === 'number' ? props?.value || 0 : props?.value || ''
+});
 </script>
 <template>
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 		<label class="the-label" v-if="label" :for="name">
-			{{ label }} <span class="text-red-600" v-if="validator?.describe().tests?.some((x) => x.name === 'required')">*</span>
+			{{ label }}
+			<span
+				class="text-red-600"
+				v-if="validator?.describe().tests?.some((x) => x.name === 'required')"
+				>*</span
+			>
 		</label>
 		<input
 			:id="name"
@@ -42,6 +44,11 @@ const {
 			:placeholder="placeholder"
 			class="the-input"
 		/>
-		<span :name="name" class="text-red-600" v-show="errorMessage || meta.valid">{{ errorMessage }}</span>
+		<span
+			:name="name"
+			class="text-red-600"
+			v-show="errorMessage || meta.valid"
+			>{{ errorMessage }}</span
+		>
 	</div>
 </template>

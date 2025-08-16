@@ -70,14 +70,14 @@ onMounted(async () => {
 				label="Название экскурсии"
 				column
 				:validator="string().required('Обязательное поле')"
-				:initial-value="excursion.name"
+				:value="excursion.name"
 			/>
 			<BaseInput
 				name="duration"
 				type="number"
 				label="Длительность экскурсии (в днях)"
 				column
-				:initial-value="excursion.duration.toString()"
+				:value="excursion.duration"
 			/>
 			<FormField name="cities" label="Города" column>
 				<TheSelect
@@ -95,7 +95,7 @@ onMounted(async () => {
 				type="number"
 				label="Стоимость экскрусии (от)"
 				column
-				:initial-value="excursion.price.toString()"
+				:value="excursion.price"
 			/>
 			<FormField name="excursionStartDates" label="Даты отправления" column>
 				<TheDatePicker v-model="excursion.excursionStartDates" />
@@ -105,7 +105,7 @@ onMounted(async () => {
 				type="text"
 				label="Название отеля (если есть)"
 				column
-				:initial-value="excursion.hotelName"
+				:value="excursion.hotelName"
 			/>
 
 			<FieldArray name="description" v-slot="{ fields, push, remove }">
@@ -116,7 +116,7 @@ onMounted(async () => {
 						column
 						:name="`description[${idx}]`"
 						:placeholder="`День ${idx + 1}`"
-						:initial-value="excursion.description[idx]"
+						:value="excursion.description[idx]"
 					/>
 					<button
 						type="button"
@@ -143,7 +143,7 @@ onMounted(async () => {
 						column
 						:name="`thePriceIncludes[${idx}]`"
 						placeholder="Что включено в стоимость"
-						:initial-value="excursion.thePriceIncludes[idx]"
+						:value="excursion.thePriceIncludes[idx]"
 					/>
 					<button
 						type="button"

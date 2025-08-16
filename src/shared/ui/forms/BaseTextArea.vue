@@ -11,7 +11,7 @@ export interface IProps {
 	label?: string;
 	placeholder?: string;
 	validator?: StringSchema<string>;
-	initialValue: string;
+	value?: string;
 	column?: boolean;
 }
 
@@ -20,7 +20,7 @@ const props = defineProps<IProps>();
 const name = toRef(props, 'name');
 
 const { value, errorMessage, meta } = useField(name, props.validator, {
-	initialValue: props.initialValue
+	initialValue: props?.value || ''
 });
 </script>
 <template>
