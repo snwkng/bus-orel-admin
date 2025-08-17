@@ -42,12 +42,12 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 			:type="type"
 			v-model="value"
 			:placeholder="placeholder"
-			class="the-input"
+			:class="[{ '!border-red-500': !meta.valid }, 'the-input']"
 		/>
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="errorMessage || meta.valid"
+			v-show="errorMessage || !meta.valid"
 			>{{ errorMessage }}</span
 		>
 	</div>

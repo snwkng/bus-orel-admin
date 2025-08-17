@@ -42,9 +42,15 @@ const removeCity = (cityName: string | SelectItem): void => {
 };
 
 const handleSubmit = async (values: GenericObject) => {
-	console.log(values);
 	await saveExcursion(values as IExcursion);
 	// router.push('/excursions');
+};
+
+const onInvalidSubmit = async ({ errors }: GenericObject) => {
+	const keys = Object.keys(errors);
+	if (keys?.length) {
+		document.getElementById(keys[0])?.scrollIntoView({ behavior: 'smooth' });
+	}
 };
 
 onMounted(async () => {
@@ -61,6 +67,7 @@ onMounted(async () => {
 		class="form-container"
 		:initial-values="excursion"
 		@submit="handleSubmit"
+		@invalid-submit="onInvalidSubmit"
 		v-slot="{ values }"
 	>
 		<div class="form-container-content">
@@ -184,6 +191,10 @@ onMounted(async () => {
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button
 				class="base-btn max-w-[300px]"
+				:class="{
+					'pointer-events-none !bg-deep-orange/70':
+						JSON.stringify(values) === JSON.stringify(excursion)
+				}"
 				type="submit"
 				:disabled="JSON.stringify(values) === JSON.stringify(excursion)"
 			>

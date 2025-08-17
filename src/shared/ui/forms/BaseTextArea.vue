@@ -34,7 +34,10 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 			>
 		</label>
 		<textarea
-			class="the-input whitespace-pre-line"
+			:class="[
+				{ '!border-red-500': !meta.valid },
+				'the-input whitespace-pre-line'
+			]"
 			rows="4"
 			:name="name"
 			:placeholder="placeholder"
@@ -43,7 +46,7 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="errorMessage || meta.valid"
+			v-show="errorMessage || !meta.valid"
 			>{{ errorMessage }}</span
 		>
 	</div>
