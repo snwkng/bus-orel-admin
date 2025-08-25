@@ -33,17 +33,12 @@ const excursionForm = ref<FormContext | null>(null);
 
 const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
 	useExcursionForm(props.type as string, route.params.id as string);
-
-const removeCity = (cityName: string | SelectItem): void => {
-	const index = excursion.value.cities.findIndex(
-		(city: string) => city.toLowerCase() === (cityName as string).toLowerCase()
-	);
-	if (index !== -1) excursion.value.cities.splice(index, 1);
-};
-
 const handleSubmit = async (values: GenericObject) => {
+	if (values.documentName) {
+		values.documentName =  values.documentName?.length ? values.documentName[0] : ''
+	}
 	await saveExcursion(values as IExcursion);
-	// router.push('/excursions');
+	router.push('/excursions');
 };
 
 const onInvalidSubmit = async ({ errors }: GenericObject) => {
@@ -70,6 +65,7 @@ onMounted(async () => {
 		@invalid-submit="onInvalidSubmit"
 		v-slot="{ values }"
 	>
+		<!-- {{ values }} -->
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
@@ -86,17 +82,14 @@ onMounted(async () => {
 				column
 				:value="excursion.duration"
 			/>
-			<FormField name="cities" label="Города" column>
-				<TheSelect
-					:selected="excursion.cities"
-					:list="citiesList"
-					@addItem="
-						($event: string | SelectItem) =>
-							excursion.cities.push($event as string)
-					"
-					@removeItem="removeCity"
-				/>
-			</FormField>
+			<TheSelect
+				name="cities"
+				label="Города"
+				column
+				multiple
+				:selected="excursion.cities"
+				:list="citiesList"
+			/>
 			<BaseInput
 				name="price"
 				type="number"
@@ -104,9 +97,13 @@ onMounted(async () => {
 				column
 				:value="excursion.price"
 			/>
-			<FormField name="excursionStartDates" label="Даты отправления" column>
-				<TheDatePicker v-model="excursion.excursionStartDates" />
-			</FormField>
+			<TheDatePicker
+				:value="excursion.excursionStartDates"
+				name="excursionStartDates"
+				label="Даты отправления"
+				multi-dates
+				column
+			/>
 			<BaseInput
 				name="hotelName"
 				type="text"
@@ -174,17 +171,15 @@ onMounted(async () => {
 					accept="image/*"
 					multiple
 					place="excursion"
-					@change="(images: string[]) => (excursion.images = images)"
 					:value="excursion.images"
 				/>
 			</FormField>
-			<FormField name="document" label="Файл прайса" column>
+			<FormField name="documentName" label="Файл прайса" column>
 				<TheFileInput
-					name="document"
+					name="documentName"
 					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 					place="excursion"
-					@change="(doc: string[]) => (excursion.documentName = doc[0])"
-					:value="excursion.documentName ? [excursion.documentName] : []"
+					:value="excursion.documentName"
 				/>
 			</FormField>
 		</div>

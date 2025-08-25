@@ -34,7 +34,7 @@ export function useExcursionForm(type: string, id?: string) {
       delete value._id;
       await createExcursion(value);
     } else {
-      await editExcursion(value);
+      excursion.value = await editExcursion(value) as IExcursion;
     }
   };
 

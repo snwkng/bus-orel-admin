@@ -47,7 +47,7 @@ class FetchApi {
 		}
 	}
 
-	async put(url: string, body?: any): Promise<JSON | Error> {
+	async put(url: string, body?: any): Promise<JSON | Error | unknown> {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
 				method: 'PUT',
