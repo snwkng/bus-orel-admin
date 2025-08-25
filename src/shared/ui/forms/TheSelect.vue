@@ -74,17 +74,15 @@ const add = () => {
 	if (inputValue.value) {
 		if (props.multiple) {
 			push(inputValue.value);
-			// emit('addItem', inputValue.value);
 		} else {
 			replace([inputValue.value]);
 		}
-		// emit('addItem', inputValue.value);
 		inputValue.value = '';
 	}
 };
 </script>
 <template>
-	<div v-click-away="close">
+	<div>
 		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 			<label class="the-label" v-if="label" :for="name">
 				{{ label }}
@@ -95,6 +93,7 @@ const add = () => {
 				>
 			</label>
 			<div
+				v-click-away="close"
 				class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 				:class="[
 					{

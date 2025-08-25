@@ -7,7 +7,7 @@ export interface IExcursion {
 	images: string[];
 	duration: number;
 	price: number;
-	documentName: string;
+	documentName: string[];
 	excursionStartDates: string[];
 	cities: string[];
 	hotelName: string;
