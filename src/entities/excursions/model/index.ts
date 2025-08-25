@@ -38,11 +38,12 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			}
 		},
 
-		async editExcursion(excursion: IExcursion): Promise<JSON | Error> {
+		async editExcursion(excursion: IExcursion): Promise<IExcursion | Error> {
 			// Construct the URL for the API endpoint.
 			const url = `/admin/excursions/${excursion._id}`;
 			// Send the request to the server.
-			return await fetchApi.put(url, excursion);
+			const response = await fetchApi.put(url, excursion) as IExcursion;
+			return response
 		},
 
 		async deleteExcursion(id: string): Promise<void> {
@@ -56,7 +57,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async uploadFile(File: FormData): Promise<string> {
 			try {
-				const res: string = await fetchApi.upload('/s3/upload', File);
+				const res: string = await fetchApi.upload('/admin/s3/upload', File);
 				return res;
 			} catch (err: any) {
 				console.error(err);
@@ -80,7 +81,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			fileName: string,
 		): Promise<boolean> {
 			try {
-				const res: boolean = await fetchApi.delete(`/s3/delete?uuid=${fileName}`);
+				const res: boolean = await fetchApi.delete(`/admin/s3/delete?uuid=${fileName}`);
 				return res;
 			} catch (err: any) {
 				console.error(err);

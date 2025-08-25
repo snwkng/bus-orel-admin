@@ -84,7 +84,7 @@ export const uploadFile = async (
 	File: FormData,
 ): Promise<string> => {
 	try {
-		const res: string = await fetchApi.upload('/s3/upload', File);
+		const res: string = await fetchApi.upload('/admin/s3/upload', File);
 		return res;
 	} catch (err: any) {
 		console.error(err);
@@ -120,7 +120,7 @@ export const deleteFile = async (
 	fileName: string,
 ): Promise<boolean> => {
 	try {
-		const res: boolean = await fetchApi.delete(`/s3/delete?uuid=${fileName}`);
+		const res: boolean = await fetchApi.delete(`/admin/s3/delete?uuid=${fileName}`);
 		return res;
 	} catch (err: any) {
 		console.error(err);

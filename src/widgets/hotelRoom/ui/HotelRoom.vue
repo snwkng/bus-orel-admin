@@ -6,7 +6,7 @@ import type {
 } from '@/entities/busTours/model/types';
 
 import FormField from '@/entities/formField/ui/FormField.vue';
-import { TheInput, TheTextArea } from '@/shared/ui/forms';
+import { BaseInput, BaseTextArea } from '@/shared/ui/forms';
 import DatePriceRow from '@/shared/ui/forms/DatePriceRow.vue';
 
 interface IHotelsInfo {
@@ -59,17 +59,17 @@ const deleteRoom = (roomIndex: number) => {
 					label="Тип номера (стандарт, эконом и т.п.)"
 					column
 				>
-					<TheInput name="typeRoom" type="text" v-model="hotel.type" />
+					<BaseInput name="typeRoom" type="text" v-model="hotel.type" />
 				</FormField>
 				<FormField name="roomName" label="Название номера" column>
-					<TheInput name="roomName" type="text" v-model="hotel.roomName" />
+					<BaseInput name="roomName" type="text" v-model="hotel.roomName" />
 				</FormField>
 				<FormField name="capacity" label="Количество спальных мест" column>
-					<TheInput name="beds" type="number" v-model="hotel.beds" />
+					<BaseInput name="beds" type="number" v-model="hotel.beds" />
 				</FormField>
 			</div>
 			<FormField name="inRoom" label="Описание того, что в номере" column>
-				<TheTextArea name="inRoom" type="text" v-model="hotel.description" />
+				<BaseTextArea name="inRoom" type="text" v-model="hotel.description" />
 			</FormField>
 			<div class="mt-2 flex w-full flex-col gap-x-5 gap-y-2">
 				<h4 class="font-bold">Даты и цены номера</h4>

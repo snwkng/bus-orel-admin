@@ -4,8 +4,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import type { IHotelRoomInfo } from '@/entities/busTours/model/types';
 import {
-	TheInput,
-	TheTextArea,
+	BaseInput,
+	BaseTextArea,
 	TheFileInput,
 	TheSelect
 } from '@/shared/ui/forms';
@@ -43,27 +43,27 @@ onMounted(async () => {
 	<form class="form-container" @submit.prevent="handleSubmit">
 		<div class="form-container-content">
 			<FormField name="name" label="Название Гостиницы" column>
-				<TheInput name="name" type="text" v-model="busTour.name" />
+				<BaseInput name="name" type="text" v-model="busTour.name" />
 			</FormField>
 			<FormField name="type" label="Тип (отель, гостиница и т.д)" column>
-				<TheInput name="type" type="text" v-model="busTour.type" />
+				<BaseInput name="type" type="text" v-model="busTour.type" />
 			</FormField>
 			<FormField name="locationDescription" label="Описание гостиницы" column>
-				<TheTextArea
+				<BaseTextArea
 					name="locationDescription"
 					type="text"
 					v-model="busTour.description"
 				/>
 			</FormField>
 			<FormField name="food" label="Питание" column>
-				<TheInput
+				<BaseInput
 					name="food"
 					type="text"
 					v-model="busTour.additionalInfo.food.type"
 				/>
 			</FormField>
 			<FormField name="beach" label="Тип пляжа" column>
-				<TheInput
+				<BaseInput
 					name="beach"
 					type="text"
 					v-model="busTour.additionalInfo.beach.type"
@@ -74,7 +74,7 @@ onMounted(async () => {
 				label="Расстояние до пляжа в минутах"
 				column
 			>
-				<TheInput
+				<BaseInput
 					name="distanceToBeach"
 					type="number"
 					placeholder="Время в минутах"
@@ -86,29 +86,29 @@ onMounted(async () => {
 				label="Условия заселения / выселения"
 				column
 			>
-				<TheInput
+				<BaseInput
 					name="checkInConditions"
 					placeholder="Время заселения"
 					v-model="busTour.additionalInfo.checkInOut.checkIn"
 				/>
-				<TheInput
+				<BaseInput
 					name="checkInConditions"
 					placeholder="Время выселения"
 					v-model="busTour.additionalInfo.checkInOut.checkOut"
 				/>
 			</FormField>
 			<FormField name="address" label="Адрес гостиницы" column>
-				<TheInput
+				<BaseInput
 					name="address"
 					type="text"
 					v-model="busTour.address.fullAddress"
 				/>
 			</FormField>
 			<FormField name="price" label="Минимальная цена заезда" column>
-				<TheInput name="price" type="number" v-model="busTour.minPrice" />
+				<BaseInput name="price" type="number" v-model="busTour.minPrice" />
 			</FormField>
 			<FormField name="region" label="Регион" column>
-				<TheInput name="region" type="text" v-model="busTour.address.region" />
+				<BaseInput name="region" type="text" v-model="busTour.address.region" />
 			</FormField>
 			<FormField name="city" label="Город" column>
 				<TheSelect
@@ -118,12 +118,12 @@ onMounted(async () => {
 				/>
 			</FormField>
 			<FormField name="seaType" label="Море" column>
-				<TheInput name="seaType" type="text" v-model="busTour.seaType" />
+				<BaseInput name="seaType" type="text" v-model="busTour.seaType" />
 			</FormField>
 
 			<div>
 				<FormField name="includedInThePrice" label="В стоимость включено" column>
-					<TheTextArea
+					<BaseTextArea
 						v-for="(inc, index) in busTour.includedInThePrice"
 						:key="index"
 						name="includedInThePrice"

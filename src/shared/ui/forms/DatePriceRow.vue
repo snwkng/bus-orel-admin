@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import FormField from '@/entities/formField/ui/FormField.vue';
-import { TheInput, TheDatePicker } from '@/shared/ui/forms';
+import { BaseInput, TheDatePicker } from '@/shared/ui/forms';
 import { TrashIcon } from '@/shared/ui/icons';
 import type { IDatesAndPrices } from '@/entities/busTours/model/types';
 
@@ -26,7 +26,7 @@ const handleDelete = () => {
 			<TheDatePicker v-model="item.endDate" />
 		</FormField>
 		<FormField :name="`price-${item.pricePerPerson}`" column>
-			<TheInput type="number" v-model="item.pricePerPerson" />
+			<BaseInput type="number" v-model="item.pricePerPerson" />
 		</FormField>
 		<div
 			class="mt-2 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-lg bg-slate-200 p-2 transition-all hover:scale-110 hover:bg-slate-300"

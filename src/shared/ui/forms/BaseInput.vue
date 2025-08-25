@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
-import { ru } from 'date-fns/locale';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
 import type { StringSchema } from 'yup';
+defineOptions({
+	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
+});
 
 export interface IProps {
+	type?: string;
 	name: string;
 	label?: string;
+	placeholder?: string;
 	validator?: StringSchema<string>;
-	value?: string[] | string;
+	value?: string | number;
 	column?: boolean;
-	multiDates?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-	multiDates: false
+	type: 'text'
 });
 
 const name = toRef(props, 'name');
 
 const { value, errorMessage, meta } = useField(name, props.validator, {
-	initialValue: props.value
+	initialValue: props.type === 'number' ? props?.value || 0 : props?.value || ''
 });
 </script>
-
 <template>
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 		<label class="the-label" v-if="label" :for="name">
@@ -36,20 +36,14 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 				>*</span
 			>
 		</label>
-		<VueDatePicker
+		<input
+			:id="name"
+			:name="name"
+			:type="type"
 			v-model="value"
-			:format-locale="ru"
-			:multi-dates="multiDates"
-			:enable-time-picker="false"
-			format="dd MMMM yyyy"
-			:class="{ '!border-red-500': !meta.valid }"
-		>
-			<template #action-row="{ selectDate }">
-				<button class="secondary-btn w-full" @click.stop.prevent="selectDate">
-					Выбрать даты
-				</button>
-			</template>
-		</VueDatePicker>
+			:placeholder="placeholder"
+			:class="[{ '!border-red-500': !meta.valid }, 'the-input']"
+		/>
 		<span
 			:name="name"
 			class="text-red-600"

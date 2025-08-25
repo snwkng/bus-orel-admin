@@ -1,27 +1,36 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, toRef, computed } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { useBusTourStore } from '@/entities/busTours/model';
+import { useField } from 'vee-validate';
 
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
+import type { StringSchema } from 'yup';
 
 export interface Props {
 	accept?: string;
 	name: string;
 	multiple?: boolean;
-	value?: string[];
+	validator?: StringSchema<string>;
+	value?: string[] | string;
 	place: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	accept: '',
-	name: 'images',
-	multiple: false,
-	value: () => [] as string[]
+	multiple: false
 });
 
-const emit = defineEmits<(event: 'change', payload: string[]) => void>();
+const name = toRef(props, 'name');
+
+const initialValue = computed(() => {
+	return props?.value || props.multiple ? [] : '';
+});
+
+const { value, errorMessage, meta } = useField(name, props.validator, {
+	initialValue: initialValue.value
+});
 
 const store =
 	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
@@ -30,17 +39,28 @@ const files = ref<File[]>([]);
 const file = ref<any>(null);
 
 watch(
-	() => props.value,
-	() => {
-		if (props.value.length !== files.value.length) {
-			props.value.forEach(async (x: string) => {
-				if (files.value.findIndex((y: File) => y?.name === x) === -1) {
-					const res = await getFile(x);
-					if (res) {
-						files.value.push(res);
+	() => value.value,
+	async () => {
+		console.log(value.value);
+		console.log(value.value?.length, files.value.length);
+		if (value.value?.length !== files.value.length) {
+			if (props.multiple && typeof value.value === 'object') {
+				value.value?.forEach(async (x: string) => {
+					if (files.value.findIndex((y: File) => y?.name === x) === -1) {
+						const res = await getFile(x);
+						if (res) {
+							files.value.push(res);
+						}
 					}
-				}
-			});
+				});
+			} else if (!props.multiple && typeof value.value === 'string') {
+				if (files.value.findIndex((y: File) => y?.name === value.value) === -1) {
+						const res = await getFile(value.value);
+						if (res) {
+							files.value.push(res);
+						}
+					}
+			}
 		}
 	}
 );
@@ -49,10 +69,7 @@ const remove = async (index: number, fileName: string) => {
 	try {
 		await deleteFile(fileName);
 		files.value.splice(index, 1);
-		emit(
-			'change',
-			files.value.map((x: File) => x.name)
-		);
+		value.value = files.value.map((x: File) => x.name);
 	} catch (error) {
 		console.error('err');
 	}
@@ -75,17 +92,14 @@ const onChange = () => {
 				return file;
 			})
 		];
-		emit(
-			'change',
-			files.value.map((x: File) => x.name)
-		);
+		value.value = files.value.map((x: File) => x.name);
 	});
 };
 </script>
 <template>
 	<div
 		class="flex w-full flex-wrap gap-5 rounded-lg bg-white p-5"
-		v-if="props.value.length"
+		v-if="value?.length"
 	>
 		<div class="relative" v-for="file in files" :key="file.name">
 			<GenerateFilePreview :get-file="file" />
