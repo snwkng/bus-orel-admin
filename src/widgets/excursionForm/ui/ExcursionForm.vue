@@ -12,7 +12,6 @@ import {
 	type FormContext,
 	type GenericObject
 } from 'vee-validate';
-import FormField from '@/entities/formField/ui/FormField.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
@@ -34,9 +33,6 @@ const excursionForm = ref<FormContext | null>(null);
 const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
 	useExcursionForm(props.type as string, route.params.id as string);
 const handleSubmit = async (values: GenericObject) => {
-	if (values.documentName) {
-		values.documentName =  values.documentName?.length ? values.documentName[0] : ''
-	}
 	await saveExcursion(values as IExcursion);
 	router.push('/excursions');
 };
@@ -165,23 +161,23 @@ onMounted(async () => {
 					</button>
 				</div>
 			</FieldArray>
-			<FormField name="images" label="Изображения эксркусии" column>
-				<TheFileInput
-					name="images"
-					accept="image/*"
-					multiple
-					place="excursion"
-					:value="excursion.images"
-				/>
-			</FormField>
-			<FormField name="documentName" label="Файл прайса" column>
-				<TheFileInput
-					name="documentName"
-					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-					place="excursion"
-					:value="excursion.documentName"
-				/>
-			</FormField>
+			<TheFileInput
+				label="Изображения эксркусии"
+				column
+				name="images"
+				accept="image/*"
+				multiple
+				place="excursion"
+				:value="excursion.images"
+			/>
+			<TheFileInput
+				label="Файл прайса"
+				column
+				name="documentName"
+				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				place="excursion"
+				:value="excursion.documentName"
+			/>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button
