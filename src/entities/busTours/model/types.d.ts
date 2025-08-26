@@ -28,12 +28,12 @@ export interface ITour {
 	};
 	includedInThePrice: {
 		serviceName: string;
-		icon: string;
+		icon?: string;
 	}[];
 	images: string[];
 	minPrice: number;
 	seaType: string;
-	documentName: string;
+	documentName: string[];
 	tours: IHotelRoomInfo[];
 }
 
@@ -49,4 +49,5 @@ export interface IDatesAndPrices {
 	startDate?: Date | string;
 	endDate?: Date | string;
 	pricePerPerson?: number;
+	_id?: ObjectId;
 }

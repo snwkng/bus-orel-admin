@@ -7,11 +7,10 @@ import { computed, ref, toRef } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
 import type { StringSchema } from 'yup';
-import { useFieldArray } from 'vee-validate';
+import { useField, useFieldArray } from 'vee-validate';
 
 export interface Props {
 	name: string;
-	selected: string[];
 	list?: SelectItem[];
 	label?: string;
 	validator?: StringSchema<string>;
@@ -20,13 +19,14 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	selected: () => [] as string[],
 	list: () => []
 });
 
 const name = toRef(props, 'name');
 
 const { remove, push, replace, fields } = useFieldArray(name.value.toString());
+
+const { value, errorMessage, meta } = useField(name, props.validator);
 
 const showSelect = ref(false);
 const inputValue = ref('');
@@ -66,7 +66,8 @@ const addToSelected = (item: SelectItem) => {
 	if (props.multiple) {
 		push(item.name);
 	} else {
-		replace([item.name]);
+		value.value = item.name
+		// replace([item.name]);
 	}
 };
 
@@ -75,11 +76,16 @@ const add = () => {
 		if (props.multiple) {
 			push(inputValue.value);
 		} else {
-			replace([inputValue.value]);
+			value.value = inputValue.value
+			// replace([inputValue.value]);
 		}
 		inputValue.value = '';
 	}
 };
+
+const removeSingleValue = () => {
+	value.value = ''
+}
 </script>
 <template>
 	<div>
@@ -106,6 +112,7 @@ const add = () => {
 					@click="toggle"
 					@keydown.enter.stop="toggle"
 				>
+				<div v-if="fields.length && multiple">
 					<div
 						v-for="(item, idx) in fields"
 						:key="item.key"
@@ -114,6 +121,15 @@ const add = () => {
 					>
 						{{ item?.value }}
 					</div>
+				</div>
+				<div v-if="value">
+					<div
+						@click.stop="removeSingleValue"
+						class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
+					>
+						{{ value }}
+					</div>
+				</div>
 				</div>
 				<div
 					class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
