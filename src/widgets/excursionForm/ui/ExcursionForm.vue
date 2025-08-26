@@ -15,6 +15,7 @@ import {
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
+import { onInvalidSubmit } from	'@/shared/config/composables/useHelpers'
 import { string } from 'yup';
 import type { IExcursion } from '@/entities/excursions/model/types';
 import { CloseIcon } from '@/shared/ui/icons';
@@ -35,13 +36,6 @@ const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
 const handleSubmit = async (values: GenericObject) => {
 	await saveExcursion(values as IExcursion);
 	router.push('/excursions');
-};
-
-const onInvalidSubmit = async ({ errors }: GenericObject) => {
-	const keys = Object.keys(errors);
-	if (keys?.length) {
-		document.getElementById(keys[0])?.scrollIntoView({ behavior: 'smooth' });
-	}
 };
 
 onMounted(async () => {
@@ -83,7 +77,6 @@ onMounted(async () => {
 				label="Города"
 				column
 				multiple
-				:selected="excursion.cities"
 				:list="citiesList"
 			/>
 			<BaseInput

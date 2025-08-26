@@ -41,12 +41,12 @@ export const getTour = async (id: string): Promise<ITour> => {
  * @returns A promise that resolves to the JSON response from the server if the request succeeds, or rejects with an error if the request fails.
  * @throws If the request fails, the promise is rejected with an error.
  */
-export const editTour = async (tour: ITour): Promise<JSON | Error> => {
+export const editTour = async (tour: ITour): Promise<ITour | JSON | Error> => {
 	// Construct the URL for the API endpoint.
 	const url = `/admin/bus-tours/${tour._id}`;
 
 	// Send the request to the server.
-	return await fetchApi.put(url, tour);
+	return await fetchApi.put<ITour>(url, tour);
 };
 
 /**

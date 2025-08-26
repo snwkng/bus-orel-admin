@@ -45,7 +45,7 @@ watch(
 	async () => {
 		if (value.value?.length !== files.value.length) {
 			value.value?.forEach(async (x: string) => {
-				if (files.value.findIndex((y: File) => y?.name === x) === -1) {
+				if (x && files.value.findIndex((y: File) => y?.name === x) === -1) {
 					const res = await getFile(x);
 					if (res) {
 						files.value.push(res);

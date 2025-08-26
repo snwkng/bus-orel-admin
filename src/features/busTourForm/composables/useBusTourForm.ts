@@ -33,7 +33,7 @@ export function useBusTourForm(type: string, id?: string) {
     includedInThePrice: [],
     images: [],
     seaType: '',
-    documentName: '',
+    documentName: [],
     tours: [],
   });
 
@@ -42,16 +42,18 @@ export function useBusTourForm(type: string, id?: string) {
   const loadTour = async () => {
     if (type === 'edit' && id) {
       const tour = await getTour(id);
+      console.log(busTour.value)
+      console.log(tour)
       Object.assign(busTour.value, tour);
     }
   };
 
-  const saveTour = async () => {
+  const saveTour = async (values: ITour) => {
     if (type === 'create') {
       // delete busTour?.value?._id;
-      await createTour(busTour.value);
+      await createTour(values);
     } else {
-      await editTour(busTour.value);
+      await editTour(values);
     }
   };
 
