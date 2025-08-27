@@ -112,7 +112,7 @@ const removeSingleValue = () => {
 					@click="toggle"
 					@keydown.enter.stop="toggle"
 				>
-				<div v-if="fields.length && multiple">
+				<template v-if="fields.length && multiple">
 					<div
 						v-for="(item, idx) in fields"
 						:key="item.key"
@@ -121,8 +121,8 @@ const removeSingleValue = () => {
 					>
 						{{ item?.value }}
 					</div>
-				</div>
-				<div v-if="value">
+				</template>
+				<div v-if="value && !multiple">
 					<div
 						@click.stop="removeSingleValue"
 						class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
