@@ -140,11 +140,25 @@ const parsePropertyName = (propertyName: string, row: any) => {
 									<template v-if="config?.dataType === 'arrayString'">
 										<div
 											:class="{
-												'line-clamp-4': parsePropertyName(config.propertyName, row).join('')?.length
+												'line-clamp-4': parsePropertyName(
+													config.propertyName,
+													row
+												).join('')?.length
 											}"
 										>
 											{{
-												parsePropertyName(config.propertyName, row).join('\n')
+												parsePropertyName(config.propertyName, row).join(', ')
+											}}
+										</div>
+									</template>
+									<template v-if="config?.dataType === 'arrayDates'">
+										<div>
+											{{
+												parsePropertyName(config.propertyName, row)
+													.map((x: Date) =>
+														dayjs(x).format('DD.MM.YYYY')
+													)
+													?.join('\n')
 											}}
 										</div>
 									</template>

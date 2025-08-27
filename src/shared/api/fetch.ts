@@ -9,14 +9,15 @@ class FetchApi {
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
 	};
+	private urlWithParams(url: string, params?: Record<string, string>) {
+		let getUrl = new URL(`/api${url}`, this.baseUrl)
+		if (params && Object.keys(params).length) getUrl.search = new URLSearchParams(params).toString();
+		return getUrl
+	}
 
 	async get<T>(url: string, params?: any): Promise<T> {
 		try {
-			const res = await fetch(
-				`${this.baseUrl}${url}` +
-				new URLSearchParams({
-					...params
-				}),
+			const res = await fetch(this.urlWithParams(url, params),
 				{
 					method: 'GET',
 					headers: new Headers(this.headers),
@@ -117,6 +118,6 @@ class FetchApi {
 
 export const fetchApi = new FetchApi(
 	process.env.NODE_ENV === 'development'
-		? import.meta.env.VITE_DEV_BASE_URL + '/api'
+		? `${import.meta.env.VITE_DEV_BASE_URL}/api`
 		: import.meta.env.VITE_BASE_URL + '/api'
 );

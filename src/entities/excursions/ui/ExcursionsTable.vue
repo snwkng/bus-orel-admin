@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useExcursionStore } from '../model';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
 
 const router = useRouter();
+const route = useRoute();
 const store = useExcursionStore();
 const { getFile } = store;
 
-onMounted(async () => {
-	await store.getExcursions();
-});
+
+watch(() => route.query, async (val: LocationQuery) => {
+	await store.getExcursions(val as Record<string, string>);
+}, {immediate: true})
+
 
 const excursions = computed(() => store.excursions);
 
@@ -25,15 +28,15 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 		cellWidth: '300px',
 		dataType: 'arrayString'
 	},
-	{ label: 'Изображения', propertyName: 'images' },
+	{ label: 'Изображения', propertyName: 'images', cellWidth: '250px' },
 	{ label: 'Длительность', propertyName: 'duration' },
-	{ label: 'Цена', propertyName: 'price', cellWidth: '100px' },
+	{ label: 'Цена', propertyName: 'price', dataType: 'money', cellWidth: '120px' },
 	{ label: 'Отель', propertyName: 'hotelName' },
-	{ label: 'Название прайса', propertyName: 'documentName' },
+	{ label: 'Название прайса', propertyName: 'documentName', dataType: 'arrayString' },
 	{
-		label: 'Начало экскурсии',
+		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
-		dataType: 'date'
+		dataType: 'arrayDates'
 	},
 	{ label: 'Город', propertyName: 'cities', dataType: 'arrayString' },
 	{
