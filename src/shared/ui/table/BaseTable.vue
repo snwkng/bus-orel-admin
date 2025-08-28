@@ -155,7 +155,7 @@ const parsePropertyName = (propertyName: string, row: any) => {
 										<div>
 											{{
 												parsePropertyName(config.propertyName, row)
-													.map((x: Date) =>
+													?.map((x: Date) =>
 														dayjs(x).format('DD.MM.YYYY')
 													)
 													?.join('\n')
