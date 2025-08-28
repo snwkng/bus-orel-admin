@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useExcursionStore } from '../model';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 
