@@ -35,6 +35,7 @@ export interface ITour {
 	seaType: string;
 	documentName: string[];
 	tours: IHotelRoomInfo[];
+	published: boolean;
 }
 
 export interface IHotelRoomInfo {

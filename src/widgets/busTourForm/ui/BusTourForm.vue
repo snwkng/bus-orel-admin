@@ -21,6 +21,8 @@ import {
 } from 'vee-validate';
 import { CloseIcon } from '@/shared/ui/icons';
 
+import { togglePublishTour } from '@/entities/busTours/api';
+
 export interface Props {
 	type: string;
 }
@@ -40,8 +42,12 @@ const handleSubmit = async (values: GenericObject) => {
 	// router.push('/bus-tours');
 };
 
-const updateTour = (tours: IHotelRoomInfo[]) => {
-	busTour.value.tours = tours;
+// const updateTour = (tours: IHotelRoomInfo[]) => {
+// 	busTour.value.tours = tours;
+// };
+
+const togglePublished = async (published: boolean) => {
+	busTour.value = await togglePublishTour(route.params.id as string, published);
 };
 
 onMounted(async () => {
@@ -49,7 +55,7 @@ onMounted(async () => {
 	await loadTour().then(() => {
 		// принудительно устанавливаем значения формы после их получения
 		busTourForm.value?.resetForm({ values: { ...busTour.value } });
-	});;
+	});
 });
 </script>
 <template>
@@ -61,14 +67,13 @@ onMounted(async () => {
 		@invalid-submit="onInvalidSubmit"
 		v-slot="{ values }"
 	>
-	<!-- {{ values }} -->
+		<!-- {{ values }} -->
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
 				label="Название Гостиницы"
 				column
 				:validator="string().required('Обязательное поле')"
-
 			/>
 			<BaseInput
 				name="type"
@@ -108,7 +113,7 @@ onMounted(async () => {
 				column
 				:value="busTour.additionalInfo.checkInOut.checkIn"
 			/>
-				<BaseInput
+			<BaseInput
 				name="additionalInfo.checkInOut.checkOut"
 				label="Время выселения"
 				column
@@ -133,20 +138,10 @@ onMounted(async () => {
 				column
 				:value="busTour.address.region"
 			/>
-			<TheSelect
-				name="address.city"
-				label="Города"
-				column
-				:list="citiesList"
-			/>
-			<BaseInput
-				name="seaType"
-				label="Море"
-				column
-				:value="busTour.seaType"
-			/>
+			<TheSelect name="address.city" label="Города" column :list="citiesList" />
+			<BaseInput name="seaType" label="Море" column :value="busTour.seaType" />
 
-				<FieldArray name="includedInThePrice" v-slot="{ fields, push, remove }">
+			<FieldArray name="includedInThePrice" v-slot="{ fields, push, remove }">
 				<div class="the-label" v-if="!fields.length">В стоимость включено</div>
 				<div class="relative" v-for="(field, idx) in fields" :key="field.key">
 					<BaseTextArea
@@ -195,9 +190,20 @@ onMounted(async () => {
 				<HotelRoom name="tours" :values="busTour.tours" />
 			</div>
 		</div>
-		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
+		<div
+			class="sticky bottom-0 flex w-full items-center gap-x-2 bg-white px-6 py-4"
+		>
 			<button class="base-btn max-w-[300px]" type="submit">
 				{{ type === 'create' ? 'Создать гостиницу' : 'Сохранить' }}
+			</button>
+
+			<button
+				class="secondary-btn max-w-[300px]"
+				type="button"
+				v-if="type === 'edit'"
+				@click="togglePublished(!busTour.published)"
+			>
+				{{ busTour.published ? 'Снять с публикации' : 'Опубликовать' }}
 			</button>
 		</div>
 	</Form>

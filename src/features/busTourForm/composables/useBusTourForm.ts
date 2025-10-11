@@ -35,6 +35,7 @@ export function useBusTourForm(type: string, id?: string) {
     seaType: '',
     documentName: [],
     tours: [],
+    published: false,
   });
 
   const { createTour, editTour, getTour, getCitiesList } = useBusTourStore();
@@ -42,8 +43,8 @@ export function useBusTourForm(type: string, id?: string) {
   const loadTour = async () => {
     if (type === 'edit' && id) {
       const tour = await getTour(id);
-      console.log(busTour.value)
-      console.log(tour)
+      console.log(busTour.value);
+      console.log(tour);
       Object.assign(busTour.value, tour);
     }
   };

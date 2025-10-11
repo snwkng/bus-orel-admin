@@ -10,9 +10,9 @@ class FetchApi {
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
 	};
 	private urlWithParams(url: string, params?: Record<string, string>) {
-		let getUrl = new URL(`/api${url}`, this.baseUrl)
+		let getUrl = new URL(`/api${url}`, this.baseUrl);
 		if (params && Object.keys(params).length) getUrl.search = new URLSearchParams(params).toString();
-		return getUrl
+		return getUrl;
 	}
 
 	async get<T>(url: string, params?: any): Promise<T> {
@@ -62,6 +62,20 @@ class FetchApi {
 		}
 	}
 
+	async patch<T>(url: string, body?: any): Promise<JSON | Error | T> {
+		try {
+			const res = await fetch(`${this.baseUrl}${url}`, {
+				method: 'PATCH',
+				headers: this.headers,
+				body: JSON.stringify(body)
+			});
+			if (!res.ok) throw handleError(res);
+			return res.json();
+		} catch (err: unknown) {
+			handleError(err);
+		}
+	}
+
 	async delete(url: string) {
 		try {
 			const res = await fetch(`${this.baseUrl}${url}`, {
@@ -88,8 +102,8 @@ class FetchApi {
 				body: formData
 			});
 			return res.text();
-		} catch(err: unknown) {
-			handleError(err)
+		} catch (err: unknown) {
+			handleError(err);
 		}
 	}
 
