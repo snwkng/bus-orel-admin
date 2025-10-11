@@ -7,7 +7,9 @@ import TheHeader from '@/shared/ui/header';
 		<TheNavbar />
 		<div class="flex-1 flex-col overflow-auto">
 			<TheHeader />
-			<main class="bg-slate-200 rounded-tl-lg transition-all h-[calc(100vh-80px)] overflow-hidden">
+			<main
+				class="h-[calc(100vh-96px)] overflow-hidden rounded-tl-lg bg-slate-200 transition-all"
+			>
 				<slot />
 			</main>
 		</div>

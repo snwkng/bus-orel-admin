@@ -127,3 +127,8 @@ export const deleteFile = async (
 		throw err;
 	}
 };
+
+export const togglePublishTour = async (id: string, published: boolean): Promise<T | JSON | Error> => {
+	const res = await fetchApi.patch(`/admin/bus-tours/published/${id}`, { published });
+	return res as ITour;
+};
