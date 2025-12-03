@@ -1,3 +1,1 @@
-import { fetchApi } from './fetch';
-
-export { fetchApi };
+export { fetchApi } from './fetch';

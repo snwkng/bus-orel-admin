@@ -5,7 +5,7 @@ import {
 	type RouteLocationNormalized
 } from 'vue-router';
 import { loadLayoutMiddleware } from '@/app/router/middleware/loadLayout';
-import { checkAuth } from '@/app/router/middleware/checkAuth';
+import { useAuthStore } from '@/features/auth/model';
 
 const DEFAULT_TITLE = 'Панель управления';
 
@@ -17,7 +17,8 @@ const router = createRouter({
 			name: 'login',
 			component: () => import('@/pages/login'),
 			meta: {
-				layout: 'auth'
+				layout: 'auth',
+				public: true
 			}
 		},
 		{
@@ -86,9 +87,19 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	await loadLayoutMiddleware(to);
-	const canAccess = await checkAuth();
-	if (to.name === 'login' && canAccess) return { name: 'home' };
-	if (to.name !== 'login' && !canAccess) return '/login';
+	const authStore = useAuthStore();
+  
+  // Публичные страницы
+  if (to.meta.public) return;
+  
+  // Защищённые
+  // if (!authStore.isLoggedIn) {
+  //   return '/login';
+  // }
+  
+  // if (!authStore.user) {
+  //   await authStore.checkAuth();
+  // }
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

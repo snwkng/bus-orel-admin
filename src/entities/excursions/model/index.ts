@@ -11,7 +11,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 	actions: {
 		async getExcursions(params?: Record<string, string | number | boolean>): Promise<void> {
 			try {
-				const response = await fetchApi.get<IExcursion[]>('/admin/excursions', params);
+				const response = await fetchApi.get<IExcursion[]>('/api/admin/excursions', params);
 				this.excursions = response;
 			} catch (err: any) {
 				console.error(err);
@@ -21,7 +21,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getExcursion(id: string): Promise<IExcursion> {
 			try {
-				const response = await fetchApi.get<IExcursion>('/admin/excursions/' + id);
+				const response = await fetchApi.get<IExcursion>('/api/admin/excursions/' + id);
 				return response;
 			} catch (err: any) {
 				console.error(err);
@@ -31,7 +31,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async createExcursion(excursion: IExcursion): Promise<void | Error> {
 			try {
-				await fetchApi.post('/admin/excursions', excursion);
+				await fetchApi.post('/api/admin/excursions', excursion);
 			} catch (err: any) {
 				console.error(err);
 				throw err;
@@ -40,7 +40,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async editExcursion(excursion: IExcursion): Promise<IExcursion | Error> {
 			// Construct the URL for the API endpoint.
-			const url = `/admin/excursions/${excursion._id}`;
+			const url = `/api/admin/excursions/${excursion._id}`;
 			// Send the request to the server.
 			const response = await fetchApi.put(url, excursion) as IExcursion;
 			return response
@@ -48,7 +48,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async deleteExcursion(id: string): Promise<void> {
 			try {
-				await fetchApi.delete('/admin/excursions/' + id);
+				await fetchApi.delete('/api/admin/excursions/' + id);
 			} catch (err: any) {
 				console.error(err);
 				throw err;
@@ -57,7 +57,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async uploadFile(File: FormData): Promise<string> {
 			try {
-				const res: string = await fetchApi.upload('/admin/s3/upload', File);
+				const res: string = await fetchApi.upload('/api/admin/s3/upload', File);
 				return res;
 			} catch (err: any) {
 				console.error(err);
@@ -69,7 +69,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			fileName: string,
 		): Promise<File> {
 			try {
-				const res: File = await fetchApi.download(`/s3/download/`, fileName);
+				const res: File = await fetchApi.download(`/api/s3/download/`, fileName);
 				return res;
 			} catch (err: any) {
 				console.error(err);
@@ -81,7 +81,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			fileName: string,
 		): Promise<boolean> {
 			try {
-				const res: boolean = await fetchApi.delete(`/admin/s3/delete?uuid=${fileName}`);
+				const res: boolean = await fetchApi.delete(`/api/admin/s3/delete?uuid=${fileName}`);
 				return res;
 			} catch (err: any) {
 				console.error(err);
@@ -91,7 +91,7 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getCitiesList(): Promise<void> {
 			try {
-				const response = await fetchApi.get<SelectItem[]>('/admin/excursions/cities-list');
+				const response = await fetchApi.get<SelectItem[]>('/api/admin/excursions/cities-list');
 				this.citiesList = response;
 			} catch (err: any) {
 				console.error(err);

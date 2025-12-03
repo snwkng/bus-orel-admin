@@ -7,7 +7,9 @@ import {
 	uploadFile,
 	getFile,
 	deleteTour,
-	deleteFile
+	deleteFile,
+	getCitiesList,
+	getTour
 } from '../api';
 import { fetchApi } from '@/shared/api';
 
@@ -23,13 +25,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async getTour(id: string): Promise<ITour> {
-			try {
-				const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
-				return response;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+			return await getTour(id)
 		},
 
 		async createTour(tour: ITour): Promise<void | Error> {
@@ -62,12 +58,8 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		},
 
 		async getCitiesList(): Promise<void> {
-			try {
-				const response = await fetchApi.get<SelectItem[]>('/admin/bus-tours/cities-list');
-				this.citiesList = response;
-			} catch (err: any) {
-				console.error(err);
-			}
+			const res = await getCitiesList();
+			this.citiesList = res;
 		}
 	}
 });

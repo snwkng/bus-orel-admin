@@ -1,18 +1,17 @@
 import { handleError } from './errorHandler';
 class FetchApi {
-	private readonly baseUrl: string;
-
-	constructor(baseUrl: string) {
-		this.baseUrl = baseUrl;
-	}
 	private headers = {
 		'Content-Type': 'application/json',
 		'Authorization': `Bearer ${localStorage.getItem('token')}`
 	};
 	private urlWithParams(url: string, params?: Record<string, string>) {
-		let getUrl = new URL(`/api${url}`, this.baseUrl);
-		if (params && Object.keys(params).length) getUrl.search = new URLSearchParams(params).toString();
-		return getUrl;
+		let search = ''
+		if (params && Object.keys(params).length) search = new URLSearchParams(params).toString();
+		if (search) {
+			return `${url}${search}`
+		} else {
+			return url
+		}
 	}
 
 	async get<T>(url: string, params?: any): Promise<T> {
@@ -33,7 +32,7 @@ class FetchApi {
 
 	async post<T>(url: string, body?: any): Promise<void | JSON | Error | T> {
 		try {
-			const res = await fetch(`${this.baseUrl}${url}`, {
+			const res = await fetch(url, {
 				method: 'POST',
 				headers: this.headers,
 				body: JSON.stringify(body)
@@ -50,7 +49,7 @@ class FetchApi {
 
 	async put<T>(url: string, body?: any): Promise<JSON | Error | T> {
 		try {
-			const res = await fetch(`${this.baseUrl}${url}`, {
+			const res = await fetch(url, {
 				method: 'PUT',
 				headers: this.headers,
 				body: JSON.stringify(body)
@@ -64,7 +63,7 @@ class FetchApi {
 
 	async patch<T>(url: string, body?: any): Promise<JSON | Error | T> {
 		try {
-			const res = await fetch(`${this.baseUrl}${url}`, {
+			const res = await fetch(url, {
 				method: 'PATCH',
 				headers: this.headers,
 				body: JSON.stringify(body)
@@ -78,7 +77,7 @@ class FetchApi {
 
 	async delete(url: string) {
 		try {
-			const res = await fetch(`${this.baseUrl}${url}`, {
+			const res = await fetch(url, {
 				method: 'DELETE',
 				headers: this.headers,
 			});
@@ -94,7 +93,7 @@ class FetchApi {
 			if (!(formData instanceof FormData)) {
 				throw new Error('Invalid FormData object');
 			}
-			const res = await fetch(`${this.baseUrl}${url}`, {
+			const res = await fetch(url, {
 				method: 'POST',
 				headers: {
 					'Authorization': this.headers['Authorization']
@@ -110,7 +109,7 @@ class FetchApi {
 	async download(url: string, fileName: string) {
 		try {
 			const res: Response = await fetch(
-				`${this.baseUrl}${url}${fileName}`,
+				`${url}${fileName}`,
 				{
 					headers: {
 						'Authorization': this.headers['Authorization']
@@ -130,8 +129,4 @@ class FetchApi {
 	}
 }
 
-export const fetchApi = new FetchApi(
-	process.env.NODE_ENV === 'development'
-		? `${import.meta.env.VITE_DEV_BASE_URL}/api`
-		: import.meta.env.VITE_BASE_URL + '/api'
-);
+export const fetchApi = new FetchApi();
