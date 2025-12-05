@@ -92,7 +92,6 @@ async function _request<T>(
     }
 
     return {
-      // ✅ Безопасное приведение (общепринято для API-клиентов)
       data: data as any as T,
       status: response.status,
       headers: response.headers,
@@ -140,6 +139,31 @@ export const api = {
     config: { headers?: HeadersInit; signal?: AbortSignal; } = {},
   ) => _request<T>('DELETE', url, config),
 
+  upload: async (url: string, file: FormData, config: { headers?: HeadersInit; signal?: AbortSignal; } = {}): Promise<string> => {
+
+    const authHeader = getAuthHeader();
+    const headers = new Headers(config.headers ?? {});
+    if (authHeader) {
+      headers.set('Authorization', authHeader);
+    }
+    const response = await fetch(url, {
+      method: 'POST',
+      body: file
+    });
+    if (response.ok) {
+      return await response.text();
+    } else {
+      let errorText = '';
+      try {
+        errorText = await response.text();
+      } catch {
+        errorText = response.statusText;
+      }
+      throw new ApiError(`Upload failed: ${response.status}`, response.status, url, errorText);
+    }
+
+  },
+
   downloadBlob: async (
     url: string,
     config: { params?: ParamsObject; headers?: HeadersInit; signal?: AbortSignal; } = {},
@@ -147,7 +171,9 @@ export const api = {
     const finalUrl = buildUrlWithParams(url, config.params);
     const headers = new Headers(config.headers ?? {});
     const authHeader = getAuthHeader();
-    if (authHeader) headers.set('Authorization', authHeader);
+    if (authHeader) {
+      headers.set('Authorization', authHeader);
+    }
 
     const response = await fetch(finalUrl, {
       method: 'GET',
@@ -168,9 +194,7 @@ export const api = {
     return await response.blob();
   },
 
-  /**
-   * Утилита: сохранить Blob как файл
-   */
+
   saveBlobAs: (blob: Blob, fileName: string): void => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -178,7 +202,7 @@ export const api = {
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 100);
   }
 };

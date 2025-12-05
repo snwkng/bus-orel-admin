@@ -92,14 +92,13 @@ router.beforeEach(async (to) => {
   // Публичные страницы
   if (to.meta.public) return;
   
-  // Защищённые
-  // if (!authStore.isLoggedIn) {
-  //   return '/login';
-  // }
+  if (!authStore.isLoggedIn) {
+    return '/login';
+  }
   
-  // if (!authStore.user) {
-  //   await authStore.checkAuth();
-  // }
+  if (!authStore.user) {
+    await authStore.checkAuth();
+  }
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

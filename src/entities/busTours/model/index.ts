@@ -1,17 +1,6 @@
 import { defineStore } from 'pinia';
 import type { ITour } from './types';
-import {
-	getTours,
-	createTour,
-	editTour,
-	uploadFile,
-	getFile,
-	deleteTour,
-	deleteFile,
-	getCitiesList,
-	getTour
-} from '../api';
-import { fetchApi } from '@/shared/api';
+import { busToursApi } from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
@@ -21,44 +10,44 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 	}),
 	actions: {
 		async getTours(params?: any): Promise<void> {
-			this.tours = await getTours(params);
+			this.tours = await busToursApi.getTours(params);
 		},
 
 		async getTour(id: string): Promise<ITour> {
-			return await getTour(id)
+			return await busToursApi.getTour(id);
 		},
 
 		async createTour(tour: ITour): Promise<void | Error> {
-			await createTour(tour);
+			await busToursApi.createTour(tour);
 		},
 
 		async editTour(tour: ITour): Promise<void | Error> {
-			await editTour(tour);
+			await busToursApi.editTour(tour);
 		},
 
 		async deleteTour(id: string): Promise<void> {
-			await deleteTour(id);
+			await busToursApi.deleteTour(id);
 		},
 
 		async uploadFile(Files: FormData): Promise<string> {
-			const res = await uploadFile(Files);
+			const res = await busToursApi.uploadFile(Files);
 			return res;
 		},
 
 		async getFile(
 			fileName: string,
 		): Promise<File> {
-			return await getFile(fileName);
+			return await busToursApi.getFile(fileName);
 		},
 
 		async deleteFile(
 			fileName: string,
 		): Promise<boolean> {
-			return await deleteFile(fileName);
+			return await busToursApi.deleteFile(fileName);
 		},
 
 		async getCitiesList(): Promise<void> {
-			const res = await getCitiesList();
+			const res = await busToursApi.getCitiesList();
 			this.citiesList = res;
 		}
 	}
