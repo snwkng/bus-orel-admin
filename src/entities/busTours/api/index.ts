@@ -34,7 +34,7 @@ export const busToursApi = {
 		}
 	},
 
-	editTour: async (tour: ITour): Promise<ITour | JSON | Error> => {
+	editTour: async (tour: ITour): Promise<ITour> => {
 		const url = `/api/admin/bus-tours/${tour._id}`;
 
 		const response = await api.put<ITour>(url, tour);
@@ -90,8 +90,8 @@ export const busToursApi = {
 		}
 	},
 
-	togglePublishTour: async (id: string, published: boolean) => {
-		const res = await api.patch(`/api/admin/bus-tours/published/${id}`, { published });
+	togglePublishTour: async (id: string, published: boolean): Promise<ITour> => {
+		const res = await api.patch<ITour>(`/api/admin/bus-tours/published/${id}`, { published });
 		return res?.data;
 	}
 };

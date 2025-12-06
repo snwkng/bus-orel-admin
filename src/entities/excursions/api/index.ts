@@ -88,10 +88,5 @@ export const excursionsApi = {
       console.error(err);
       throw err;
     }
-  },
-
-  togglePublishTour: async (id: string, published: boolean) => {
-    const res = await api.patch(`/api/admin/excursions/published/${id}`, { published });
-    return res?.data;
   }
 };

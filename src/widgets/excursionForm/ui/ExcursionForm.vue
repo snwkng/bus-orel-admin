@@ -131,7 +131,7 @@ onMounted(async () => {
 			<FieldArray name="thePriceIncludes" v-slot="{ fields, push, remove }">
 				<div class="the-label" v-if="!fields.length">В стоимость включено</div>
 				<div class="relative" v-for="(field, idx) in fields" :key="field.key">
-					<BaseTextArea
+					<BaseInput
 						:label="idx === 0 ? 'В стоимость включено' : ''"
 						column
 						:name="`thePriceIncludes[${idx}]`"

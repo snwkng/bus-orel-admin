@@ -1,1 +1,0 @@
-export { fetchApi } from './fetch';

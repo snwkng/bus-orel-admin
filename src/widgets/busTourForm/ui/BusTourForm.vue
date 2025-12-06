@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
-import type { IHotelRoomInfo, ITour } from '@/entities/busTours/model/types';
+import type { ITour } from '@/entities/busTours/model/types';
 import {
 	BaseInput,
 	BaseTextArea,
@@ -21,7 +21,7 @@ import {
 } from 'vee-validate';
 import { CloseIcon } from '@/shared/ui/icons';
 
-import { togglePublishTour } from '@/entities/busTours/api';
+import { busToursApi } from '@/entities/busTours/api';
 
 export interface Props {
 	type: string;
@@ -39,15 +39,11 @@ const { busTour, citiesList, loadTour, saveTour, getCitiesList } =
 
 const handleSubmit = async (values: GenericObject) => {
 	await saveTour(values as ITour);
-	// router.push('/bus-tours');
+	router.push('/bus-tours');
 };
 
-// const updateTour = (tours: IHotelRoomInfo[]) => {
-// 	busTour.value.tours = tours;
-// };
-
 const togglePublished = async (published: boolean) => {
-	busTour.value = await togglePublishTour(route.params.id as string, published);
+	busTour.value = await busToursApi.togglePublishTour(route.params.id as string, published);
 };
 
 onMounted(async () => {
@@ -187,7 +183,7 @@ onMounted(async () => {
 			/>
 			<div>
 				{{ busTour.tours }}
-				<HotelRoom name="tours" :values="busTour.tours" />
+				<HotelRoom name="tours" :values="busTour?.tours"  />
 			</div>
 		</div>
 		<div

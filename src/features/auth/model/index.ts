@@ -45,8 +45,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     logout() {
-      // localStorage.removeItem('token');
-      // this.user = null;
+      localStorage.removeItem('token');
+      this.user = null;
     },
 
     async checkAuth(): Promise<boolean> {
