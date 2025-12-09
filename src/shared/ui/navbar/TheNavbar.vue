@@ -24,7 +24,7 @@ watch(
 		class="flex h-[100vh] w-[300px] flex-col overflow-hidden bg-white transition-all sticky top-0"
 		:class="{ 'w-[60px]': !isExpanded }"
 	>
-		<div class="flex h-20 items-center justify-center">
+		<div class="flex h-20 py-6 md:py-12 items-center justify-center">
 			<RouterLink
 				class="flex flex-row items-center justify-center rounded-full bg-slate-100 py-2 px-3"
 				to="/"
