@@ -8,69 +8,58 @@ import {
 } from '@/shared/ui/forms';
 import {
 	FieldArray,
-	Form,
-	type FormContext,
-	type GenericObject
 } from 'vee-validate';
-import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref } from 'vue';
-import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
-import { onInvalidSubmit } from	'@/shared/config/composables/useHelpers'
-import { string } from 'yup';
-import type { IExcursion } from '@/entities/excursions/model/types';
+import { computed, onMounted } from 'vue';
+import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
 import { CloseIcon } from '@/shared/ui/icons';
+import { useRoute, useRouter } from 'vue-router';
 
-export interface Props {
-	type: string;
-}
-
-const props = defineProps<Props>();
-
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const exId = computed(() => route?.params?.id as string || '');
 
-const excursionForm = ref<FormContext | null>(null);
+const {
+	values,
+	meta,
+	citiesList,
+	isSubmitting,
+	buttonTitle,
+	loadExcursion,
+	getCitiesList,
+	handleSubmit,
+} = useExcursionForm(exId.value);
 
-const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
-	useExcursionForm(props.type as string, route.params.id as string);
-const handleSubmit = async (values: GenericObject) => {
-	await saveExcursion(values as IExcursion);
-	router.push('/excursions');
-};
+const onSubmit = async () => {
+	const success = await handleSubmit()
+	if (success) {
+		 router.push('/excursions');
+	}
+}
 
 onMounted(async () => {
 	await getCitiesList();
-	await loadExcursion().then(() => {
-		// принудительно устанавливаем значения формы после их получения
-		excursionForm.value?.resetForm({ values: { ...excursion.value } });
-	});
+	await loadExcursion();
 });
 </script>
 <template>
-	<Form
+	<form
 		ref="excursionForm"
 		class="form-container"
-		:initial-values="excursion"
-		@submit="handleSubmit"
-		@invalid-submit="onInvalidSubmit"
-		v-slot="{ values }"
+		@submit.prevent="onSubmit"
 	>
-		<!-- {{ values }} -->
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
 				type="text"
 				label="Название экскурсии"
 				column
-				:validator="string().required('Обязательное поле')"
-				:value="excursion.name"
+				required
 			/>
 			<BaseInput
 				name="duration"
 				type="number"
 				label="Длительность экскурсии (в днях)"
 				column
-				:value="excursion.duration"
 			/>
 			<TheSelect
 				name="cities"
@@ -84,10 +73,9 @@ onMounted(async () => {
 				type="number"
 				label="Стоимость экскрусии (от)"
 				column
-				:value="excursion.price"
 			/>
 			<TheDatePicker
-				:value="excursion.excursionStartDates"
+				:value="values.excursionStartDates"
 				name="excursionStartDates"
 				label="Даты отправления"
 				multi-dates
@@ -98,7 +86,6 @@ onMounted(async () => {
 				type="text"
 				label="Название отеля (если есть)"
 				column
-				:value="excursion.hotelName"
 			/>
 
 			<FieldArray name="description" v-slot="{ fields, push, remove }">
@@ -109,7 +96,7 @@ onMounted(async () => {
 						column
 						:name="`description[${idx}]`"
 						:placeholder="`День ${idx + 1}`"
-						:value="excursion.description[idx]"
+						:value="values.description[idx]"
 					/>
 					<button
 						type="button"
@@ -136,7 +123,7 @@ onMounted(async () => {
 						column
 						:name="`thePriceIncludes[${idx}]`"
 						placeholder="Что включено в стоимость"
-						:value="excursion.thePriceIncludes[idx]"
+						:value="values.thePriceIncludes[idx]"
 					/>
 					<button
 						type="button"
@@ -161,7 +148,7 @@ onMounted(async () => {
 				accept="image/*"
 				multiple
 				place="excursion"
-				:value="excursion.images"
+				:value="values.images"
 			/>
 			<TheFileInput
 				label="Файл прайса"
@@ -169,21 +156,20 @@ onMounted(async () => {
 				name="documentName"
 				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 				place="excursion"
-				:value="excursion.documentName"
+				:value="values.documentName"
 			/>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button
 				class="base-btn max-w-[300px]"
 				:class="{
-					'pointer-events-none !bg-deep-orange/70':
-						JSON.stringify(values) === JSON.stringify(excursion)
+					'pointer-events-none !bg-deep-orange/70': !meta.dirty || isSubmitting
 				}"
 				type="submit"
-				:disabled="JSON.stringify(values) === JSON.stringify(excursion)"
+				:disabled="!meta.dirty || isSubmitting"
 			>
-				{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
+				{{ buttonTitle }}
 			</button>
 		</div>
-	</Form>
+	</form>
 </template>
