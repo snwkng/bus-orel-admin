@@ -9,7 +9,7 @@ td, th {
 }
 
 .link-active {
-	@apply bg-ligth-blue text-white !important;
+	@apply bg-deep-blue text-white !important;
 }
 
 .link {
@@ -21,7 +21,7 @@ td, th {
 }
 
 .secondary-btn {
-	@apply py-2 px-4 bg-ligth-blue text-white rounded-lg transition-all hover:bg-ligth-blue/85;
+	@apply py-2 px-4 bg-deep-blue text-white rounded-lg transition-all hover:bg-deep-blue/85;
 }
 
 .delete-btn {

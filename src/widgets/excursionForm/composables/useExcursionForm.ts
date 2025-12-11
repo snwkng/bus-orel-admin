@@ -1,26 +1,23 @@
-import type { IExcursion } from '@/entities/excursions/model/types';
+import type { CreateExcursionDto, EditExcursionDto } from '@/entities/excursions/model/types';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { storeToRefs } from 'pinia';
 import { useForm } from 'vee-validate';
 import { onInvalidSubmit } from '@/shared/config/composables/useHelpers';
 import * as yup from 'yup';
-import { useRouter } from 'vue-router';
 import { computed } from 'vue';
 
-const router = useRouter();
-
 const schema = yup.object({
-  name: yup.string().required('Укажите название экскурсии').defined(),
-  description: yup.array().defined(),
-  images: yup.array().defined(),
-  duration: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value),
-  price: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value),
-  documentName: yup.array().defined(),
-  excursionStartDates: yup.array().defined(),
-  cities: yup.array().defined(),
+  name: yup.string().required('Укажите название экскурсии').defined().typeError('Поле должно быть текстовым'),
+  description: yup.array().of(yup.string()).defined(),
+  images: yup.array().of(yup.string()).defined(),
+  duration: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
+  price: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
+  documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
+  excursionStartDates: yup.array().of(yup.string()).defined(),
+  cities: yup.array().of(yup.string()).defined(),
   hotelName: yup.string().defined(),
-  thePriceIncludes: yup.array().defined()
-}) as yup.ObjectSchema<IExcursion>;
+  thePriceIncludes: yup.array().of(yup.string()).defined()
+}) as yup.ObjectSchema<CreateExcursionDto>;
 
 export function useExcursionForm(exId?: string) {
 
@@ -31,7 +28,7 @@ export function useExcursionForm(exId?: string) {
     resetForm,
     meta,
     isSubmitting,
-  } = useForm<IExcursion>({
+  } = useForm<CreateExcursionDto>({
     validationSchema: schema,
     initialValues: {
       name: '',
@@ -66,7 +63,7 @@ export function useExcursionForm(exId?: string) {
 
   const saveExcursion = async () => {
     if (exId) {
-      const res = await editExcursion({ ...values, _id: exId }) as IExcursion;
+      const res = await editExcursion({ ...values, _id: exId });
       resetForm({
         values: res,
       });
@@ -84,5 +81,13 @@ export function useExcursionForm(exId?: string) {
     return true;
   };
 
-  return { values, meta, errors, isSubmitting, buttonTitle, citiesList, validate, resetForm, loadExcursion, saveExcursion, handleSubmit, getCitiesList };
+  return {
+    meta,
+    citiesList,
+    isSubmitting,
+    buttonTitle,
+    loadExcursion,
+    getCitiesList,
+    handleSubmit
+  };
 }

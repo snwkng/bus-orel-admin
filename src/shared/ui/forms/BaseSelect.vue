@@ -6,16 +6,15 @@ defineOptions({
 import { computed, ref, toRef } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
-import type { StringSchema } from 'yup';
 import { useField, useFieldArray } from 'vee-validate';
 
 export interface Props {
 	name: string;
 	list?: SelectItem[];
 	label?: string;
-	validator?: StringSchema<string>;
 	column?: boolean;
 	multiple?: boolean;
+	required?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,9 +23,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const { remove, push, replace, fields } = useFieldArray(name.value.toString());
+const {
+	value,
+	errorMessage,
+	meta,
+	handleChange,
+} = useField<string>(name);
 
-const { value, errorMessage, meta } = useField(name, props.validator);
+const { remove, push, replace, fields } = useFieldArray(name);
 
 const showSelect = ref(false);
 const inputValue = ref('');
@@ -66,8 +70,7 @@ const addToSelected = (item: SelectItem) => {
 	if (props.multiple) {
 		push(item.name);
 	} else {
-		value.value = item.name
-		// replace([item.name]);
+		handleChange(item.name)
 	}
 };
 
@@ -76,15 +79,14 @@ const add = () => {
 		if (props.multiple) {
 			push(inputValue.value);
 		} else {
-			value.value = inputValue.value
-			// replace([inputValue.value]);
+			replace([inputValue.value]);
 		}
 		inputValue.value = '';
 	}
 };
 
 const removeSingleValue = () => {
-	value.value = ''
+	handleChange('')
 }
 </script>
 <template>
@@ -94,7 +96,7 @@ const removeSingleValue = () => {
 				{{ label }}
 				<span
 					class="text-red-600"
-					v-if="validator?.describe().tests?.some((x) => x.name === 'required')"
+					v-if="required"
 					>*</span
 				>
 			</label>

@@ -148,6 +148,7 @@ export const api = {
     }
     const response = await fetch(url, {
       method: 'POST',
+      headers,
       body: file
     });
     if (response.ok) {

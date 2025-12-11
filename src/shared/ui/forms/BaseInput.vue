@@ -10,31 +10,21 @@ export interface IProps {
 	label?: string;
 	placeholder?: string;
 	column?: boolean;
-	required?: boolean
+	required?: boolean;
 }
 
 const props = defineProps<IProps>();
 
 const name = toRef(props, 'name');
 
-const {
-	value,
-	errorMessage,
-	meta,
-	handleChange,
-	handleBlur
-} = useField<string>(name);
+const { value, errorMessage, meta, handleChange, handleBlur } =
+	useField<string>(name);
 </script>
 <template>
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
-			<span
-				class="text-red-600"
-				v-if="required"
-			>
-				*
-			</span>
+			<span class="text-red-600" v-if="required"> * </span>
 		</label>
 		<input
 			:id="name"
@@ -50,7 +40,8 @@ const {
 			:name="name"
 			class="text-red-600"
 			v-show="meta.touched && (errorMessage || !meta.valid)"
-			>{{ errorMessage }}</span
-		>
+			>
+				{{ errorMessage }}
+			</span>
 	</div>
 </template>

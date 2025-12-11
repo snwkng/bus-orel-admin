@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import type { IExcursion } from './types';
+import type { EditExcursionDto, CreateExcursionDto } from './types';
 import { excursionsApi } from '../api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({
-		excursions: [] as IExcursion[],
+		excursions: [] as EditExcursionDto[],
 		files: [] as File[],
 		citiesList: [] as SelectItem[],
 	}),
@@ -17,11 +17,11 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 			return await excursionsApi.getExcursion(id);
 		},
 
-		async createExcursion(excursion: IExcursion) {
+		async createExcursion(excursion: CreateExcursionDto): Promise<void> {
 			return await excursionsApi.createExcursion(excursion);
 		},
 
-		async editExcursion(excursion: IExcursion) {
+		async editExcursion(excursion: EditExcursionDto): Promise<EditExcursionDto> {
 			return await excursionsApi.editExcursion(excursion);
 		},
 

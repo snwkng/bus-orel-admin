@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, toRef, computed } from 'vue';
+import { ref, watch, toRef } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { useBusTourStore } from '@/entities/busTours/model';
-import { useField } from 'vee-validate';
+import { useFieldArray, type FieldEntry } from 'vee-validate';
 
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
-import type { StringSchema } from 'yup';
 
 export interface Props {
 	accept?: string;
@@ -14,9 +13,8 @@ export interface Props {
 	label?: string;
 	column?: boolean;
 	multiple?: boolean;
-	validator?: StringSchema<string>;
-	value?: string[] | string;
 	place: string;
+	required?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -26,13 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const initialValue = computed(() => {
-	return typeof props.value === 'string' ? [props?.value] : props?.value || [];
-});
-
-const { value, errorMessage, meta } = useField(name, props.validator, {
-	initialValue: initialValue.value
-});
+const { remove, push, replace, fields } = useFieldArray(name);
 
 const store =
 	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
@@ -41,26 +33,31 @@ const files = ref<File[]>([]);
 const file = ref<any>(null);
 
 watch(
-	() => value.value,
+	() => fields.value,
 	async () => {
-		if (value.value?.length !== files.value.length) {
-			value.value?.forEach(async (x: string) => {
-				if (x && files.value.findIndex((y: File) => y?.name === x) === -1) {
-					const res = await getFile(x);
-					if (res) {
-						files.value.push(res);
+		if (fields.value.length !== files.value.length) {
+			fields.value?.forEach(
+				async (x: FieldEntry<unknown> | FieldEntry<string>) => {
+					if (
+						x.value &&
+						files.value.findIndex((y: File) => y?.name === x.value) === -1
+					) {
+						const res = await getFile(x.value as string);
+						if (res) {
+							files.value.push(res);
+						}
 					}
 				}
-			});
+			);
 		}
 	}
 );
 
-const remove = async (index: number, fileName: string) => {
+const removeFile = async (index: number, fileName: string) => {
 	try {
 		await deleteFile(fileName);
 		files.value.splice(index, 1);
-		value.value = files.value.map((x: File) => x.name);
+		remove(index);
 	} catch (error) {
 		console.error('err');
 	}
@@ -74,8 +71,7 @@ const onChange = () => {
 		return uploadFile(formData);
 	});
 	Promise.all(arrayFunctions).then((res: string[]) => {
-		files.value = [
-			...files.value,
+		const updatedFiles = [
 			...newFiles.map((x, index) => {
 				const file: File = new File([x], res[index], {
 					type: x.type
@@ -83,7 +79,8 @@ const onChange = () => {
 				return file;
 			})
 		];
-		value.value = files.value.map((x: File) => x.name) as string[];
+		files.value = props.multiple ? [...files.value, ...updatedFiles] : [...updatedFiles];
+		replace(files.value?.map((x: File) => x.name));
 	});
 };
 </script>
@@ -91,15 +88,11 @@ const onChange = () => {
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
-			<span
-				class="text-red-600"
-				v-if="validator?.describe().tests?.some((x) => x.name === 'required')"
-				>*</span
-			>
+			<span class="text-red-600" v-if="required">*</span>
 		</label>
 		<div
 			class="flex w-full flex-wrap gap-5 rounded-lg bg-white p-5"
-			v-if="value?.length"
+			v-if="fields?.length"
 		>
 			<div class="relative" v-for="file in files" :key="file.name">
 				<GenerateFilePreview :get-file="file" />
@@ -112,7 +105,7 @@ const onChange = () => {
 						'absolute rounded-full bg-slate-100 p-2 shadow-md'
 					]"
 					type="button"
-					@click="remove(files.indexOf(file), file.name)"
+					@click="removeFile(files.indexOf(file), file.name)"
 					title="Удалить файл"
 				>
 					<CloseIcon :width="12" :height="12" />

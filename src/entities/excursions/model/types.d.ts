@@ -1,6 +1,6 @@
 import { ObjectId } from 'bson';
 
-export interface IExcursion {
+interface IExcursion {
 	_id: ObjectId;
 	name: string;
 	description: string[];
@@ -13,3 +13,6 @@ export interface IExcursion {
 	hotelName: string;
 	thePriceIncludes: string[];
 }
+
+export type CreateExcursionDto = Omit<IExcursion, 'id'>;
+export type EditExcursionDto = Omit<IExcursion>;

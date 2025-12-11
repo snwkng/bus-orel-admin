@@ -1,12 +1,12 @@
 import { api } from '@/shared/lib/api/api';
-import type { IExcursion } from '../model/types';
+import type { EditExcursionDto, CreateExcursionDto } from '../model/types';
 
 export const excursionsApi = {
   getExcursions: async (
     params?: Record<string, string | number | boolean>
-  ): Promise<IExcursion[]> => {
+  ): Promise<EditExcursionDto[]> => {
     try {
-      const response = await api.get<IExcursion[]>('/api/admin/excursions', { params });
+      const response = await api.get<EditExcursionDto[]>('/api/admin/excursions', { params });
       return response?.data;
     } catch (err: any) {
       console.error(err);
@@ -24,9 +24,9 @@ export const excursionsApi = {
     }
   },
 
-  getExcursion: async (id: string): Promise<IExcursion> => {
+  getExcursion: async (id: string): Promise<EditExcursionDto> => {
     try {
-      const response = await api.get<IExcursion>('/api/admin/excursions/' + id);
+      const response = await api.get<EditExcursionDto>('/api/admin/excursions/' + id);
       return response?.data;
     } catch (err: any) {
       console.error(err);
@@ -34,14 +34,14 @@ export const excursionsApi = {
     }
   },
 
-  editExcursion: async (tour: IExcursion): Promise<IExcursion | JSON | Error> => {
+  editExcursion: async (tour: EditExcursionDto): Promise<EditExcursionDto> => {
     const url = `/api/admin/excursions/${tour._id}`;
 
-    const response = await api.put<IExcursion>(url, tour);
+    const response = await api.put<EditExcursionDto>(url, tour);
     return response?.data;
   },
 
-  createExcursion: async (tour: IExcursion): Promise<void | JSON | Error> => {
+  createExcursion: async (tour: CreateExcursionDto): Promise<void> => {
     await api.post<void>('/api/admin/excursions', tour);
   },
 

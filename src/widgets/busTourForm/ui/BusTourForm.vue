@@ -7,7 +7,7 @@ import {
 	BaseInput,
 	BaseTextArea,
 	TheFileInput,
-	TheSelect
+	BaseSelect
 } from '@/shared/ui/forms';
 import HotelRoom from '@/widgets/hotelRoom';
 import { useBusTourForm } from '@/features/busTourForm/composables/useBusTourForm';
@@ -134,7 +134,7 @@ onMounted(async () => {
 				column
 				:value="busTour.address.region"
 			/>
-			<TheSelect name="address.city" label="Города" column :list="citiesList" />
+			<BaseSelect name="address.city" label="Города" column :list="citiesList" />
 			<BaseInput name="seaType" label="Море" column :value="busTour.seaType" />
 
 			<FieldArray name="includedInThePrice" v-slot="{ fields, push, remove }">

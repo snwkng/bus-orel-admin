@@ -196,7 +196,7 @@ const parsePropertyName = (propertyName: string, row: any) => {
 									title="Редактировать"
 									@click="editAction(row._id)"
 								>
-									<EditIcon fill="#009EFF" :width="25" :height="25" />
+									<EditIcon fill="#006DF0" :width="25" :height="25" />
 								</button>
 								<button
 									type="button"

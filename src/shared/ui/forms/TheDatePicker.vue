@@ -9,10 +9,10 @@ import type { StringSchema } from 'yup';
 export interface IProps {
 	name: string;
 	label?: string;
-	validator?: StringSchema<string>;
 	value?: string[] | string;
 	column?: boolean;
 	multiDates?: boolean;
+	required?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -21,20 +21,15 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta } = useField(name, props.validator, {
-	initialValue: props.value
-});
+const { value, errorMessage, meta, handleChange, handleBlur } =
+	useField<string>(name);
 </script>
 
 <template>
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
-			<span
-				class="text-red-600"
-				v-if="validator?.describe().tests?.some((x) => x.name === 'required')"
-				>*</span
-			>
+			<span class="text-red-600" v-if="required">*</span>
 		</label>
 		<VueDatePicker
 			v-model="value"
@@ -53,8 +48,9 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="errorMessage || !meta.valid"
-			>{{ errorMessage }}</span
+			v-show="meta.touched && (errorMessage || !meta.valid)"
 		>
+			{{ errorMessage }}
+		</span>
 	</div>
 </template>
