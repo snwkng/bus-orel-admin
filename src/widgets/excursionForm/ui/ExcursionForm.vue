@@ -38,7 +38,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-	<form ref="excursionForm" class="form-container" @submit.prevent="onSubmit">
+	<form class="form-container" @submit.prevent="onSubmit">
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
@@ -97,7 +97,7 @@ onMounted(async () => {
 			<BaseArrayFields
 				name="thePriceIncludes"
 				label="В стоимость включено"
-				addButtonLabel="Добавить день"
+				addButtonLabel="Добавить опцию"
 				:render-field="
 					(idx: number, name: string) =>
 						h(BaseInput, {

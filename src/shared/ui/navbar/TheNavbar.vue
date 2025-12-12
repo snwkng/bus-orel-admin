@@ -29,7 +29,7 @@ watch(
 				class="flex flex-row items-center justify-center"
 				to="/"
 			>
-				<img class="w-full h-full" src="/public/logo.png" alt="logo" />
+				<img class="w-full h-full" src="/logo.png" alt="logo" />
 			</RouterLink>
 		</div>
 		<nav :class="['flex flex-col gap-2', isExpanded ? 'px-6' : 'px-2']">

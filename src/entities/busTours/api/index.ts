@@ -1,12 +1,12 @@
 import { api } from '@/shared/lib/api/api';
-import type { ITour } from '../model/types';
+import type { CreateTourDto, EditTourDto } from '../model/types';
 
 export const busToursApi = {
 	getTours: async (
 		params?: Record<string, string | number | boolean>
-	): Promise<ITour[]> => {
+	): Promise<EditTourDto[]> => {
 		try {
-			const response = await api.get<ITour[]>('/api/admin/bus-tours', { params });
+			const response = await api.get<EditTourDto[]>('/api/admin/bus-tours', { params });
 			return response?.data;
 		} catch (err: any) {
 			console.error(err);
@@ -24,9 +24,9 @@ export const busToursApi = {
 		}
 	},
 
-	getTour: async (id: string): Promise<ITour> => {
+	getTour: async (id: string): Promise<EditTourDto> => {
 		try {
-			const response = await api.get<ITour>('/api/admin/bus-tours/' + id);
+			const response = await api.get<EditTourDto>('/api/admin/bus-tours/' + id);
 			return response?.data;
 		} catch (err: any) {
 			console.error(err);
@@ -34,14 +34,14 @@ export const busToursApi = {
 		}
 	},
 
-	editTour: async (tour: ITour): Promise<ITour> => {
+	editTour: async (tour: EditTourDto): Promise<EditTourDto> => {
 		const url = `/api/admin/bus-tours/${tour._id}`;
 
-		const response = await api.put<ITour>(url, tour);
+		const response = await api.put<EditTourDto>(url, tour);
 		return response?.data;
 	},
 
-	createTour: async (tour: ITour): Promise<void | JSON | Error> => {
+	createTour: async (tour: CreateTourDto): Promise<void | JSON | Error> => {
 		await api.post<void>('/api/admin/bus-tours', tour);
 	},
 
@@ -90,8 +90,8 @@ export const busToursApi = {
 		}
 	},
 
-	togglePublishTour: async (id: string, published: boolean): Promise<ITour> => {
-		const res = await api.patch<ITour>(`/api/admin/bus-tours/published/${id}`, { published });
+	togglePublishTour: async (id: string, published: boolean): Promise<EditTourDto> => {
+		const res = await api.patch<EditTourDto>(`/api/admin/bus-tours/published/${id}`, { published });
 		return res?.data;
 	}
 };
