@@ -1,7 +1,7 @@
 <!-- widgets/busTourForm/ui/BusTourForm.vue -->
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { computed, onMounted, ref } from 'vue';
+import { computed, h, onMounted, ref } from 'vue';
 import {
 	BaseInput,
 	BaseTextArea,
@@ -30,6 +30,20 @@ const {
 	changeStatus
 } = useBusTourForm(tourId.value);
 
+const renderServiceField = ({
+	index,
+	fieldName
+}: {
+	index: number;
+	fieldName: string;
+}) =>
+	h(BaseInput, {
+		name: `${fieldName}.serviceName`,
+		label: index === 0 ? 'В стоимость включено' : '',
+		placeholder: 'Название услуги',
+		column: true
+	});
+
 const onSubmit = async () => {
 	const success = await handleSubmit();
 	if (success) {
@@ -45,16 +59,8 @@ onMounted(async () => {
 <template>
 	<form class="form-container" @submit.prevent="onSubmit">
 		<div class="form-container-content">
-			<BaseInput
-				name="name"
-				label="Название Гостиницы"
-				column
-			/>
-			<BaseInput
-				name="type"
-				label="Тип (отель, гостиница и т.д)"
-				column
-			/>
+			<BaseInput name="name" label="Название Гостиницы" column />
+			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column />
 			<BaseTextArea name="description" label="Описание гостиницы" column />
 			<BaseInput name="additionalInfo.food.type" label="Питание" column />
 			<BaseInput name="additionalInfo.beach.type" label="Тип пляжа" column />
@@ -89,43 +95,9 @@ onMounted(async () => {
 				name="includedInThePrice"
 				label="В стоимость включено"
 				addButtonLabel="Добавить опцию"
-				:render-field="
-					(idx: number, name: string) =>
-						h(BaseInput, {
-							label: idx === 0 ? 'В стоимость включено' : '',
-							column: true,
-							name: name[idx].serviceName,
-							placeholder: `День ${idx + 1}`,
-						})
-				"
+				:initial-value="() => ({ serviceName: '' })"
+				:render-field="renderServiceField"
 			/>
-
-			<!-- <FieldArray name="includedInThePrice" v-slot="{ fields, push, remove }">
-				<div class="the-label" v-if="!fields.length">В стоимость включено</div>
-				<div class="relative" v-for="(field, idx) in fields" :key="field.key">
-					<BaseTextArea
-						:label="idx === 0 ? 'В стоимость включено' : ''"
-						column
-						:name="`includedInThePrice[${idx}]`"
-						:placeholder="`Опция ${idx + 1}`"
-						:value="busTour.includedInThePrice[idx].serviceName"
-					/>
-					<button
-						type="button"
-						title="удалить"
-						class="absolute right-[-10px] top-[-10px] rounded-full bg-red-500 p-2 text-white shadow-md transition-all hover:bg-red-500/85"
-						:class="{ 'my-8': idx === 0 }"
-						@click="remove(idx)"
-					>
-						<CloseIcon :width="16" :height="16" fill="white" />
-					</button>
-				</div>
-				<div class="flex flex-row gap-x-3">
-					<button type="button" class="secondary-btn mt-1" @click="push('')">
-						Добавить
-					</button>
-				</div>
-			</FieldArray> -->
 
 			<TheFileInput
 				label="Изображения гостиницы"

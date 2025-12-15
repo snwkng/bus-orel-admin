@@ -33,7 +33,7 @@ const schema = yup.object({
   minPrice: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
   includedInThePrice: yup.array().of(
     yup.object({
-      serviceName: yup.string().required(),
+      serviceName: yup.string().required('Заполните или удалите поле'),
     })
   ),
   images: yup.array().of(yup.string()).defined(),
