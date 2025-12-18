@@ -84,12 +84,12 @@ onMounted(async () => {
 				label="Программа экскурсии"
 				addButtonLabel="Добавить день"
 				:render-field="
-					(idx: number, name: string) =>
+					({index, fieldName}) =>
 						h(BaseTextArea, {
-							label: idx === 0 ? 'Программа экскурсии' : '',
+							label: index === 0 ? 'Программа экскурсии' : '',
 							column: true,
-							name,
-							placeholder: `День ${idx + 1}`,
+							name: fieldName,
+							placeholder: `День ${index + 1}`,
 						})
 				"
 			/>
@@ -99,12 +99,12 @@ onMounted(async () => {
 				label="В стоимость включено"
 				addButtonLabel="Добавить опцию"
 				:render-field="
-					(idx: number, name: string) =>
+					({index, fieldName}) =>
 						h(BaseInput, {
-							label: idx === 0 ? 'В стоимость включено' : '',
+							label: index === 0 ? 'В стоимость включено' : '',
 							column: true,
-							name,
-							placeholder: `Дополнительная опция ${idx + 1}`,
+							name: fieldName,
+							placeholder: `Дополнительная опция ${index + 1}`,
 						})
 				"
 			/>
