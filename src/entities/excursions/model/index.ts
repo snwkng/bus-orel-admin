@@ -1,101 +1,52 @@
 import { defineStore } from 'pinia';
-import type { IExcursion } from './types';
-import { fetchApi } from '@/shared/api';
+import type { EditExcursionDto, CreateExcursionDto } from './types';
+import { excursionsApi } from '../api';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => ({
-		excursions: [] as IExcursion[],
+		excursions: [] as EditExcursionDto[],
 		files: [] as File[],
 		citiesList: [] as SelectItem[],
 	}),
 	actions: {
 		async getExcursions(params?: Record<string, string | number | boolean>): Promise<void> {
-			try {
-				const response = await fetchApi.get<IExcursion[]>('/admin/excursions', params);
-				this.excursions = response;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+			this.excursions = await excursionsApi.getExcursions(params);
 		},
 
-		async getExcursion(id: string): Promise<IExcursion> {
-			try {
-				const response = await fetchApi.get<IExcursion>('/admin/excursions/' + id);
-				return response;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+		async getExcursion(id: string) {
+			return await excursionsApi.getExcursion(id);
 		},
 
-		async createExcursion(excursion: IExcursion): Promise<void | Error> {
-			try {
-				await fetchApi.post('/admin/excursions', excursion);
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+		async createExcursion(excursion: CreateExcursionDto): Promise<void> {
+			return await excursionsApi.createExcursion(excursion);
 		},
 
-		async editExcursion(excursion: IExcursion): Promise<IExcursion | Error> {
-			// Construct the URL for the API endpoint.
-			const url = `/admin/excursions/${excursion._id}`;
-			// Send the request to the server.
-			const response = await fetchApi.put(url, excursion) as IExcursion;
-			return response
+		async editExcursion(excursion: EditExcursionDto): Promise<EditExcursionDto> {
+			return await excursionsApi.editExcursion(excursion);
 		},
 
 		async deleteExcursion(id: string): Promise<void> {
-			try {
-				await fetchApi.delete('/admin/excursions/' + id);
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+			await excursionsApi.deleteExcursion(id);
 		},
 
-		async uploadFile(File: FormData): Promise<string> {
-			try {
-				const res: string = await fetchApi.upload('/admin/s3/upload', File);
-				return res;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+		async uploadFile(file: FormData): Promise<string> {
+			return await excursionsApi.uploadFile(file);
 		},
 
 		async getFile(
 			fileName: string,
 		): Promise<File> {
-			try {
-				const res: File = await fetchApi.download(`/s3/download/`, fileName);
-				return res;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+			return await excursionsApi.getFile(fileName);
 		},
 
 		async deleteFile(
 			fileName: string,
 		): Promise<boolean> {
-			try {
-				const res: boolean = await fetchApi.delete(`/admin/s3/delete?uuid=${fileName}`);
-				return res;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+			return await excursionsApi.deleteFile(fileName);
 		},
 
 		async getCitiesList(): Promise<void> {
-			try {
-				const response = await fetchApi.get<SelectItem[]>('/admin/excursions/cities-list');
-				this.citiesList = response;
-			} catch (err: any) {
-				console.error(err);
-			}
+			this.citiesList = await excursionsApi.getCitiesList();
 		}
 	}
 });

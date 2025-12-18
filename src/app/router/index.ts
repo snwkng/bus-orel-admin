@@ -5,7 +5,7 @@ import {
 	type RouteLocationNormalized
 } from 'vue-router';
 import { loadLayoutMiddleware } from '@/app/router/middleware/loadLayout';
-import { checkAuth } from '@/app/router/middleware/checkAuth';
+import { useAuthStore } from '@/features/auth/model';
 
 const DEFAULT_TITLE = 'Панель управления';
 
@@ -17,7 +17,8 @@ const router = createRouter({
 			name: 'login',
 			component: () => import('@/pages/login'),
 			meta: {
-				layout: 'auth'
+				layout: 'auth',
+				public: true
 			}
 		},
 		{
@@ -26,7 +27,7 @@ const router = createRouter({
 			component: () => import('@/pages/home')
 		},
 		{
-			path: '/bus-tours',
+			path: '/hotels',
 			name: 'bus-tours',
 			component: () => import('@/pages/busTours'),
 			meta: {
@@ -34,7 +35,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/bus-tours/create',
+			path: '/hotels/create',
 			name: 'create-tour',
 			component: () => import('@/pages/createBusTour'),
 			meta: {
@@ -42,7 +43,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/bus-tours/edit/:id',
+			path: '/hotels/edit/:id',
 			name: 'edit-tour',
 			component: () => import('@/pages/editBusTour'),
 			meta: {
@@ -86,9 +87,18 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	await loadLayoutMiddleware(to);
-	const canAccess = await checkAuth();
-	if (to.name === 'login' && canAccess) return { name: 'home' };
-	if (to.name !== 'login' && !canAccess) return '/login';
+	const authStore = useAuthStore();
+  
+  // Публичные страницы
+  if (to.meta.public) return;
+	
+  if (!authStore.isLoggedIn &&  to.name !== 'login') {
+    return { name: 'login' };
+  }
+  
+  if (!authStore.user) {
+    await authStore.checkAuth();
+  }
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

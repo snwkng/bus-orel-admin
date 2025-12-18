@@ -1,3 +1,1 @@
-import AuthLayout from './AuthLayout.vue';
-
-export default AuthLayout;
+export { default } from './AuthLayout.vue';

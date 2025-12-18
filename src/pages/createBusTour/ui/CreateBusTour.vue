@@ -2,5 +2,5 @@
 import BusTourForm from '@/widgets/busTourForm';
 </script>
 <template>
-	<BusTourForm type="create" />
+	<BusTourForm />
 </template>

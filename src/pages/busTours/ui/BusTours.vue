@@ -9,7 +9,7 @@ import BusToursTable from '@/entities/busTours';
 				Добавляйте, редатируйте и удаляйте туры
 			</h4>
 			<div class="flex items-center pt-3" title="Добавить тур">
-				<router-link class="base-btn" to="/bus-tours/create">Добавить тур</router-link>
+				<router-link class="base-btn" to="/hotels/create">Добавить тур</router-link>
 			</div>
 		</div>
 		<BusToursTable />

@@ -1,73 +1,59 @@
 import { defineStore } from 'pinia';
-import type { ITour } from './types';
-import {
-	getTours,
-	createTour,
-	editTour,
-	uploadFile,
-	getFile,
-	deleteTour,
-	deleteFile
-} from '../api';
-import { fetchApi } from '@/shared/api';
+import type { CreateTourDto, EditTourDto } from './types';
+import { busToursApi } from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
-		tours: [] as ITour[],
+		tours: [] as EditTourDto[],
 		files: [] as File[],
 		citiesList: [] as SelectItem[]
 	}),
 	actions: {
 		async getTours(params?: any): Promise<void> {
-			this.tours = await getTours(params);
+			this.tours = await busToursApi.getTours(params);
 		},
 
-		async getTour(id: string): Promise<ITour> {
-			try {
-				const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
-				return response;
-			} catch (err: any) {
-				console.error(err);
-				throw err;
-			}
+		async getTour(id: string): Promise<EditTourDto> {
+			return await busToursApi.getTour(id);
 		},
 
-		async createTour(tour: ITour): Promise<void | Error> {
-			await createTour(tour);
+		async createTour(tour: CreateTourDto): Promise<void | Error> {
+			await busToursApi.createTour(tour);
 		},
 
-		async editTour(tour: ITour): Promise<void | Error> {
-			await editTour(tour);
+		async editTour(tour: EditTourDto): Promise<EditTourDto> {
+			return await busToursApi.editTour(tour);
 		},
 
 		async deleteTour(id: string): Promise<void> {
-			await deleteTour(id);
+			await busToursApi.deleteTour(id);
 		},
 
 		async uploadFile(Files: FormData): Promise<string> {
-			const res = await uploadFile(Files);
+			const res = await busToursApi.uploadFile(Files);
+			return res;
+		},
+
+		async updateStatus(id: string, published: boolean): Promise<EditTourDto> {
+			const res = await busToursApi.togglePublishTour(id, published);
 			return res;
 		},
 
 		async getFile(
 			fileName: string,
 		): Promise<File> {
-			return await getFile(fileName);
+			return await busToursApi.getFile(fileName);
 		},
 
 		async deleteFile(
 			fileName: string,
 		): Promise<boolean> {
-			return await deleteFile(fileName);
+			return await busToursApi.deleteFile(fileName);
 		},
 
 		async getCitiesList(): Promise<void> {
-			try {
-				const response = await fetchApi.get<SelectItem[]>('/admin/bus-tours/cities-list');
-				this.citiesList = response;
-			} catch (err: any) {
-				console.error(err);
-			}
+			const res = await busToursApi.getCitiesList();
+			this.citiesList = res;
 		}
 	}
 });

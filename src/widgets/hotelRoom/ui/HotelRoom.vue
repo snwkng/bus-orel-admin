@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import type {
 	IHotelRoomInfo,
 	IDatesAndPrices
@@ -15,8 +15,20 @@ interface IHotelsInfo {
 }
 
 const props = withDefaults(defineProps<IHotelsInfo>(), {
-	values: () => [] as IHotelRoomInfo[]
+	values: () => []
 });
+
+const initialValue = ref<IHotelRoomInfo>({
+	type: '',
+	roomName: '',
+	beds: 0,
+	description: '',
+	availability: [],
+})
+
+
+
+
 
 const name = toRef(props, 'name');
 </script>
@@ -109,7 +121,7 @@ const name = toRef(props, 'name');
 					</button>
 				</div>
 			</div>
-			<button type="button" class="secondary-btn w-fit" @click.stop="push({})">
+			<button type="button" class="secondary-btn w-fit" @click.stop="push({...initialValue})">
 				Добавить номер
 			</button>
 		</FieldArray>

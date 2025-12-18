@@ -1,134 +1,97 @@
-import { fetchApi } from '@/shared/api';
-import type { ITour } from '../model/types';
+import { api } from '@/shared/lib/api/api';
+import type { CreateTourDto, EditTourDto } from '../model/types';
 
-/**
- * Retrieves a list of tours from the server.
- * @param params - Optional query parameters for the request.
- * @returns A promise that resolves to an array of ITour objects.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const getTours = async (
-	params?: Record<string, string | number | boolean>
-): Promise<ITour[]> => {
-	try {
-		const response = await fetchApi.get<ITour[]>('/admin/bus-tours', params);
-		return response;
-	} catch (err: any) {
-		console.error(err);
-		throw err;
+export const busToursApi = {
+	getTours: async (
+		params?: Record<string, string | number | boolean>
+	): Promise<EditTourDto[]> => {
+		try {
+			const response = await api.get<EditTourDto[]>('/api/admin/hotels', { params });
+			return response?.data;
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	getCitiesList: async (): Promise<SelectItem[]> => {
+		try {
+			const response = await api.get<SelectItem[]>('/api/admin/hotels/cities-list');
+			return response?.data;
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	getTour: async (id: string): Promise<EditTourDto> => {
+		try {
+			const response = await api.get<EditTourDto>('/api/admin/hotels/' + id);
+			return response?.data;
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	editTour: async (tour: EditTourDto): Promise<EditTourDto> => {
+		const url = `/api/admin/hotels/${tour._id}`;
+
+		const response = await api.put<EditTourDto>(url, tour);
+		return response?.data;
+	},
+
+	createTour: async (tour: CreateTourDto): Promise<void | JSON | Error> => {
+		await api.post<void>('/api/admin/hotels', tour);
+	},
+
+	deleteTour: async (id: string): Promise<void> => {
+		try {
+			await api.delete('/api/admin/hotels/' + id);
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	uploadFile: async (
+		File: FormData,
+	): Promise<string> => {
+		try {
+			const res: string = await api.upload('/api/admin/s3/upload', File);
+			return res;
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	getFile: async (
+		fileName: string,
+	): Promise<File> => {
+		try {
+			const res = await api.downloadBlob(`/api/s3/download/${fileName}`,);
+			return new File([res], fileName);
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	deleteFile: async (
+		fileName: string,
+	): Promise<boolean> => {
+		try {
+			const res = await api.delete<boolean>(`/api/admin/s3/delete?uuid=${fileName}`);
+			return res?.data;
+		} catch (err: any) {
+			console.error(err);
+			throw err;
+		}
+	},
+
+	togglePublishTour: async (id: string, published: boolean): Promise<EditTourDto> => {
+		const res = await api.patch<EditTourDto>(`/api/admin/hotels/published/${id}`, { published });
+		return res?.data;
 	}
-};
-
-/**
- * Retrieves a single tour from the server.
- * @param id - The ID of the tour.
- * @returns A promise that resolves to an ITour object.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const getTour = async (id: string): Promise<ITour> => {
-	try {
-		const response = await fetchApi.get<ITour>('/admin/bus-tours/' + id);
-		return response;
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
-};
-
-/**
- * Edits an tour on the server.
- * @param tour - The ITour object containing the updated data.
- * @returns A promise that resolves to the JSON response from the server if the request succeeds, or rejects with an error if the request fails.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const editTour = async (tour: ITour): Promise<ITour | JSON | Error> => {
-	// Construct the URL for the API endpoint.
-	const url = `/admin/bus-tours/${tour._id}`;
-
-	// Send the request to the server.
-	return await fetchApi.put<ITour>(url, tour);
-};
-
-/**
- * Retrieves a single tour from the server.
- * @param tour - The ITour object containing the create data.
- * @returns A promise that resolves to an ITour object.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const createTour = async (tour: ITour): Promise<void | JSON | Error> => {
-	return await fetchApi.post('/admin/bus-tours', tour);
-};
-
-/**
- * Retrieves a single tour from the server.
- * @param id - The ID of the tour.
- * @returns A promise that resolves to an ITour object.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const deleteTour = async (id: string): Promise<void> => {
-	try {
-		await fetchApi.delete('/admin/bus-tours/' + id);
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
-};
-
-/**
- * Uploads files to the server.
- * @param File - The files to upload.
- * @returns A promise that resolves when the files are uploaded.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const uploadFile = async (
-	File: FormData,
-): Promise<string> => {
-	try {
-		const res: string = await fetchApi.upload('/admin/s3/upload', File);
-		return res;
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
-};
-
-/**
- * Uploads files to the server.
- * @param fileName - The file name to upload.
- * @returns A promise that resolves when the files are uploaded.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const getFile = async (
-	fileName: string,
-): Promise<File> => {
-	try {
-		const res: File = await fetchApi.download(`/s3/download/`, fileName);
-		return res;
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
-};
-
-/**
- * Uploads files to the server.
- * @param fileName - The file name to upload.
- * @returns A promise that resolves when the files are uploaded.
- * @throws If the request fails, the promise is rejected with an error.
- */
-export const deleteFile = async (
-	fileName: string,
-): Promise<boolean> => {
-	try {
-		const res: boolean = await fetchApi.delete(`/admin/s3/delete?uuid=${fileName}`);
-		return res;
-	} catch (err: any) {
-		console.error(err);
-		throw err;
-	}
-};
-
-export const togglePublishTour = async (id: string, published: boolean) => {
-	const res = await fetchApi.patch(`/admin/bus-tours/published/${id}`, { published });
-	return res as ITour;
 };

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLoginStore } from '../model';
+import { useAuthStore } from '../model';
 
-const { login } = useLoginStore();
+const { loginAction } = useAuthStore();
 
 const router = useRouter();
 
@@ -11,7 +11,7 @@ const username = ref('');
 const password = ref('');
 
 const loginHandler = async () => {
-  await login(username.value, password.value).then(() => {
+  await loginAction(username.value, password.value).then(() => {
     router.replace('/');
   })
 }

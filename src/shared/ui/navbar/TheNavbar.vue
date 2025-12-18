@@ -24,27 +24,26 @@ watch(
 		class="flex h-[100vh] w-[300px] flex-col overflow-hidden bg-white transition-all sticky top-0"
 		:class="{ 'w-[60px]': !isExpanded }"
 	>
-		<div class="flex h-20 items-center justify-center">
+		<div class="flex h-20 py-6 md:py-12 items-center justify-center">
 			<RouterLink
-				class="flex flex-row items-center justify-center rounded-full bg-slate-100 py-2 px-3"
+				class="flex flex-row items-center justify-center"
 				to="/"
 			>
-				<span class="text-2xl font-semibold text-deep-orange">Г</span
-				><span class="text-2xl font-semibold text-ligth-blue">Т</span>
+				<img class="w-full h-full" src="/logo.png" alt="logo" />
 			</RouterLink>
 		</div>
 		<nav :class="['flex flex-col gap-2', isExpanded ? 'px-6' : 'px-2']">
 			<RouterLink
 				:class="[
 					'link w-full',
-					{ 'link-active': route.path.includes('/bus-tours') },
+					{ 'link-active': route.path.includes('/hotels') },
 					{ '!rounded-full !px-0 justify-center': !isExpanded }
 				]"
-				to="/bus-tours"
+				to="/hotels"
 				title="Автобусом к морю"
 			>
 				<SeaIcon
-					:fill="route.path.includes('/bus-tours') ? '#FFFFFF' : '#020202'" :width="28" :height="28"
+					:fill="route.path.includes('/hotels') ? '#FFFFFF' : '#020202'" :width="28" :height="28"
 				/>
 				<span v-if="isExpanded">Автобусом к морю</span>
 			</RouterLink>

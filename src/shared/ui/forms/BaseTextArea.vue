@@ -10,18 +10,16 @@ export interface IProps {
 	name: string;
 	label?: string;
 	placeholder?: string;
-	validator?: StringSchema<string>;
-	value?: string;
 	column?: boolean;
+	required?: boolean;
 }
 
 const props = defineProps<IProps>();
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta } = useField(name, props.validator, {
-	initialValue: props?.value || ''
-});
+const { value, errorMessage, meta } =
+	useField<string>(name);
 </script>
 <template>
 	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
@@ -29,7 +27,7 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 			{{ label }}
 			<span
 				class="text-red-600"
-				v-if="validator?.describe().tests?.some((x) => x.name === 'required')"
+				v-if="required"
 				>*</span
 			>
 		</label>
@@ -46,8 +44,9 @@ const { value, errorMessage, meta } = useField(name, props.validator, {
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="errorMessage || !meta.valid"
-			>{{ errorMessage }}</span
-		>
+			v-show="meta.touched && (errorMessage || !meta.valid)"
+			>
+				{{ errorMessage }}
+			</span>
 	</div>
 </template>

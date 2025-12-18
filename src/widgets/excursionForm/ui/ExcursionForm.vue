@@ -3,76 +3,57 @@ import {
 	BaseInput,
 	BaseTextArea,
 	TheFileInput,
-	TheSelect,
-	TheDatePicker
+	BaseSelect,
+	TheDatePicker,
+	BaseArrayFields
 } from '@/shared/ui/forms';
-import {
-	FieldArray,
-	Form,
-	type FormContext,
-	type GenericObject
-} from 'vee-validate';
+import { computed, h, onMounted } from 'vue';
+import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref } from 'vue';
-import { useExcursionForm } from '@/features/excursionForm/composables/useExcursionForm';
-import { onInvalidSubmit } from	'@/shared/config/composables/useHelpers'
-import { string } from 'yup';
-import type { IExcursion } from '@/entities/excursions/model/types';
-import { CloseIcon } from '@/shared/ui/icons';
 
-export interface Props {
-	type: string;
-}
-
-const props = defineProps<Props>();
-
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const exId = computed(() => (route?.params?.id as string) || '');
 
-const excursionForm = ref<FormContext | null>(null);
+const {
+	meta,
+	citiesList,
+	isSubmitting,
+	buttonTitle,
+	loadExcursion,
+	getCitiesList,
+	handleSubmit
+} = useExcursionForm(exId.value);
 
-const { excursion, citiesList, loadExcursion, saveExcursion, getCitiesList } =
-	useExcursionForm(props.type as string, route.params.id as string);
-const handleSubmit = async (values: GenericObject) => {
-	await saveExcursion(values as IExcursion);
-	router.push('/excursions');
+const onSubmit = async () => {
+	const success = await handleSubmit();
+	if (success) {
+		router.push('/excursions');
+	}
 };
 
 onMounted(async () => {
 	await getCitiesList();
-	await loadExcursion().then(() => {
-		// принудительно устанавливаем значения формы после их получения
-		excursionForm.value?.resetForm({ values: { ...excursion.value } });
-	});
+	await loadExcursion();
 });
 </script>
 <template>
-	<Form
-		ref="excursionForm"
-		class="form-container"
-		:initial-values="excursion"
-		@submit="handleSubmit"
-		@invalid-submit="onInvalidSubmit"
-		v-slot="{ values }"
-	>
-		<!-- {{ values }} -->
+	<form class="form-container" @submit.prevent="onSubmit">
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
 				type="text"
 				label="Название экскурсии"
 				column
-				:validator="string().required('Обязательное поле')"
-				:value="excursion.name"
+				required
 			/>
 			<BaseInput
 				name="duration"
 				type="number"
 				label="Длительность экскурсии (в днях)"
 				column
-				:value="excursion.duration"
 			/>
-			<TheSelect
+			<BaseSelect
 				name="cities"
 				label="Города"
 				column
@@ -84,10 +65,8 @@ onMounted(async () => {
 				type="number"
 				label="Стоимость экскрусии (от)"
 				column
-				:value="excursion.price"
 			/>
 			<TheDatePicker
-				:value="excursion.excursionStartDates"
 				name="excursionStartDates"
 				label="Даты отправления"
 				multi-dates
@@ -98,62 +77,38 @@ onMounted(async () => {
 				type="text"
 				label="Название отеля (если есть)"
 				column
-				:value="excursion.hotelName"
 			/>
 
-			<FieldArray name="description" v-slot="{ fields, push, remove }">
-				<div class="the-label" v-if="!fields.length">Программа экскурсии</div>
-				<div class="relative" v-for="(field, idx) in fields" :key="field.key">
-					<BaseTextArea
-						:label="idx === 0 ? 'Программа экскурсии' : ''"
-						column
-						:name="`description[${idx}]`"
-						:placeholder="`День ${idx + 1}`"
-						:value="excursion.description[idx]"
-					/>
-					<button
-						type="button"
-						title="удалить"
-						class="absolute right-[-10px] top-[-10px] rounded-full bg-red-500 p-2 text-white shadow-md transition-all hover:bg-red-500/85"
-						:class="{ 'my-8': idx === 0 }"
-						@click="remove(idx)"
-					>
-						<CloseIcon :width="16" :height="16" fill="white" />
-					</button>
-				</div>
-				<div class="flex flex-row gap-x-3">
-					<button type="button" class="secondary-btn mt-1" @click="push('')">
-						Добавить день
-					</button>
-				</div>
-			</FieldArray>
+			<BaseArrayFields
+				name="description"
+				label="Программа экскурсии"
+				addButtonLabel="Добавить день"
+				:render-field="
+					(idx: number, name: string) =>
+						h(BaseTextArea, {
+							label: idx === 0 ? 'Программа экскурсии' : '',
+							column: true,
+							name,
+							placeholder: `День ${idx + 1}`,
+						})
+				"
+			/>
 
-			<FieldArray name="thePriceIncludes" v-slot="{ fields, push, remove }">
-				<div class="the-label" v-if="!fields.length">В стоимость включено</div>
-				<div class="relative" v-for="(field, idx) in fields" :key="field.key">
-					<BaseTextArea
-						:label="idx === 0 ? 'В стоимость включено' : ''"
-						column
-						:name="`thePriceIncludes[${idx}]`"
-						placeholder="Что включено в стоимость"
-						:value="excursion.thePriceIncludes[idx]"
-					/>
-					<button
-						type="button"
-						title="удалить"
-						class="absolute right-[-10px] top-[-10px] rounded-full bg-red-500 p-2 text-white shadow-md transition-all hover:bg-red-500/85"
-						:class="{ 'my-8': idx === 0 }"
-						@click="remove(idx)"
-					>
-						<CloseIcon :width="16" :height="16" fill="white" />
-					</button>
-				</div>
-				<div class="flex flex-row gap-x-3">
-					<button type="button" class="secondary-btn mt-1" @click="push('')">
-						Добавить опцию
-					</button>
-				</div>
-			</FieldArray>
+			<BaseArrayFields
+				name="thePriceIncludes"
+				label="В стоимость включено"
+				addButtonLabel="Добавить опцию"
+				:render-field="
+					(idx: number, name: string) =>
+						h(BaseInput, {
+							label: idx === 0 ? 'В стоимость включено' : '',
+							column: true,
+							name,
+							placeholder: `Дополнительная опция ${idx + 1}`,
+						})
+				"
+			/>
+
 			<TheFileInput
 				label="Изображения эксркусии"
 				column
@@ -161,7 +116,6 @@ onMounted(async () => {
 				accept="image/*"
 				multiple
 				place="excursion"
-				:value="excursion.images"
 			/>
 			<TheFileInput
 				label="Файл прайса"
@@ -169,21 +123,19 @@ onMounted(async () => {
 				name="documentName"
 				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 				place="excursion"
-				:value="excursion.documentName"
 			/>
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
 			<button
 				class="base-btn max-w-[300px]"
 				:class="{
-					'pointer-events-none !bg-deep-orange/70':
-						JSON.stringify(values) === JSON.stringify(excursion)
+					'pointer-events-none !bg-deep-orange/70': !meta.dirty || isSubmitting
 				}"
 				type="submit"
-				:disabled="JSON.stringify(values) === JSON.stringify(excursion)"
+				:disabled="!meta.dirty || isSubmitting"
 			>
-				{{ type === 'create' ? 'Создать экскурсию' : 'Сохранить' }}
+				{{ buttonTitle }}
 			</button>
 		</div>
-	</Form>
+	</form>
 </template>

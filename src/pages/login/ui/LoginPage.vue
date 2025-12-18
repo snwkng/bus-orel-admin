@@ -1,5 +1,5 @@
 <script setup lang="ts">
- import TheLogin from '@/entities/login/ui/TheLogin.vue';
+ import TheLogin from '@/features/auth';
 </script>
 
 <template>

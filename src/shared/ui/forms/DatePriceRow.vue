@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, toRef } from 'vue';
+import { toRef } from 'vue';
 import { BaseInput, TheDatePicker } from '@/shared/ui/forms';
 import { TrashIcon } from '@/shared/ui/icons';
 import type { IDatesAndPrices } from '@/entities/busTours/model/types';

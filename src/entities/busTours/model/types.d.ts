@@ -1,7 +1,7 @@
 import { ObjectId } from 'bson';
 
-export interface ITour {
-	_id?: ObjectId;
+interface ITour {
+	_id: ObjectId;
 	name: string;
 	type: string;
 	description: string;
@@ -37,6 +37,9 @@ export interface ITour {
 	tours: IHotelRoomInfo[];
 	published: boolean;
 }
+
+export type CreateTourDto = Omit<ITour, 'id'>;
+export type EditTourDto = Omit<ITour>;
 
 export interface IHotelRoomInfo {
 	type?: string;

@@ -3,14 +3,13 @@ import './app/assets/tailwind.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import VueClickAway from "vue3-click-away";
-import { fetchApi } from './shared/api';
 
 import App from './app/App.vue';
 import router from './app/router';
 
 const app = createApp(App);
 
-app.config.globalProperties.$api = fetchApi;
+// app.config.globalProperties.$api = fetchApi;
 
 app.use(createPinia());
 app.use(VueClickAway);
