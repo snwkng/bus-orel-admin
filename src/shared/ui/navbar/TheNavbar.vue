@@ -36,14 +36,14 @@ watch(
 			<RouterLink
 				:class="[
 					'link w-full',
-					{ 'link-active': route.path.includes('/bus-tours') },
+					{ 'link-active': route.path.includes('/hotels') },
 					{ '!rounded-full !px-0 justify-center': !isExpanded }
 				]"
-				to="/bus-tours"
+				to="/hotels"
 				title="Автобусом к морю"
 			>
 				<SeaIcon
-					:fill="route.path.includes('/bus-tours') ? '#FFFFFF' : '#020202'" :width="28" :height="28"
+					:fill="route.path.includes('/hotels') ? '#FFFFFF' : '#020202'" :width="28" :height="28"
 				/>
 				<span v-if="isExpanded">Автобусом к морю</span>
 			</RouterLink>

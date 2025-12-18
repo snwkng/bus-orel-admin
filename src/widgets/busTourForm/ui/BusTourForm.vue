@@ -47,7 +47,7 @@ const renderServiceField = ({
 const onSubmit = async () => {
 	const success = await handleSubmit();
 	if (success) {
-		router.push('/bus-tours');
+		router.push('/hotels');
 	}
 };
 
@@ -85,7 +85,7 @@ onMounted(async () => {
 			<BaseInput name="address.region" label="Регион" column />
 			<BaseSelect
 				name="address.city"
-				label="Города"
+				label="Город"
 				column
 				:list="citiesList"
 			/>
@@ -136,10 +136,10 @@ onMounted(async () => {
 				v-if="tourId"
 				class="secondary-btn max-w-[300px]"
 				:class="{
-					'pointer-events-none !bg-deep-blue/70': !meta.dirty || isSubmitting
+					'pointer-events-none !bg-deep-blue/70': meta.dirty || isSubmitting
 				}"
 				@click="changeStatus(!isPublished)"
-				:disabled="!meta.dirty || isSubmitting"
+				:disabled="meta.dirty || isSubmitting"
 			>
 				{{ publishTitle }}
 			</button>
