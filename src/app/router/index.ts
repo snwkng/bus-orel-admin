@@ -92,7 +92,7 @@ router.beforeEach(async (to) => {
   // Публичные страницы
   if (to.meta.public) return;
 	
-  if (!authStore.isLoggedIn &&  to.name !== 'login') {
+  if (!authStore.isLoggedIn && to.name !== 'login') {
     return { name: 'login' };
   }
   

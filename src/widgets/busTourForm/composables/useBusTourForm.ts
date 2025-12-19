@@ -1,5 +1,5 @@
 import { useBusTourStore } from '@/entities/busTours/model';
-import type { CreateTourDto } from '@/entities/busTours/model/types';
+import type { CreateHotelDto } from '@/entities/busTours/model/types';
 import { storeToRefs } from 'pinia';
 import { onInvalidSubmit } from '@/shared/config/composables/useHelpers';
 import { useForm } from 'vee-validate';
@@ -55,7 +55,7 @@ const schema = yup.object({
     })
   ),
   published: yup.boolean(),
-}) as yup.ObjectSchema<CreateTourDto>;
+}) as yup.ObjectSchema<CreateHotelDto>;
 
 export function useBusTourForm(tourId?: string) {
   const {
@@ -65,7 +65,7 @@ export function useBusTourForm(tourId?: string) {
     resetForm,
     meta,
     isSubmitting,
-  } = useForm<CreateTourDto>({
+  } = useForm<CreateHotelDto>({
     validationSchema: schema,
     initialValues: {
       name: '',
@@ -96,7 +96,7 @@ export function useBusTourForm(tourId?: string) {
       images: [],
       seaType: '',
       documentName: [],
-      tours: [],
+      rooms: [],
       published: false,
     },
     validateOnMount: false,

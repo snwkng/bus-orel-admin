@@ -83,12 +83,7 @@ onMounted(async () => {
 			<BaseInput name="address.fullAddress" label="Адрес гостиницы" column />
 			<BaseInput name="minPrice" label="Минимальная цена заезда" column />
 			<BaseInput name="address.region" label="Регион" column />
-			<BaseSelect
-				name="address.city"
-				label="Город"
-				column
-				:list="citiesList"
-			/>
+			<BaseSelect name="address.city" label="Город" column :list="citiesList" />
 			<BaseInput name="seaType" label="Море" column />
 
 			<BaseArrayFields
