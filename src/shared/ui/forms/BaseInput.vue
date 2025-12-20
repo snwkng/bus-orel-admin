@@ -32,16 +32,16 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			type="text"
 			:value="value"
 			:placeholder="placeholder"
-			:class="[{ '!border-red-500': !meta.valid }, 'the-input']"
+			:class="[{ '!border-red-500': (meta.touched && !meta.valid) || !meta.valid }, 'the-input']"
 			@input="handleChange"
 			@blur="handleBlur"
 		/>
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="meta.touched && (errorMessage || !meta.valid)"
-			>
-				{{ errorMessage }}
-			</span>
+			v-show="(meta.touched && !meta.valid) || !meta.valid"
+		>
+			{{ errorMessage }}
+		</span>
 	</div>
 </template>

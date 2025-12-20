@@ -39,19 +39,12 @@ const schema = yup.object({
   images: yup.array().of(yup.string()).defined(),
   seaType: yup.string().defined(),
   documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
-  tours: yup.array().of(
-    yup.object({
-      type: yup.string().defined(),
-      roomName: yup.string().defined(),
-      beds: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
-      description: yup.string().defined(),
-      availability: yup.array().of(
-        yup.object({
-          startDate: yup.string().defined(),
-          endDate: yup.string().defined(),
-          pricePerPerson: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
-        })
-      )
+  rooms: yup.array().min(1, 'Добавьте хотя бы один номер').of(
+    yup.object().shape({
+      type: yup.string().required('Укажите тип номера').defined(),
+      name: yup.string().required('Укажите название номера').defined(),
+      capacity: yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable().typeError('Поле должно быть числом').required('Укажите количество спальных мест').min(1, 'Количество спальных мест не может быть меньше 1'),
+      inRoom: yup.string().defined(),
     })
   ),
   published: yup.boolean(),
@@ -154,5 +147,6 @@ export function useBusTourForm(tourId?: string) {
     getCitiesList,
     handleSubmit,
     changeStatus,
+    values
   };
 }
