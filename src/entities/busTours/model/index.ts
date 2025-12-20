@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import type { CreateTourDto, EditTourDto } from './types';
+import type { CreateHotelDto, EditHotelDto } from './types';
 import { busToursApi } from '../api';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
-		tours: [] as EditTourDto[],
+		tours: [] as EditHotelDto[],
 		files: [] as File[],
 		citiesList: [] as SelectItem[]
 	}),
@@ -13,15 +13,15 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			this.tours = await busToursApi.getTours(params);
 		},
 
-		async getTour(id: string): Promise<EditTourDto> {
+		async getTour(id: string): Promise<EditHotelDto> {
 			return await busToursApi.getTour(id);
 		},
 
-		async createTour(tour: CreateTourDto): Promise<void | Error> {
+		async createTour(tour: CreateHotelDto): Promise<void | Error> {
 			await busToursApi.createTour(tour);
 		},
 
-		async editTour(tour: EditTourDto): Promise<EditTourDto> {
+		async editTour(tour: EditHotelDto): Promise<EditHotelDto> {
 			return await busToursApi.editTour(tour);
 		},
 
@@ -34,7 +34,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 			return res;
 		},
 
-		async updateStatus(id: string, published: boolean): Promise<EditTourDto> {
+		async updateStatus(id: string, published: boolean): Promise<EditHotelDto> {
 			const res = await busToursApi.togglePublishTour(id, published);
 			return res;
 		},

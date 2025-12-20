@@ -1,12 +1,12 @@
 import { api } from '@/shared/lib/api/api';
-import type { CreateTourDto, EditTourDto } from '../model/types';
+import type { CreateHotelDto, EditHotelDto } from '../model/types';
 
 export const busToursApi = {
 	getTours: async (
 		params?: Record<string, string | number | boolean>
-	): Promise<EditTourDto[]> => {
+	): Promise<EditHotelDto[]> => {
 		try {
-			const response = await api.get<EditTourDto[]>('/api/admin/hotels', { params });
+			const response = await api.get<EditHotelDto[]>('/api/admin/hotels', { params });
 			return response?.data;
 		} catch (err: any) {
 			console.error(err);
@@ -24,9 +24,9 @@ export const busToursApi = {
 		}
 	},
 
-	getTour: async (id: string): Promise<EditTourDto> => {
+	getTour: async (id: string): Promise<EditHotelDto> => {
 		try {
-			const response = await api.get<EditTourDto>('/api/admin/hotels/' + id);
+			const response = await api.get<EditHotelDto>('/api/admin/hotels/' + id);
 			return response?.data;
 		} catch (err: any) {
 			console.error(err);
@@ -34,14 +34,14 @@ export const busToursApi = {
 		}
 	},
 
-	editTour: async (tour: EditTourDto): Promise<EditTourDto> => {
+	editTour: async (tour: EditHotelDto): Promise<EditHotelDto> => {
 		const url = `/api/admin/hotels/${tour._id}`;
 
-		const response = await api.put<EditTourDto>(url, tour);
+		const response = await api.put<EditHotelDto>(url, tour);
 		return response?.data;
 	},
 
-	createTour: async (tour: CreateTourDto): Promise<void | JSON | Error> => {
+	createTour: async (tour: CreateHotelDto): Promise<void | JSON | Error> => {
 		await api.post<void>('/api/admin/hotels', tour);
 	},
 
@@ -90,8 +90,8 @@ export const busToursApi = {
 		}
 	},
 
-	togglePublishTour: async (id: string, published: boolean): Promise<EditTourDto> => {
-		const res = await api.patch<EditTourDto>(`/api/admin/hotels/published/${id}`, { published });
+	togglePublishTour: async (id: string, published: boolean): Promise<EditHotelDto> => {
+		const res = await api.patch<EditHotelDto>(`/api/admin/hotels/published/${id}`, { published });
 		return res?.data;
 	}
 };

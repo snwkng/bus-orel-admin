@@ -9,9 +9,8 @@ import {
 	BaseSelect,
 	BaseArrayFields
 } from '@/shared/ui/forms';
-import HotelRoom from '@/widgets/hotelRoom';
 import { useBusTourForm } from '@/widgets/busTourForm/composables/useBusTourForm';
-import { FieldArray } from 'vee-validate';
+import HotelRooms from '@/entities/hotelRooms/ui/HotelRooms.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -62,6 +61,7 @@ onMounted(async () => {
 			<BaseInput name="name" label="Название Гостиницы" column />
 			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column />
 			<BaseTextArea name="description" label="Описание гостиницы" column />
+			<HotelRooms name="rooms" label="Номера" />
 			<BaseInput name="additionalInfo.food.type" label="Питание" column />
 			<BaseInput name="additionalInfo.beach.type" label="Тип пляжа" column />
 			<BaseInput
@@ -83,12 +83,7 @@ onMounted(async () => {
 			<BaseInput name="address.fullAddress" label="Адрес гостиницы" column />
 			<BaseInput name="minPrice" label="Минимальная цена заезда" column />
 			<BaseInput name="address.region" label="Регион" column />
-			<BaseSelect
-				name="address.city"
-				label="Город"
-				column
-				:list="citiesList"
-			/>
+			<BaseSelect name="address.city" label="Город" column :list="citiesList" />
 			<BaseInput name="seaType" label="Море" column />
 
 			<BaseArrayFields
@@ -114,9 +109,6 @@ onMounted(async () => {
 				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 				place="busTour"
 			/>
-			<!-- <div>
-				<HotelRoom name="tours"  />
-			</div> -->
 		</div>
 		<div
 			class="sticky bottom-0 flex w-full items-center gap-x-2 bg-white px-6 py-4"
