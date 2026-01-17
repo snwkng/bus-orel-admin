@@ -75,7 +75,7 @@ async function _request<T>(
 
     let data: unknown;
     try {
-      // 204 No Content → null
+      // 204 No Content - null
       data = response.status === 204 ? null : await response.json();
     } catch (e) {
       console.error(e);
@@ -91,11 +91,7 @@ async function _request<T>(
       );
     }
 
-    return {
-      data: data as any as T,
-      status: response.status,
-      headers: response.headers,
-    };
+    return data as ApiResponse<T>
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new ApiError('Request aborted', 0, url);

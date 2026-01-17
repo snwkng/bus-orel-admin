@@ -7,6 +7,7 @@ export const excursionsApi = {
   ): Promise<EditExcursionDto[]> => {
     try {
       const response = await api.get<EditExcursionDto[]>('/api/admin/excursions', { params });
+      console.log(response.data)
       return response?.data;
     } catch (err: any) {
       console.error(err);
@@ -16,8 +17,8 @@ export const excursionsApi = {
 
   getCitiesList: async (): Promise<SelectItem[]> => {
     try {
-      const response = await api.get<SelectItem[]>('/api/admin/excursions/cities-list');
-      return response?.data;
+      const response = await api.get('/api/admin/excursions/cities-list');
+      return response?.data as SelectItem[];
     } catch (err: any) {
       console.error(err);
       throw err;

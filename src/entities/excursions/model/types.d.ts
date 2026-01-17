@@ -14,5 +14,5 @@ interface IExcursion {
 	thePriceIncludes: string[];
 }
 
-export type CreateExcursionDto = Omit<IExcursion, 'id'>;
+export type CreateExcursionDto = Omit<IExcursion, '_id'>;
 export type EditExcursionDto = Omit<IExcursion>;

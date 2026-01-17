@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 
-import { defineEmits, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
@@ -39,6 +39,8 @@ const editAction = (id: string) => {
 const deleteAction = (id: string) => {
 	emit('delete', id);
 };
+
+const classGeneration = computed(() => {});
 
 const parsePropertyName = (propertyName: string, row: any) => {
 	if (propertyName.includes('.')) {
@@ -107,82 +109,71 @@ const parsePropertyName = (propertyName: string, row: any) => {
 							:key="config.propertyName"
 						>
 							<slot :name="config.propertyName" :row="row">
-								<div
-									:class="{
-										'line-clamp-4':
-											typeof parsePropertyName(config.propertyName, row) ===
-												'string' &&
-											parsePropertyName(config.propertyName, row)?.length > 100
-									}"
+								<template v-if="config?.dataType === 'money'">
+									{{ row[config.propertyName] }}&#8381;
+								</template>
+								<template
+									v-else-if="
+										config?.dataType === 'date' &&
+										dayjs(row[config.propertyName]).isValid()
+									"
 								>
-									<template
-										v-if="!config?.dataType || config?.dataType === 'text'"
+									{{ dayjs(row[config.propertyName]).format('DD.MM.YYYY') }}
+								</template>
+								<template
+									v-else-if="
+										config?.dataType === 'arrayString' &&
+										row[config.propertyName].length &&
+										typeof row[config.propertyName] === 'object'
+									"
+								>
+									<div
+										:class="{
+											'line-clamp-4':
+												row[config.propertyName].join('').length > 300
+										}"
 									>
-										{{ parsePropertyName(config.propertyName, row) }}
-									</template>
-									<template v-else-if="config?.dataType === 'money'">
-										{{ parsePropertyName(config.propertyName, row) }}&#8381;
-									</template>
-									<template
-										v-else-if="
-											config?.dataType === 'date' &&
-											dayjs(
-												parsePropertyName(config.propertyName, row)
-											).isValid()
-										"
-									>
-										{{
-											dayjs(parsePropertyName(config.propertyName, row)).format(
-												'DD.MM.YYYY'
-											)
-										}}
-									</template>
-									<template v-if="config?.dataType === 'arrayString'">
-										<div
-											:class="{
-												'line-clamp-4': parsePropertyName(
-													config.propertyName,
-													row
-												).join('')?.length
-											}"
+										<p
+											v-for="(value, index) in row[config.propertyName]"
+											:key="index"
 										>
-											{{
-												parsePropertyName(config.propertyName, row).join(', ')
-											}}
+											{{ value }}
+										</p>
+									</div>
+								</template>
+								<template v-else-if="config?.dataType === 'arrayDates'">
+									<div>
+										{{
+											row[config.propertyName]
+												?.map((x: Date) => dayjs(x).format('DD.MM.YYYY'))
+												?.join('\n')
+										}}
+									</div>
+								</template>
+								<template v-else-if="config?.dataType === 'image' && getImage">
+									<div class="flex flex-row flex-wrap gap-1">
+										<div
+											class="relative"
+											v-for="imageName in row[config.propertyName]"
+											:key="imageName"
+										>
+											<GenerateFilePreview
+												:get-file="getImage(imageName)"
+												preview-width="w-[80px]"
+												preview-height="h-[70px]"
+											/>
 										</div>
-									</template>
-									<template v-if="config?.dataType === 'arrayDates'">
-										<div>
-											{{
-												parsePropertyName(config.propertyName, row)
-													?.map((x: Date) =>
-														dayjs(x).format('DD.MM.YYYY')
-													)
-													?.join('\n')
-											}}
-										</div>
-									</template>
-									<template
-										v-else-if="config?.dataType === 'image' && getImage"
+									</div>
+								</template>
+								<template v-else>
+									<span
+										:class="{
+											'line-clamp-4': row[config.propertyName]?.length > 100
+										}"
 									>
-										<div class="flex flex-row flex-wrap gap-1">
-											<div
-												class="relative"
-												v-for="imageName in parsePropertyName(
-													config.propertyName,
-													row
-												)"
-												:key="imageName"
-											>
-												<GenerateFilePreview
-													:get-file="getImage(imageName)"
-													preview-width="w-[80px]"
-													preview-height="h-[70px]"
-												/>
-											</div>
-										</div>
-									</template>
-								</div>
+										{{ row[config.propertyName] }}
+									</span>
+								</template>
 							</slot>
 						</td>
 						<td
