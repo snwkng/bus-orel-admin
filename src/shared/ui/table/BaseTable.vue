@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
-import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
 
 export interface IProps {
@@ -38,18 +37,6 @@ const editAction = (id: string) => {
 
 const deleteAction = (id: string) => {
 	emit('delete', id);
-};
-
-const classGeneration = computed(() => {});
-
-const parsePropertyName = (propertyName: string, row: any) => {
-	if (propertyName.includes('.')) {
-		const properties = propertyName.split('.');
-		const value = properties.reduce((obj, key) => obj && obj[key], row);
-		return value;
-	} else {
-		return row[propertyName];
-	}
 };
 </script>
 <template>
@@ -123,7 +110,7 @@ const parsePropertyName = (propertyName: string, row: any) => {
 								<template
 									v-else-if="
 										config?.dataType === 'arrayString' &&
-										row[config.propertyName].length &&
+										row[config.propertyName]?.length &&
 										typeof row[config.propertyName] === 'object'
 									"
 								>
@@ -150,17 +137,18 @@ const parsePropertyName = (propertyName: string, row: any) => {
 										}}
 									</div>
 								</template>
-								<template v-else-if="config?.dataType === 'image' && getImage">
+								<template v-else-if="config?.dataType === 'images'">
 									<div class="flex flex-row flex-wrap gap-1">
 										<div
 											class="relative"
-											v-for="imageName in row[config.propertyName]"
+											v-for="(imageName, index) in row[config.propertyName]"
 											:key="imageName"
 										>
-											<GenerateFilePreview
-												:get-file="getImage(imageName)"
-												preview-width="w-[80px]"
-												preview-height="h-[70px]"
+											<img
+												loading="lazy"
+												:src="`/api/s3/download/${imageName}`"
+												:alt="`preview-${index}`"
+												class="h-[70px] w-[80px] rounded-lg object-fill"
 											/>
 										</div>
 									</div>
@@ -201,9 +189,7 @@ const parsePropertyName = (propertyName: string, row: any) => {
 						</td>
 					</tr>
 					<tr class="flex h-52 w-full items-center justify-center" v-else>
-						{{
-							emptyText
-						}}
+						{{ emptyText }}
 					</tr>
 				</tbody>
 			</table>

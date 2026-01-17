@@ -3,6 +3,6 @@ export interface ITableDataConfig {
   label: string;
   propertyName: string;
   cellWidth?: string;
-  dataType?: 'text' | 'date' | 'money' | 'image' | 'arrayString' | 'arrayDates';
+  dataType?: 'text' | 'date' | 'money' | 'images' | 'arrayString' | 'arrayDates';
 }
 

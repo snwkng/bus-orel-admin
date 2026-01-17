@@ -109,6 +109,21 @@ onMounted(async () => {
 				"
 			/>
 
+			<BaseArrayFields
+				name="additionallyPaid"
+				label="Дополнительно оплачивается"
+				addButtonLabel="Добавить опцию"
+				:render-field="
+					({index, fieldName}) =>
+						h(BaseInput, {
+							label: index === 0 ? 'Дополнительно оплачивается' : '',
+							column: true,
+							name: fieldName,
+							placeholder: `Платная опция  ${index + 1}`,
+						})
+				"
+			/>
+
 			<TheFileInput
 				label="Изображения эксркусии"
 				column
