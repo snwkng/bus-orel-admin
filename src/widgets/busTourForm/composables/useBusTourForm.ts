@@ -23,14 +23,14 @@ const schema = yup.object({
     }),
     beach: yup.object({
       type: yup.string().defined(),
-      distanceMinutes: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
+      distanceMinutes: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' || originalValue === 0 ? null : +value).typeError('Поле должно быть числом'),
     }),
     checkInOut: yup.object({
       checkIn: yup.string().defined(),
       checkOut: yup.string().defined(),
     }),
   }),
-  minPrice: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
+  minPrice: yup.number().required('Укажите минимальную цену').min(1, 'Цена должна быть больше 0').defined().typeError('Поле должно быть числом'),
   includedInThePrice: yup.array().of(
     yup.object({
       serviceName: yup.string().required('Заполните или удалите поле'),
@@ -43,7 +43,7 @@ const schema = yup.object({
     yup.object().shape({
       type: yup.string().required('Укажите тип номера').defined(),
       name: yup.string().required('Укажите название номера').defined(),
-      capacity: yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable().typeError('Поле должно быть числом').required('Укажите количество спальных мест').min(1, 'Количество спальных мест не может быть меньше 1'),
+      capacity: yup.number().transform((value, originalValue) => originalValue === '' || originalValue === 0 ? null : +value).nullable().typeError('Поле должно быть числом').required('Укажите количество спальных мест').min(1, 'Количество спальных мест не может быть меньше 1'),
       inRoom: yup.string().defined(),
     })
   ),

@@ -30,7 +30,8 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 		},
 
 		async uploadFile(file: FormData): Promise<string> {
-			return await excursionsApi.uploadFile(file);
+			const res = await excursionsApi.uploadFile(file);
+			return res.data as string
 		},
 
 		async getFile(

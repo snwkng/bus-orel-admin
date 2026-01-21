@@ -65,6 +65,7 @@ onMounted(async () => {
 				type="number"
 				label="Стоимость экскрусии (от)"
 				column
+				required
 			/>
 			<TheDatePicker
 				name="excursionStartDates"

@@ -56,9 +56,9 @@ export const busToursApi = {
 
 	uploadFile: async (
 		File: FormData,
-	): Promise<string> => {
+	) => {
 		try {
-			const res: string = await api.upload('/api/admin/s3/upload', File);
+			const res = await api.upload('/api/admin/s3/upload', File);
 			return res;
 		} catch (err: any) {
 			console.error(err);

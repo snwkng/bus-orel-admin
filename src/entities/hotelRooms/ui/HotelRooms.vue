@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { useField, useFieldArray } from 'vee-validate';
 import { ref, toRef } from 'vue';
-import { CloseIcon } from '@/shared/ui/icons';
 
 import BaseInput from '@/shared/ui/forms/BaseInput.vue';
 import BaseTextArea from '@/shared/ui/forms/BaseTextArea.vue';
 
-const props = defineProps({
-	name: { type: String, required: true },
-	label: { type: String, required: true },
-	addButtonLabel: { type: String, default: 'Добавить' }
+interface IProps {
+	name: string;
+	label: string;
+	addButtonLabel?: string;
+	required?: boolean;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+	required: false,
+	addButtonLabel: 'Добавить'
 });
 
 const name = toRef(props, 'name');
@@ -34,6 +39,7 @@ const { errorMessage, meta, errors } = useField<string>(name);
 				]"
 			>
 				{{ label }}
+				<span class="text-red-600" v-if="required"> * </span>
 			</div>
 			<span
 				:name="name"

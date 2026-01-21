@@ -10,7 +10,6 @@ export interface IProps {
 	tableData?: any[];
 	showActions?: boolean;
 	emptyText?: string;
-	getImage?: Function;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -107,6 +106,7 @@ const deleteAction = (id: string) => {
 								>
 									{{ dayjs(row[config.propertyName]).format('DD.MM.YYYY') }}
 								</template>
+								<!-- TODO: продумать логику работы с массивами и вложенными объектами -->
 								<template
 									v-else-if="
 										config?.dataType === 'arrayString' &&
@@ -159,7 +159,7 @@ const deleteAction = (id: string) => {
 											'line-clamp-4': row[config.propertyName]?.length > 100
 										}"
 									>
-										{{ row[config.propertyName] }}
+										{{ config.propertyName.split('.').reduce((acc, key) => acc && acc[key], row) }}
 									</span>
 								</template>
 							</slot>

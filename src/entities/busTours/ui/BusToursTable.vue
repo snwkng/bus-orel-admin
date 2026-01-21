@@ -8,7 +8,6 @@ import type { ITableDataConfig } from '@/shared/config/interfaces/table.interfac
 
 const router = useRouter();
 const store = useBusTourStore();
-const { getFile } = store;
 
 onMounted(async () => {
 	await store.getTours();
@@ -24,7 +23,7 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 		label: 'Изображения',
 		propertyName: 'images',
 		cellWidth: '350px',
-		dataType: 'image'
+		dataType: 'images'
 	},
 	{ label: 'Питание', propertyName: 'additionalInfo.food.type' },
 	{ label: 'Тип пляжа', propertyName: 'additionalInfo.beach.type' },
@@ -36,17 +35,13 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 	{ label: 'Выселение', propertyName: 'additionalInfo.checkInOut.checkOut' },
 	{ label: 'Адрес', propertyName: 'address.fullAddress', cellWidth: '300px' },
 	{ label: 'Цена (от)', propertyName: 'minPrice', dataType: 'money' },
-	{ label: 'В стоимость включено', propertyName: 'includedInThePrice' },
+	{ label: 'В стоимость включено', propertyName: 'includedInThePrice.serviceName', dataType: 'arrayString' },
 	{ label: 'Название прайса', propertyName: 'documentName' },
 	{ label: 'Туры', propertyName: 'tours' },
 	{ label: 'Город', propertyName: 'address.city' },
 	{ label: 'Регион', propertyName: 'address.region' },
 	{ label: 'Море', propertyName: 'seaType' }
 ]);
-
-const getImage = async (imageName: string): Promise<File | undefined> => {
-	return await getFile(imageName);
-};
 
 const deleteTour = async (id: string) => {
 	await store
@@ -65,7 +60,6 @@ const deleteTour = async (id: string) => {
 		:table-data="tours"
 		@edit="router.push({ name: 'edit-tour', params: { id: $event } })"
 		@delete="deleteTour"
-		:get-image="getImage"
 	>
 		<template #name="row">
 			<RouterLink

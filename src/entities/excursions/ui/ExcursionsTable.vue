@@ -28,7 +28,7 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 		cellWidth: '300px',
 		dataType: 'arrayString'
 	},
-	{ label: 'Изображения', propertyName: 'images', cellWidth: '250px', dataType: 'images' },
+	{ label: 'Изображения', propertyName: 'images', cellWidth: '350px', dataType: 'images' },
 	{ label: 'Длительность', propertyName: 'duration' },
 	{
 		label: 'Цена',
