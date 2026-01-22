@@ -68,7 +68,8 @@ const onChange = () => {
 	const arrayFunctions = newFiles.map((x: File) => {
 		const formData = new FormData();
 		formData.append('file', x);
-		return uploadFile(formData);
+		const res = uploadFile(formData);
+		return res
 	});
 	Promise.all(arrayFunctions).then((res: string[]) => {
 		const updatedFiles = [

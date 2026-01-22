@@ -16,7 +16,7 @@ export interface AuthResponse {
 export const login = async (username: string, password: string): Promise<string> => {
   try {
     const res = await api.post<AuthResponse>('/api/auth/login', { username, password });
-    
+    console.log(res)
     if (!res.data?.access_token) {
       throw new Error('Access token not found in response');
     }

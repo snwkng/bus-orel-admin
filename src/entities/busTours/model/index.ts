@@ -31,7 +31,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 
 		async uploadFile(Files: FormData): Promise<string> {
 			const res = await busToursApi.uploadFile(Files);
-			return res;
+			return res.data as string
 		},
 
 		async updateStatus(id: string, published: boolean): Promise<EditHotelDto> {

@@ -12,7 +12,8 @@ interface IExcursion {
 	cities: string[];
 	hotelName: string;
 	thePriceIncludes: string[];
+	additionallyPaid: string[]
 }
 
-export type CreateExcursionDto = Omit<IExcursion, 'id'>;
+export type CreateExcursionDto = Omit<IExcursion, '_id'>;
 export type EditExcursionDto = Omit<IExcursion>;

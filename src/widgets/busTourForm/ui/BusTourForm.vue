@@ -58,10 +58,10 @@ onMounted(async () => {
 <template>
 	<form class="form-container" @submit.prevent="onSubmit">
 		<div class="form-container-content">
-			<BaseInput name="name" label="Название Гостиницы" column />
-			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column />
+			<BaseInput name="name" label="Название Гостиницы" column required />
+			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column required />
 			<BaseTextArea name="description" label="Описание гостиницы" column />
-			<HotelRooms name="rooms" label="Номера" />
+			<HotelRooms name="rooms" label="Номера" required />
 			<BaseInput name="additionalInfo.food.type" label="Питание" column />
 			<BaseInput name="additionalInfo.beach.type" label="Тип пляжа" column />
 			<BaseInput
@@ -81,7 +81,7 @@ onMounted(async () => {
 				column
 			/>
 			<BaseInput name="address.fullAddress" label="Адрес гостиницы" column />
-			<BaseInput name="minPrice" label="Минимальная цена заезда" column />
+			<BaseInput name="minPrice" label="Минимальная цена заезда" column required />
 			<BaseInput name="address.region" label="Регион" column />
 			<BaseSelect name="address.city" label="Город" column :list="citiesList" />
 			<BaseInput name="seaType" label="Море" column />

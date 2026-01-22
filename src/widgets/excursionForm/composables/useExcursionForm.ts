@@ -1,4 +1,4 @@
-import type { CreateExcursionDto, EditExcursionDto } from '@/entities/excursions/model/types';
+import type { CreateExcursionDto } from '@/entities/excursions/model/types';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { storeToRefs } from 'pinia';
 import { useForm } from 'vee-validate';
@@ -10,13 +10,14 @@ const schema = yup.object({
   name: yup.string().required('Укажите название экскурсии').defined().typeError('Поле должно быть текстовым'),
   description: yup.array().of(yup.string()).defined(),
   images: yup.array().of(yup.string()).defined(),
-  duration: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
-  price: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' ? null : value).typeError('Поле должно быть числом'),
+  duration: yup.number().nullable().defined().transform((value, originalValue) => originalValue === '' || originalValue === 0 ? null : +value).typeError('Поле должно быть числом'),
+  price: yup.number().required('Укажите цену').min(1, 'Цена должна быть больше 0').defined().typeError('Поле должно быть числом'),
   documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
   excursionStartDates: yup.array().of(yup.string()).defined(),
   cities: yup.array().of(yup.string()).defined(),
   hotelName: yup.string().defined(),
-  thePriceIncludes: yup.array().of(yup.string()).defined()
+  thePriceIncludes: yup.array().of(yup.string()).defined(),
+  additionallyPaid: yup.array().of(yup.string()).defined()
 }) as yup.ObjectSchema<CreateExcursionDto>;
 
 export function useExcursionForm(exId?: string) {
@@ -40,7 +41,8 @@ export function useExcursionForm(exId?: string) {
       excursionStartDates: [],
       cities: [] as string[],
       hotelName: '',
-      thePriceIncludes: []
+      thePriceIncludes: [],
+      additionallyPaid: []
     },
     validateOnMount: false,
   });
@@ -63,12 +65,12 @@ export function useExcursionForm(exId?: string) {
 
   const saveExcursion = async () => {
     if (exId) {
-      const res = await editExcursion({ ...values, _id: exId });
+      const res = await editExcursion({ ...schema.cast(values), _id: exId });
       resetForm({
         values: res,
       });
     } else {
-      await createExcursion(values);
+      await createExcursion(schema.cast(values));
     }
   };
 

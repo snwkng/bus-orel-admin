@@ -9,10 +9,14 @@ export interface ApiRequestConfig {
   timeout?: number;
 }
 
-export interface ApiResponse<T = unknown> {
-  data: T;
-  status: number;
-  headers: Headers;
+export interface ApiResponse<T> {
+  success: boolean,
+  data: T,
+  meta: {
+    timestamp: Date,
+    path: string,
+    statusCode: number,
+  };
 }
 
 export class ApiError extends Error {
