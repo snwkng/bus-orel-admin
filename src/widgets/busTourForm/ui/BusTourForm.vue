@@ -60,6 +60,7 @@ onMounted(async () => {
 		<div class="form-container-content">
 			<BaseInput name="name" label="Название Гостиницы" column required />
 			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column required />
+			<BaseInput name="registryNumber" label="Регистрационный номер" column required />
 			<BaseTextArea name="description" label="Описание гостиницы" column />
 			<HotelRooms name="rooms" label="Номера" required />
 			<BaseInput name="additionalInfo.food.type" label="Питание" column />
