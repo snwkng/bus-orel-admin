@@ -9,6 +9,7 @@ import { computed } from 'vue';
 const schema = yup.object({
   name: yup.string().required('Укажите название гостиницы').defined().typeError('Поле должно быть текстовым'),
   type: yup.string().required('Укажите тип гостиницы').defined().typeError('Поле должно быть текстовым'),
+  registryNumber: yup.string().required('Укажите регистрационные номер гостиницы').defined().typeError('Поле должно быть текстовым'),
   description: yup.string().defined(),
   address: yup.object({
     city: yup.string().defined(),
@@ -63,6 +64,7 @@ export function useBusTourForm(tourId?: string) {
     initialValues: {
       name: '',
       type: '',
+      registryNumber: '',
       description: '',
       address: {
         city: '',

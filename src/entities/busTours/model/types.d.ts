@@ -4,6 +4,7 @@ interface IHotel {
 	_id: ObjectId;
 	name: string;
 	type: string;
+	registryNumber: string;
 	description: string;
 	address: {
 		city: string;
