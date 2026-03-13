@@ -1,7 +1,7 @@
 <!-- widgets/busTourForm/ui/BusTourForm.vue -->
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, h, onMounted } from 'vue';
 import {
 	BaseInput,
 	BaseTextArea,

@@ -6,7 +6,7 @@ defineOptions({
 import { computed, ref, toRef } from 'vue';
 
 import { ArrowDown } from '@/shared/ui/icons';
-import { useField, useFieldArray } from 'vee-validate';
+import { useField } from 'vee-validate';
 
 export interface Props {
 	name: string;
@@ -23,38 +23,26 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const {
-	value,
-	errorMessage,
-	meta,
-	handleChange,
-} = useField<string>(name);
-
-const { remove, push, replace, fields } = useFieldArray(name);
+const { value, errorMessage, meta, handleChange } = useField<string | string[]>(
+	name
+);
 
 const showSelect = ref(false);
 const inputValue = ref('');
 
 const searchableList = computed(() => {
-	const filedsVal = fields.value.map((x: any) => x.value)
-	if (inputValue.value) {
-		return props.list.filter(
-			(listItem: SelectItem) =>
-				listItem.name?.toLowerCase().includes(inputValue.value.toLowerCase()) &&
-				filedsVal?.findIndex(
-					(dataItem: string) =>
-						dataItem?.toLowerCase() === listItem?.name?.toLowerCase()
-				) === -1
-		);
-	} else {
-		return props.list.filter((listItem: SelectItem) => {
-			const index = filedsVal.findIndex(
-				(dataItem: string) =>
-					dataItem?.toLocaleLowerCase() === listItem.name?.toLowerCase()
+	return props.list.filter((listItem: SelectItem) => {
+		// Проверяем, нет ли уже этого элемента в выбранных
+		const isSelected = currentValues.value.includes(listItem?.name ?? '');
+
+		if (inputValue.value) {
+			return (
+				!isSelected &&
+				listItem.name?.toLowerCase().includes(inputValue.value.toLowerCase())
 			);
-			return index === -1;
-		});
-	}
+		}
+		return !isSelected;
+	});
 });
 
 const toggle = () => {
@@ -66,39 +54,50 @@ const close = () => {
 	showSelect.value = false;
 };
 
+const currentValues = computed(() => {
+	if (!value.value) return [];
+	return Array.isArray(value.value) ? value.value : [value.value];
+});
+
 const addToSelected = (item: SelectItem) => {
 	if (props.multiple) {
-		push(item.name);
+		const newValue = [...currentValues.value, item.name];
+		handleChange(newValue);
 	} else {
-		handleChange(item.name)
+		handleChange(item.name);
+		close();
 	}
+};
+
+const removeValue = (index: number) => {
+    if (props.multiple) {
+        const newValue = [...currentValues.value];
+        newValue.splice(index, 1);
+        handleChange(newValue);
+    } else {
+        handleChange(undefined);
+    }
 };
 
 const add = () => {
 	if (inputValue.value) {
 		if (props.multiple) {
-			push(inputValue.value);
+			const newValue = [...currentValues.value, inputValue.value]
+			handleChange(newValue);
 		} else {
-			replace([inputValue.value]);
+			handleChange(inputValue.value);
 		}
 		inputValue.value = '';
 	}
 };
 
-const removeSingleValue = () => {
-	handleChange('')
-}
 </script>
 <template>
 	<div>
 		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
 			<label class="the-label" v-if="label" :for="name">
 				{{ label }}
-				<span
-					class="text-red-600"
-					v-if="required"
-					>*</span
-				>
+				<span class="text-red-600" v-if="required">*</span>
 			</label>
 			<div
 				v-click-away="close"
@@ -112,26 +111,17 @@ const removeSingleValue = () => {
 				<div
 					class="flex min-h-[42px] w-full flex-wrap gap-2 px-3 py-2"
 					@click="toggle"
-					@keydown.enter.stop="toggle"
 				>
-				<template v-if="fields.length && multiple">
-					<div
-						v-for="(item, idx) in fields"
-						:key="item.key"
-						@click.stop="remove(idx)"
-						class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
-					>
-						{{ item?.value }}
-					</div>
-				</template>
-				<div v-if="value && !multiple">
-					<div
-						@click.stop="removeSingleValue"
-						class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
-					>
-						{{ value }}
-					</div>
-				</div>
+					<template v-if="currentValues.length">
+						<div
+							v-for="(val, idx) in currentValues"
+							:key="idx"
+							@click.stop="removeValue(idx)"
+							class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
+						>
+							{{ val }}
+						</div>
+					</template>
 				</div>
 				<div
 					class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
