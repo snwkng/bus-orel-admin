@@ -6,12 +6,12 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { computed } from 'vue';
 
-const schema = yup.object({
+const schema = yup.object().shape({
   name: yup.string().required('Укажите название гостиницы').defined().typeError('Поле должно быть текстовым'),
   type: yup.string().required('Укажите тип гостиницы').defined().typeError('Поле должно быть текстовым'),
   registryNumber: yup.string().required('Укажите регистрационные номер гостиницы').defined().typeError('Поле должно быть текстовым'),
   description: yup.string().defined(),
-  address: yup.object({
+  address: yup.object().shape({
     city: yup.string().defined(),
     region: yup.string().defined(),
     country: yup.string().defined(),
