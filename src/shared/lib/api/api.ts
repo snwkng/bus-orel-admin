@@ -73,6 +73,15 @@ async function _request<T>(
       signal: config.signal,
     });
 
+    if (response.status === 401) {
+      const { useAuthStore } = await import('@/features/auth/model'); 
+      const authStore = useAuthStore();
+      
+      authStore.logout(); 
+      
+      throw new ApiError('Session expired', 401, url, 'Unauthorized');
+    }
+
     let data: unknown;
     try {
       // 204 No Content - null

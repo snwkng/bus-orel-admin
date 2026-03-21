@@ -88,19 +88,22 @@ const router = createRouter({
 router.beforeEach(async (to) => {
 	await loadLayoutMiddleware(to);
 	const authStore = useAuthStore();
-  
-  // Публичные страницы
-  if (to.meta.public) return;
-	
-	console.log(authStore.isLoggedIn)
-	console.log(to.name)
-  if (!authStore.isLoggedIn && to.name !== 'login') {
-    return { name: 'login' };
-  }
-  
-  if (!authStore.user) {
-    await authStore.checkAuth();
-  }
+
+	// Публичные страницы
+	if (to.meta.public) return true;
+
+	if (!authStore.isLoggedIn && to.name !== 'login') {
+		return { name: 'login' };
+	}
+
+	if (!authStore.user) {
+		try {
+			await authStore.fetchProfile();
+			return to;
+		} catch {
+			return { name: 'login' };
+		}
+	}
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

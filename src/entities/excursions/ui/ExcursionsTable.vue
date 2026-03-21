@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, h, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
-import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
+import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
+import type { IExcursion } from '../model/types';
 
 const router = useRouter();
 const route = useRoute();
@@ -20,48 +21,44 @@ watch(
 
 const excursions = computed(() => store.excursions);
 
-const tableDataConfig = reactive<ITableDataConfig[]>([
+const tableDataConfig = shallowRef<ITableConfig[]>([
 	{ label: 'Название', propertyName: 'name', cellWidth: '200px' },
 	{
 		label: 'Описание',
 		propertyName: 'description',
 		cellWidth: '300px',
-		dataType: 'arrayString'
+		format: (val: IExcursion['description']) => Array.isArray(val) ? val.join(', ') : val 
 	},
-	{ label: 'Изображения', propertyName: 'images', cellWidth: '350px', dataType: 'images' },
+	{ label: 'Изображения', propertyName: 'images', cellWidth: '350px' },
 	{ label: 'Длительность', propertyName: 'duration' },
 	{
 		label: 'Цена',
 		propertyName: 'price',
-		dataType: 'money',
 		cellWidth: '120px'
 	},
 	{ label: 'Отель', propertyName: 'hotelName' },
 	{
 		label: 'Название прайса',
 		propertyName: 'documentName',
-		dataType: 'arrayString'
 	},
 	{
 		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
-		dataType: 'arrayDates'
+		format: (val: string[]) => h('div', (val || []).map(t => h('span', t)))
 	},
-	{ label: 'Город', propertyName: 'cities', dataType: 'arrayString' },
+	{ label: 'Город', propertyName: 'cities' },
 	{
 		label: 'В стоимость включено',
 		propertyName: 'thePriceIncludes',
 		cellWidth: '250px',
-		dataType: 'arrayString'
 	},
 
 	{
 		label: 'Дополнительно оплачивается',
 		propertyName: 'additionallyPaid',
 		cellWidth: '250px',
-		dataType: 'arrayString'
 	}
-]);
+] as const);
 
 const deleteExcursion = async (id: string) => {
 	await store
@@ -81,7 +78,7 @@ const deleteExcursion = async (id: string) => {
 		@edit="router.push({ name: 'edit-excursion', params: { id: $event } })"
 		@delete="deleteExcursion"
 	>
-		<template #name="row">
+		<template #cell(name)="row">
 			<RouterLink
 				class="text-ligth-blue hover:underline"
 				:to="{ name: 'edit-excursion', params: { id: row.row._id } }"
