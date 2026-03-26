@@ -6,6 +6,12 @@ import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
 import type { IExcursion } from '../model/types';
+import {
+	dateFormat,
+	imageFormat,
+	linkFormat,
+	priceFormat
+} from '@/shared/config/composables/useRenderFunctions';
 
 const router = useRouter();
 const route = useRoute();
@@ -22,41 +28,68 @@ watch(
 const excursions = computed(() => store.excursions);
 
 const tableDataConfig = shallowRef<ITableConfig[]>([
-	{ label: 'Название', propertyName: 'name', cellWidth: '200px' },
+	{
+		label: 'Название',
+		propertyName: 'name',
+		cellWidth: '200px',
+		format: (val: IExcursion['name'], row: IExcursion) =>
+			linkFormat(val, { name: 'edit-excursion', params: { id: row._id } })
+	},
 	{
 		label: 'Описание',
 		propertyName: 'description',
 		cellWidth: '300px',
-		format: (val: IExcursion['description']) => Array.isArray(val) ? val.join(', ') : val 
+		format: (val: IExcursion['description']) =>
+			Array.isArray(val) ? val.join(', ') : val
 	},
-	{ label: 'Изображения', propertyName: 'images', cellWidth: '350px' },
+	{
+		label: 'Изображения',
+		propertyName: 'images',
+		cellWidth: '350px',
+		format: (val) => imageFormat(val)
+	},
 	{ label: 'Длительность', propertyName: 'duration' },
 	{
 		label: 'Цена',
 		propertyName: 'price',
-		cellWidth: '120px'
+		cellWidth: '120px',
+		format: (val: IExcursion['price']) => priceFormat(val)
 	},
 	{ label: 'Отель', propertyName: 'hotelName' },
 	{
-		label: 'Название прайса',
+		label: 'Наличие прайса',
 		propertyName: 'documentName',
+		format: (val: IExcursion['documentName']) => (val.length ? 'Есть' : 'Нет')
 	},
 	{
 		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
-		format: (val: string[]) => h('div', (val || []).map(t => h('span', t)))
+		format: (val: string[]) =>
+			h(
+				'div',
+				(val || []).map((t) => h('span', dateFormat(t, 'DD.MM.YYYY')))
+			)
 	},
-	{ label: 'Город', propertyName: 'cities' },
+	{
+		label: 'Город(-а)',
+		propertyName: 'cities',
+		format: (val: string[]) =>
+			h(
+				'div',
+				{class: 'flex flex-col'},
+				(val || []).map((t) => h('span', t))
+			)
+	},
 	{
 		label: 'В стоимость включено',
 		propertyName: 'thePriceIncludes',
-		cellWidth: '250px',
+		cellWidth: '250px'
 	},
 
 	{
 		label: 'Дополнительно оплачивается',
 		propertyName: 'additionallyPaid',
-		cellWidth: '250px',
+		cellWidth: '250px'
 	}
 ] as const);
 
@@ -77,30 +110,5 @@ const deleteExcursion = async (id: string) => {
 		:table-data="excursions"
 		@edit="router.push({ name: 'edit-excursion', params: { id: $event } })"
 		@delete="deleteExcursion"
-	>
-		<template #cell(name)="row">
-			<RouterLink
-				class="text-ligth-blue hover:underline"
-				:to="{ name: 'edit-excursion', params: { id: row.row._id } }"
-			>
-				{{ row.row.name }}
-			</RouterLink>
-		</template>
-		<!-- <template #images="row">
-			<div class="flex flex-row flex-wrap gap-1">
-				<div
-					class="relative"
-					v-for="(imageName, index) in row?.row.images"
-					:key="imageName"
-				>
-					<img
-						loading="lazy"
-						:src="`/api/s3/download/${imageName}`"
-						:alt="`preview-${index}`"
-						class="h-[70px] w-[80px] rounded-lg object-fill"
-					/>
-				</div>
-			</div>
-		</template> -->
-	</BaseTable>
+	/>
 </template>

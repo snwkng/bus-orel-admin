@@ -76,46 +76,50 @@ const deleteAction = (id: string) => {
 };
 </script>
 <template>
-	<div class="overflow-x-auto rounded-xl border">
-		<div
-			class="grid min-w-[800px] bg-white md:min-w-full"
-			:style="{
-				gridTemplateColumns: tableDataConfig
-					.map((c) => c.cellWidth || '1fr')
-					.join(' ')
-			}"
-		>
-			<!-- Шапка таблицы -->
+	<div class="bg-white p-4 overflow-hidden w-full h-full rounded-xl">
+		<div class="overflow-x-auto rounded-xl w-full h-full">
 			<div
-				v-for="config in tableDataConfig"
-				:key="config.propertyName"
-				class="border-b border-gray-300 bg-slate-100 p-4 font-bold text-slate-700"
+				class="grid min-w-[800px] bg-white md:min-w-full"
+				:style="{
+					gridTemplateColumns: tableDataConfig
+						.map((c) => c.cellWidth || 'minmax(160px, 300px)')
+						.join(' ')
+				}"
 			>
-				{{ config.label }}
-			</div>
+				<!-- Шапка таблицы -->
+				<div
+					v-for="config in tableDataConfig"
+					:key="config.propertyName"
+					class="border-b border-gray-300 bg-slate-100 p-4 font-bold text-slate-700"
+				>
+					{{ config.label }}
+				</div>
 
-			<!-- Тело таблицы -->
-			<template v-for="(tableItem, idx) in tableData" :key="idx">
-				<template v-for="config in tableDataConfig" :key="config.propertyName">
-					<div
-						class="line-clamp-4 min-w-0 text-wrap bg-inherit p-4"
-						:class="{
-							'border-b border-gray-100': idx !== tableData.length - 1
-						}"
+				<!-- Тело таблицы -->
+				<template v-for="(tableItem, idx) in tableData" :key="idx">
+					<template
+						v-for="config in tableDataConfig"
+						:key="config.propertyName"
 					>
-						<div class="line-clamp-4 break-words">
-							<slot
-								:name="`cell(${config.propertyName})`"
-								:value="getValue(tableItem, config.propertyName)"
-								:row="tableItem"
-							>
-								<!-- Используем наш мини-компонент -->
-								<RenderValue :value="getRenderedValue(tableItem, config)" />
-							</slot>
+						<div
+							class="line-clamp-4 min-w-0 text-wrap bg-inherit p-4"
+							:class="{
+								'border-b border-gray-100': idx !== tableData.length - 1
+							}"
+						>
+							<div class="line-clamp-4 break-words">
+								<slot
+									:name="`cell(${config.propertyName})`"
+									:value="getValue(tableItem, config.propertyName)"
+									:row="tableItem"
+								>
+									<RenderValue :value="getRenderedValue(tableItem, config)" />
+								</slot>
+							</div>
 						</div>
-					</div>
+					</template>
 				</template>
-			</template>
+			</div>
 		</div>
 	</div>
 </template>
