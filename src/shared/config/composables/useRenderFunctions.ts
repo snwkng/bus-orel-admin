@@ -1,5 +1,5 @@
 import { h } from 'vue';
-import type { RouteLocationAsRelativeGeneric } from 'vue-router';
+import { RouterLink, type RouteLocationAsRelativeGeneric } from 'vue-router';
 import dayjs from 'dayjs';
 
 export const imageFormat = (val: string[]) => {
@@ -12,22 +12,24 @@ export const imageFormat = (val: string[]) => {
 
 export const linkFormat = (title: string, route: RouteLocationAsRelativeGeneric) => {
   return h(
-    'router-link',
+    RouterLink,
     { to: route, class: 'text-ligth-blue hover:underline' },
-    title
+    () => title
   );
 };
 
 export const priceFormat = (val: number) => {
   return h(
     'span',
+    null,
     `${val}₽`
   );
 };
 
 export const dateFormat = (val: Date | string, format: string) => {
   return h(
-    'span',
+    'div',
+    null,
     dayjs(val).format(format)
   );
 };

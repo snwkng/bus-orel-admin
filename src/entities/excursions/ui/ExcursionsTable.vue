@@ -4,8 +4,9 @@ import { useExcursionStore } from '../model';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
+import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
-import type { IExcursion } from '../model/types';
+import type { EditExcursionDto } from '../model/types';
 import {
 	dateFormat,
 	imageFormat,
@@ -32,14 +33,14 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 		label: 'Название',
 		propertyName: 'name',
 		cellWidth: '200px',
-		format: (val: IExcursion['name'], row: IExcursion) =>
+		format: (val: EditExcursionDto['name'], row: EditExcursionDto) =>
 			linkFormat(val, { name: 'edit-excursion', params: { id: row._id } })
 	},
 	{
 		label: 'Описание',
 		propertyName: 'description',
 		cellWidth: '300px',
-		format: (val: IExcursion['description']) =>
+		format: (val: EditExcursionDto['description']) =>
 			Array.isArray(val) ? val.join(', ') : val
 	},
 	{
@@ -53,13 +54,13 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 		label: 'Цена',
 		propertyName: 'price',
 		cellWidth: '120px',
-		format: (val: IExcursion['price']) => priceFormat(val)
+		format: (val: EditExcursionDto['price']) => priceFormat(val)
 	},
 	{ label: 'Отель', propertyName: 'hotelName' },
 	{
 		label: 'Наличие прайса',
 		propertyName: 'documentName',
-		format: (val: IExcursion['documentName']) => (val.length ? 'Есть' : 'Нет')
+		format: (val: EditExcursionDto['documentName']) => (val.length ? 'Есть' : 'Нет')
 	},
 	{
 		label: 'Даты экскурсий',
@@ -108,7 +109,26 @@ const deleteExcursion = async (id: string) => {
 	<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
-		@edit="router.push({ name: 'edit-excursion', params: { id: $event } })"
-		@delete="deleteExcursion"
-	/>
+	>
+	<template #actions="{ item }">
+			<div class="flex items-center gap-2">
+				<button 
+					type="button"
+					class="cursor-pointer transition-transform hover:scale-110"
+					title="Редактировать"
+					@click="router.push({ name: 'edit-excursion', params: { id: item._id } })"
+				>
+					<EditIcon fill="#006DF0" :width="25" :height="25" />
+				</button>
+				<button 
+					type="button"
+					class="cursor-pointer transition-transform hover:scale-110"
+					title="Удалить"
+					@click="deleteExcursion(item._id)"
+				>
+					<TrashIcon fill="red" :width="25" :height="25" />
+				</button>
+			</div>
+		</template>
+	</BaseTable>
 </template>
