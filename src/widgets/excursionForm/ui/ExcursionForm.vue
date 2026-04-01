@@ -58,6 +58,7 @@ onMounted(async () => {
 				label="Города"
 				column
 				multiple
+				required
 				:list="citiesList"
 			/>
 			<BaseInput

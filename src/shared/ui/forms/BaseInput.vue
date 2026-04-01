@@ -17,7 +17,7 @@ const props = defineProps<IProps>();
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange, handleBlur } =
+const { value, errorMessage, errors, meta, handleChange, handleBlur } =
 	useField<string>(name);
 </script>
 <template>
@@ -32,14 +32,14 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			type="text"
 			:value="value"
 			:placeholder="placeholder"
-			:class="[{ '!border-red-500': (meta.touched && !meta.valid) || !meta.valid }, 'the-input']"
+			:class="[{ '!border-red-500': (meta.touched && errorMessage) }, 'the-input']"
 			@input="handleChange"
-			@blur="handleBlur"
+			@blur="handleBlur($event, true)" 
 		/>
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="(meta.touched && !meta.valid) || !meta.valid"
+			v-show="(meta.touched && errorMessage)"
 		>
 			{{ errorMessage }}
 		</span>

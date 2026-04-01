@@ -74,11 +74,11 @@ async function _request<T>(
     });
 
     if (response.status === 401) {
-      const { useAuthStore } = await import('@/features/auth/model'); 
+      const { useAuthStore } = await import('@/features/auth/model');
       const authStore = useAuthStore();
-      
-      authStore.logout(); 
-      
+
+      authStore.logout();
+
       throw new ApiError('Session expired', 401, url, 'Unauthorized');
     }
 
@@ -91,18 +91,20 @@ async function _request<T>(
       data = await response.text();
     }
 
-    console.log(response)
     if (!response.ok) {
       throw new ApiError(
         `HTTP ${response.status}: ${response.statusText}`,
         response.status,
         url,
-        typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+        typeof data === 'string' ? data : '',
+        null,
+        (data as { data: { message?: string[]; }; })?.data?.message
       );
     }
 
     return data as ApiResponse<T>;
   } catch (error) {
+    console.log(error, 'error');
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new ApiError('Request aborted', 0, url);
     }

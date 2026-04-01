@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange } = useField<string | string[]>(
+const { value, errorMessage, meta, handleChange, validate } = useField<string | string[]>(
 	name
 );
 
@@ -49,7 +49,8 @@ const toggle = () => {
 	showSelect.value = !showSelect.value;
 };
 
-const close = () => {
+const close = async () => {
+	await validate()
 	inputValue.value = '';
 	showSelect.value = false;
 };
@@ -101,9 +102,10 @@ const add = () => {
 			</label>
 			<div
 				v-click-away="close"
-				class="relative mt-1 flex w-full cursor-pointer items-center justify-between rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+				class="relative mt-1 flex w-full cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 				:class="[
 					{
+						'border-red-500': (errorMessage),
 						'border-indigo-300 ring ring-indigo-200 ring-opacity-50': showSelect
 					}
 				]"
@@ -167,6 +169,13 @@ const add = () => {
 					@click="toggle"
 				/>
 			</div>
+			<span
+			:name="name"
+			class="text-red-600"
+			v-show="(errorMessage)"
+		>
+			{{ errorMessage }}
+		</span>
 		</div>
 	</div>
 </template>
