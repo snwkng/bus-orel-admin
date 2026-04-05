@@ -1,15 +1,14 @@
 <script setup lang="ts">
+import { RouteNames } from '@/app/router/RouteNames.enum';
 import BusToursTable from '@/entities/busTours';
 </script>
 <template>
-	<div class="px-4 py-4 md:px-5 md:py-5 h-full flex flex-col">
+	<div class="flex h-full flex-col">
 		<div class="mb-4 flex flex-col gap-y-1">
-			<h1 class="text-3xl font-bold">Автобусыне туры к морю</h1>
-			<h4 class="text-xm font-medium text-slate-400">
-				Добавляйте, редатируйте и удаляйте туры
-			</h4>
-			<div class="flex items-center pt-3" title="Добавить тур">
-				<router-link class="base-btn" to="/hotels/create">Добавить тур</router-link>
+			<div class="flex items-center" title="Добавить тур">
+				<router-link class="base-btn" :to="{ name: RouteNames.CreateHotel }">
+					Добавить тур
+				</router-link>
 			</div>
 		</div>
 		<BusToursTable />

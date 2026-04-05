@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, shallowRef, watch } from 'vue';
+import { computed, h, ref, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 
@@ -13,20 +13,29 @@ import {
 	linkFormat,
 	priceFormat
 } from '@/shared/config/composables/useRenderFunctions';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 const route = useRoute();
 const store = useExcursionStore();
 
+const {excursions, pagination} = storeToRefs(store)
+
+const page = ref(1)
+const limit = ref(10)
+
 watch(
 	() => route.query,
 	async (val: LocationQuery) => {
-		await store.getExcursions(val as Record<string, string>);
+		const params = {
+			...val,
+			page: page.value,
+			limit: limit.value
+		}
+		await store.getExcursions(params);
 	},
 	{ immediate: true }
 );
-
-const excursions = computed(() => store.excursions);
 
 const tableDataConfig = shallowRef<ITableConfig[]>([
 	{
@@ -98,7 +107,7 @@ const deleteExcursion = async (id: string) => {
 	await store
 		.deleteExcursion(id)
 		.then(async () => {
-			await store.getExcursions();
+			await store.getExcursions({page: page.value, limit: limit.value});
 		})
 		.catch((err) => {
 			console.error(err);
@@ -109,6 +118,7 @@ const deleteExcursion = async (id: string) => {
 	<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
+		:pagination="pagination"
 	>
 	<template #actions="{ item }">
 			<div class="flex items-center gap-2">

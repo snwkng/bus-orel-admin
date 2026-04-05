@@ -1,3 +1,5 @@
+import type { IPagination } from '@/shared/config/interfaces/pagination.interface';
+
 type ParamsValue = string | number | boolean | null | undefined;
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -16,6 +18,7 @@ export interface ApiResponse<T> {
     timestamp: Date,
     path: string,
     statusCode: number,
+    pagination?: IPagination
   };
 }
 

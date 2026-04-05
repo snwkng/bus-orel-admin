@@ -5,11 +5,11 @@ import type { ApiResponse } from '@/shared/lib/api/types';
 export const excursionsApi = {
   getExcursions: async (
     params?: Record<string, string | number | boolean>
-  ): Promise<EditExcursionDto[]> => {
+  ): Promise<ApiResponse<EditExcursionDto[]>> => {
     try {
       const response = await api.get<EditExcursionDto[]>('/api/admin/excursions', { params });
       console.log(response.data)
-      return response?.data;
+      return response;
     } catch (err: any) {
       console.error(err);
       throw err;

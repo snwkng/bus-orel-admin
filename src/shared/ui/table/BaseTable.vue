@@ -1,17 +1,21 @@
 <script setup lang="ts" generic="T">
 import { type ITableConfig } from '@/shared/config/interfaces/table.interface';
+import { type IPagination } from '@/shared/config/interfaces/pagination.interface';
 import { computed, isVNode, markRaw, useSlots } from 'vue';
+import BasePagination from './BasePagination.vue';
 
 const props = withDefaults(
 	defineProps<{
 		tableDataConfig: readonly ITableConfig<T>[]; // Конфиг для типа T
 		tableData?: T[]; // Массив объектов типа T
 		emptyText?: string;
+		pagination: IPagination | null
 	}>(),
 	{
 		tableDataConfig: () => [],
 		tableData: () => [],
-		emptyText: 'Здесь пусто...'
+		emptyText: 'Здесь пусто...',
+		pagination: null
 	}
 );
 
@@ -47,7 +51,7 @@ const getRenderedValue = (row: T, col: ITableConfig<T>): any => {
 			: rendered;
 	}
 
-	return rawValue ?? '—';
+	return rawValue;
 };
 
 const RenderValue = (props: { value: any }) => {
@@ -108,6 +112,9 @@ const RenderValue = (props: { value: any }) => {
 						</div>
 					</template>
 				</template>
+			</div>
+			<div class="sticky bottom-0 left-0 bg-white base-py base-px" v-if="pagination">
+				<BasePagination :total="pagination.total" :limit="pagination.limit" :page="pagination.page" :last-page="pagination.lastPage" />
 			</div>
 		</div>
 	</div>

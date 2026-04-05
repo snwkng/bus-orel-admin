@@ -12,6 +12,7 @@ export default {
         'deep-blue': '#006DF0'
       },
     },
+    
   },
   plugins: [
     require('@tailwindcss/forms'),

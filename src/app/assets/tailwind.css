@@ -2,12 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-td, th {
-	padding: 0.25rem;
-	width: 200px;
-	text-align: left;
+.header-height {
+	@apply h-[70px]
 }
 
+.base-px {
+	@apply px-2 md:px-4 xl:px-5
+}
+
+.base-py {
+	@apply py-2 md:py-4 xl:py-5
+}
 .link-active {
 	@apply bg-deep-blue text-white !important;
 }

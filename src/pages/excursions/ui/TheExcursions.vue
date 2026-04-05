@@ -1,15 +1,12 @@
 <script setup lang="ts">
+import { RouteNames } from '@/app/router/RouteNames.enum';
 import ExcursionsTable from '@/entities/excursions';
 </script>
 <template>
-	<div class="px-4 py-4 md:px-5 md:py-5 h-full flex flex-col">
+	<div class="h-full flex flex-col">
 		<div class="mb-4 flex flex-col gap-y-1">
-			<h1 class="text-3xl font-bold">Экскурсии</h1>
-			<h4 class="text-xm font-medium text-slate-400">
-				Добавляйте, редатируйте и удаляйте экскурсии
-			</h4>
-			<div class="flex items-center pt-3" title="Добавить экскурсию">
-				<router-link class="base-btn" to="/excursions/create">Добавить экскурсию</router-link>
+			<div class="flex items-center" title="Добавить экскурсию">
+				<router-link class="base-btn" :to="{name: RouteNames.CreateExcursion}">Добавить экскурсию</router-link>
 			</div>
 		</div>
 

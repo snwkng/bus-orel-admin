@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { login } from '../api'; // ← только API-методы
+import { login } from '../api';
 import { api } from '@/shared/lib/api/api';
 import router from '@/app/router';
 
