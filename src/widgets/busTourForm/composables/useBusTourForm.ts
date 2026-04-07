@@ -1,7 +1,7 @@
 import { useBusTourStore } from '@/entities/busTours/model';
 import type { CreateHotelDto } from '@/entities/busTours/model/types';
 import { storeToRefs } from 'pinia';
-import { onInvalidSubmit } from '@/shared/config/composables/useHelpers';
+import { onInvalidSubmit } from '@/shared/lib/useInvalidSubmits';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { computed } from 'vue';

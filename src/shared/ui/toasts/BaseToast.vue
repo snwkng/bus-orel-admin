@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useToast, type ToastItem } from '@/shared/config/composables/useToast';
+import { useToast, type ToastItem } from '@/shared/lib/useToasts';
 const { toasts, remove } = useToast();
 
 const getToastType = (type: ToastItem['type']) => {

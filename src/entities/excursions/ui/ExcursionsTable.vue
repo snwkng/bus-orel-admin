@@ -12,7 +12,7 @@ import {
 	imageFormat,
 	linkFormat,
 	priceFormat
-} from '@/shared/config/composables/useRenderFunctions';
+} from '@/shared/lib/useRenderFunctions';
 import { storeToRefs } from 'pinia';
 
 const router = useRouter();
@@ -119,6 +119,7 @@ const deleteExcursion = async (id: string) => {
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
 		:pagination="pagination"
+		sticky-header
 	>
 	<template #actions="{ item }">
 			<div class="flex items-center gap-2">

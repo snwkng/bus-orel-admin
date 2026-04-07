@@ -1,6 +1,6 @@
-import { api } from '@/shared/lib/api/api';
+import { api } from '@/shared/api/api';
 import type { EditExcursionDto, CreateExcursionDto } from '../model/types';
-import type { ApiResponse } from '@/shared/lib/api/types';
+import type { ApiResponse } from '@/shared/api/types';
 
 export const excursionsApi = {
   getExcursions: async (

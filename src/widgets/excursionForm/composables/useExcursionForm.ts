@@ -2,11 +2,11 @@ import type { CreateExcursionDto } from '@/entities/excursions/model/types';
 import { useExcursionStore } from '@/entities/excursions/model';
 import { storeToRefs } from 'pinia';
 import { useForm } from 'vee-validate';
-import { onInvalidSubmit } from '@/shared/config/composables/useHelpers';
+import { onInvalidSubmit } from '@/shared/lib/useInvalidSubmits';
 import * as yup from 'yup';
 import { computed } from 'vue';
-import type { ApiError } from '@/shared/lib/api/types';
-import { useToast } from '@/shared/config/composables/useToast';
+import type { ApiError } from '@/shared/api/types';
+import { useToast } from '@/shared/lib/useToasts';
 
 const schema = yup.object({
   name: yup.string().required('Укажите название экскурсии').defined().typeError('Поле должно быть текстовым'),

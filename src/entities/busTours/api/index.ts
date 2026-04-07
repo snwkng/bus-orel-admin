@@ -1,4 +1,4 @@
-import { api } from '@/shared/lib/api/api';
+import { api } from '@/shared/api/api';
 import type { CreateHotelDto, EditHotelDto } from '../model/types';
 
 export const busToursApi = {

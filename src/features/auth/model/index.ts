@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { login } from '../api';
-import { api } from '@/shared/lib/api/api';
+import { api } from '@/shared/api/api';
 import router from '@/app/router';
 
 interface User {

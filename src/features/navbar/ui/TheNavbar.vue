@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { markRaw, onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { PanelRightOpenIcon } from '@lucide/vue';
 import { SeaIcon, ExcursionIcon, BusIcon } from '@/shared/ui/icons';
@@ -11,17 +11,17 @@ const routes = ref([
 	{
 		name: RouteNames.Hotels,
 		title: 'Автобусом к морю',
-		iconComponent: SeaIcon
+		iconComponent: markRaw(SeaIcon)
 	},
 	{
 		name: RouteNames.Excursions,
 		title: 'Экскурсии',
-		iconComponent: ExcursionIcon
+		iconComponent: markRaw(ExcursionIcon)
 	},
 	{
 		name: RouteNames.BusRent,
 		title: 'Аренда автобусов',
-		iconComponent: BusIcon
+		iconComponent: markRaw(BusIcon)
 	}
 ]);
 

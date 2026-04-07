@@ -11,6 +11,10 @@ export default {
         'ligth-blue': '#009EFF',
         'deep-blue': '#006DF0'
       },
+
+      boxShadow: {
+        'rounded-left': '-8px 0 10px -15px rgba(0, 0, 0, 0.2), -3px 0 10px -3px rgba(0, 0, 0, 0.14)'
+      }
     },
     
   },
