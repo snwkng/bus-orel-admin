@@ -23,15 +23,15 @@ export function useQueryFilters<T extends ObjectSchema<any>>(schema: T) {
     }
   });
 
-    const debouncedNavigate = debounce(
+  const debouncedNavigate = debounce(
     (query: LocationQueryRaw, replace: boolean) => {
-      router[replace ? 'replace' : 'push']({ query })
+      router[replace ? 'replace' : 'push']({ query });
     },
     150
-  )
+  );
 
   const updateFilters = (patch: Partial<FilterType>, options?: { replace?: boolean; }) => {
-    
+
     const combined = { ...route.query, ...patch };
 
     const defaultValues = schema.getDefault();
@@ -54,8 +54,12 @@ export function useQueryFilters<T extends ObjectSchema<any>>(schema: T) {
       localStorage.setItem(StorageKey.PER_PAGE, String(patch.limit));
     }
 
-    debouncedNavigate(cleanQuery as LocationQueryRaw, options?.replace ?? false)
+    debouncedNavigate(cleanQuery as LocationQueryRaw, options?.replace ?? false);
   };
 
-  return { filters, updateFilters };
+  const resetFilters = () => {
+    router.replace({ query: {} });
+  };
+
+  return { filters, updateFilters, resetFilters };
 }

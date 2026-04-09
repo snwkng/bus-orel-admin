@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, nextTick, onMounted, ref, shallowRef, watch } from 'vue';
+import { computed, h, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
 import { useRouter } from 'vue-router';
 
@@ -16,7 +16,6 @@ import {
 import { storeToRefs } from 'pinia';
 import { useQueryFilters } from '@/shared/lib/useQueryFilters';
 import { excursionSchema } from '../model/excursion.schema';
-import { StorageKey } from '@/shared/config/storage-keys';
 
 const router = useRouter();
 const store = useExcursionStore();
@@ -25,18 +24,11 @@ const { filters, updateFilters } = useQueryFilters(excursionSchema);
 
 const { excursions, pagination } = storeToRefs(store);
 
-const isInitialized = ref(false);
-
-// TODO: ПОправить вотчер и Mount работают с ошибками
-watch(
-  [isInitialized, () => filters.value], 
-  ([ready, newFilters]) => {
-    // Если мы еще не "прогрели" URL лимитом из памяти — ничего не делаем
-    if (!ready) return;
-
-    store.getExcursions(newFilters);
-  }, 
-  { deep: true }
+watch(filters,
+	(newFilters) => {
+		store.getExcursions(newFilters);
+	},
+	{ immediate: true, deep: true }
 );
 
 const tablePagination = computed(() => ({
@@ -45,18 +37,6 @@ const tablePagination = computed(() => ({
 	lastPage: pagination.value?.lastPage ?? 0,
 	total: pagination.value?.total ?? 0
 }));
-
-onMounted(async () => {
-  const savedLimit = localStorage.getItem(StorageKey.PER_PAGE);
-  const currentLimitInUrl = filters.value.limit;
-
-  if (savedLimit && Number(savedLimit) !== currentLimitInUrl) {
-    await updateFilters({ limit: Number(savedLimit) }, { replace: true });
-    await nextTick();
-  }
-  
-  isInitialized.value = true;
-});
 
 const tableDataConfig = shallowRef<ITableConfig[]>([
 	{
