@@ -1,6 +1,10 @@
 export const debounce = (func: Function, delayMs: number = 1000) => {
-	const timeout = setTimeout(() => {
-		func();
-		clearTimeout(timeout);
-	}, delayMs);
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func(...args);
+    }, delayMs);
+  };
 };

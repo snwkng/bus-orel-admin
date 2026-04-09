@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, h, ref, shallowRef, watch } from 'vue';
+import { computed, h, nextTick, onMounted, ref, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
-import { useRoute, useRouter, type LocationQuery } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
@@ -14,28 +14,49 @@ import {
 	priceFormat
 } from '@/shared/lib/useRenderFunctions';
 import { storeToRefs } from 'pinia';
+import { useQueryFilters } from '@/shared/lib/useQueryFilters';
+import { excursionSchema } from '../model/excursion.schema';
+import { StorageKey } from '@/shared/config/storage-keys';
 
 const router = useRouter();
-const route = useRoute();
 const store = useExcursionStore();
 
-const {excursions, pagination} = storeToRefs(store)
+const { filters, updateFilters } = useQueryFilters(excursionSchema);
 
-const page = ref(1)
-const limit = ref(10)
+const { excursions, pagination } = storeToRefs(store);
 
+const isInitialized = ref(false);
+
+// TODO: ПОправить вотчер и Mount работают с ошибками
 watch(
-	() => route.query,
-	async (val: LocationQuery) => {
-		const params = {
-			...val,
-			page: page.value,
-			limit: limit.value
-		}
-		await store.getExcursions(params);
-	},
-	{ immediate: true }
+  [isInitialized, () => filters.value], 
+  ([ready, newFilters]) => {
+    // Если мы еще не "прогрели" URL лимитом из памяти — ничего не делаем
+    if (!ready) return;
+
+    store.getExcursions(newFilters);
+  }, 
+  { deep: true }
 );
+
+const tablePagination = computed(() => ({
+	page: filters.value.page,
+	limit: filters.value.limit,
+	lastPage: pagination.value?.lastPage ?? 0,
+	total: pagination.value?.total ?? 0
+}));
+
+onMounted(async () => {
+  const savedLimit = localStorage.getItem(StorageKey.PER_PAGE);
+  const currentLimitInUrl = filters.value.limit;
+
+  if (savedLimit && Number(savedLimit) !== currentLimitInUrl) {
+    await updateFilters({ limit: Number(savedLimit) }, { replace: true });
+    await nextTick();
+  }
+  
+  isInitialized.value = true;
+});
 
 const tableDataConfig = shallowRef<ITableConfig[]>([
 	{
@@ -69,7 +90,8 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 	{
 		label: 'Наличие прайса',
 		propertyName: 'documentName',
-		format: (val: EditExcursionDto['documentName']) => (val.length ? 'Есть' : 'Нет')
+		format: (val: EditExcursionDto['documentName']) =>
+			val.length ? 'Есть' : 'Нет'
 	},
 	{
 		label: 'Даты экскурсий',
@@ -86,7 +108,7 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 		format: (val: string[]) =>
 			h(
 				'div',
-				{class: 'flex flex-col'},
+				{ class: 'flex flex-col' },
 				(val || []).map((t) => h('span', t))
 			)
 	},
@@ -107,7 +129,7 @@ const deleteExcursion = async (id: string) => {
 	await store
 		.deleteExcursion(id)
 		.then(async () => {
-			await store.getExcursions({page: page.value, limit: limit.value});
+			await store.getExcursions(filters.value);
 		})
 		.catch((err) => {
 			console.error(err);
@@ -118,20 +140,23 @@ const deleteExcursion = async (id: string) => {
 	<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
-		:pagination="pagination"
+		:pagination="tablePagination"
 		sticky-header
+		@update-filters="updateFilters"
 	>
-	<template #actions="{ item }">
-			<div class="flex items-center gap-2">
-				<button 
+		<template #actions="{ item }">
+			<div class="flex items-center justify-between gap-2">
+				<button
 					type="button"
 					class="cursor-pointer transition-transform hover:scale-110"
 					title="Редактировать"
-					@click="router.push({ name: 'edit-excursion', params: { id: item._id } })"
+					@click="
+						router.push({ name: 'edit-excursion', params: { id: item._id } })
+					"
 				>
 					<EditIcon fill="#006DF0" :width="25" :height="25" />
 				</button>
-				<button 
+				<button
 					type="button"
 					class="cursor-pointer transition-transform hover:scale-110"
 					title="Удалить"

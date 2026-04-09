@@ -3,13 +3,13 @@ import { TheNavbar } from '@/features/navbar';
 import { TheHeader } from '@/features/header';
 </script>
 <template>
-	<div class="flex overflow-hidden rounded-xl bg-gray-200">
+	<div class="flex overflow-hidden rounded-xl bg-gray-300">
 		<TheNavbar />
 		<div class="flex-1 flex-col overflow-auto">
 			<TheHeader />
 			<div class="h-[calc(100vh-70px)] bg-white">
 				<main
-					class="base-px base-py h-full overflow-hidden rounded-xl bg-gray-200 transition-all"
+					class="base-px base-py h-full overflow-hidden rounded-t-xl bg-gray-300 transition-all"
 				>
 					<slot />
 				</main>

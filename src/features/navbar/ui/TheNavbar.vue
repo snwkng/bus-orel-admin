@@ -74,7 +74,7 @@ onMounted(() => {
 				>
 					<component
 						:is="value.iconComponent"
-						:fill="route.name === value.name ? '#FFFFFF' : '#020202'"
+						:fill="'#020202'"
 						:width="28"
 						:height="28"
 					/>
@@ -87,7 +87,7 @@ onMounted(() => {
 			</nav>
 			<div class="absolute bottom-2 right-2">
 				<div
-					class="cursor-pointer rounded-xl bg-gray-100 p-2 shadow-xl transition-all hover:bg-gray-200"
+					class="cursor-pointer rounded-xl bg-gray-300 p-2 shadow-xl transition-all hover:bg-gray-200"
 					@click="changeExpanded(!isExpanded)"
 					:title="isExpanded ? 'Свернуть' : 'Развернуть'"
 				>

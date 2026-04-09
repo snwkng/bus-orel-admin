@@ -14,7 +14,7 @@
 	@apply py-2 md:py-4 xl:py-5
 }
 .link-active {
-	@apply bg-deep-blue text-white !important;
+	@apply bg-gray-300;
 }
 
 .link {

@@ -11,6 +11,7 @@ const props = withDefaults(
 		emptyText?: string;
 		pagination?: IPagination | null;
 		stickyHeader?: boolean;
+		filters?: Record<string, unknown>;
 	}>(),
 	{
 		tableDataConfig: () => [],
@@ -20,6 +21,10 @@ const props = withDefaults(
 		stickyHeader: false
 	}
 );
+
+const emit = defineEmits<{
+	(e: 'update-filters', data: Record<string, unknown>): void;
+}>();
 
 const slots = useSlots();
 
@@ -66,6 +71,10 @@ const RenderValue = (props: { value: any }) => {
 	// Если это примитив, оборачиваем в текстовый узел
 	return String(props.value ?? '—');
 };
+
+const updateFilters = (data: Record<string, any>) => {
+	emit('update-filters', data);
+};
 </script>
 <template>
 	<div
@@ -74,7 +83,7 @@ const RenderValue = (props: { value: any }) => {
 		<div class="h-full w-full overflow-x-auto rounded-xl">
 			<!-- шапка таблицы -->
 			<div
-				class="grid bg-white md:min-w-full z-10"
+				class="z-10 grid bg-white md:min-w-full"
 				:class="{
 					'sticky top-0': stickyHeader
 				}"
@@ -87,9 +96,10 @@ const RenderValue = (props: { value: any }) => {
 				<div
 					v-for="config in tableHeader"
 					:key="config.propertyName"
-					class="border-b border-gray-300 bg-slate-100 p-4 font-bold text-slate-700 flex items-center"
+					class="flex items-center border-b border-gray-300 bg-slate-100 p-4 font-bold text-slate-700"
 					:class="{
-						'sticky right-0 top-0 shadow-rounded-left': config.propertyName === 'actions'
+						'sticky right-0 top-0 shadow-rounded-left':
+							config.propertyName === 'actions'
 					}"
 				>
 					{{ config.label }}
@@ -111,7 +121,8 @@ const RenderValue = (props: { value: any }) => {
 							class="line-clamp-4 min-w-0 text-wrap bg-inherit p-4"
 							:class="{
 								'border-b border-gray-100': idx !== tableData.length - 1,
-								'sticky right-0 z-0 shadow-rounded-left': config.propertyName === 'actions'
+								'sticky right-0 z-0 shadow-rounded-left':
+									config.propertyName === 'actions'
 							}"
 						>
 							<div class="line-clamp-4 break-words">
@@ -140,6 +151,8 @@ const RenderValue = (props: { value: any }) => {
 				:limit="pagination.limit"
 				:page="pagination.page"
 				:last-page="pagination.lastPage"
+				@update:page="(p) => updateFilters({ page: p })"
+				@update:limit="(l) => updateFilters({ limit: l, page: 1 })"
 			/>
 		</div>
 	</div>
