@@ -15,7 +15,7 @@ export interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-	width: 'md'
+	width: 'lg'
 });
 
 const name = toRef(props, 'name');
@@ -24,7 +24,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 	useField<string>(name);
 </script>
 <template>
-	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }, `w-${width}`]">
+	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, `w-${width}`]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
 			<span class="text-red-600" v-if="required"> * </span>
@@ -35,7 +35,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			type="text"
 			:value="value"
 			:placeholder="placeholder"
-			:class="[{ 'border-red-500!': ((meta.touched && !meta.valid) || errorMessage) }, 'the-input']"
+			:class="[{ 'border-red-600!': ((meta.touched && !meta.valid) || errorMessage) }, 'the-input']"
 			@input="handleChange"
 			@blur="handleBlur($event, true)" 
 		/>

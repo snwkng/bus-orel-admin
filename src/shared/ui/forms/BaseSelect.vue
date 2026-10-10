@@ -20,7 +20,7 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
 	list: () => [],
-	width: 'md'
+	width: 'lg'
 });
 
 const name = toRef(props, 'name');

@@ -79,5 +79,5 @@
 }
 
 .the-label {
-	@apply block text-nowrap font-semibold text-lg;
+	@apply block text-nowrap font-semibold text-base;
 }

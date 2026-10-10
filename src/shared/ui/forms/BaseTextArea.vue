@@ -12,9 +12,12 @@ export interface IProps {
 	placeholder?: string;
 	column?: boolean;
 	required?: boolean;
+	width?: 'sm' | 'md' | 'lg' | '2xl' | '3xl' | '4xl' | 'full'
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+	width: '4xl'
+});
 
 const name = toRef(props, 'name');
 
@@ -22,7 +25,7 @@ const { value, errorMessage, meta } =
 	useField<string>(name);
 </script>
 <template>
-	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
+	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, `w-${width}`]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
 			<span
@@ -33,7 +36,7 @@ const { value, errorMessage, meta } =
 		</label>
 		<textarea
 			:class="[
-				{ '!border-red-500': !meta.valid },
+				{ 'border-red-600!':  ((meta.touched && !meta.valid) || errorMessage) },
 				'the-input whitespace-pre-line'
 			]"
 			rows="4"
@@ -44,7 +47,7 @@ const { value, errorMessage, meta } =
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="meta.touched && (errorMessage || !meta.valid)"
+			v-show=" ((meta.touched && !meta.valid) || errorMessage)"
 			>
 				{{ errorMessage }}
 			</span>

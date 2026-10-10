@@ -13,10 +13,12 @@ export interface IProps {
 	column?: boolean;
 	multiDates?: boolean;
 	required?: boolean;
+	width?: 'sm' | 'md' | 'lg' | 'full'
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-	multiDates: false
+	multiDates: false,
+	width: 'lg'
 });
 
 const name = toRef(props, 'name');
@@ -26,7 +28,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 </script>
 
 <template>
-	<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
+	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, `w-${width}`]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
 			<span class="text-red-600" v-if="required">*</span>
