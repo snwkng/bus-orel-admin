@@ -32,12 +32,14 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			<span class="text-red-600" v-if="required">*</span>
 		</label>
 		<VueDatePicker
+			:id="name"
 			v-model="value"
 			:format-locale="ru"
 			:multi-dates="multiDates"
 			:enable-time-picker="false"
+			:min-date="new Date()"
 			format="dd MMMM yyyy"
-			:class="{ '!border-red-500': !meta.valid }"
+			:ui="{ input: (!meta.valid || errorMessage) ? 'date-picker-error' : '' }"
 		>
 			<template #action-row="{ selectDate }">
 				<button class="secondary-btn w-full" @click.stop.prevent="selectDate">
@@ -48,9 +50,19 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 		<span
 			:name="name"
 			class="text-red-600"
-			v-show="meta.touched && (errorMessage || !meta.valid)"
+			v-show="(!meta.valid || errorMessage)"
 		>
 			{{ errorMessage }}
 		</span>
 	</div>
 </template>
+
+<style>
+.date-picker-error {
+  border-color: red;
+
+	&:hover {
+		border-color: red;
+	}
+}
+</style>

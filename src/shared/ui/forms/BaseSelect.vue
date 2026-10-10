@@ -3,9 +3,9 @@ defineOptions({
 	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
 });
 
-import { computed, ref, toRef } from 'vue';
+import { computed, nextTick, ref, toRef, useTemplateRef } from 'vue';
 
-import { ArrowDown } from '@/shared/ui/icons';
+import { ChevronDown } from '@lucide/vue';
 import { useField } from 'vee-validate';
 
 export interface Props {
@@ -15,10 +15,12 @@ export interface Props {
 	column?: boolean;
 	multiple?: boolean;
 	required?: boolean;
+	width?: 'sm' | 'md' | 'lg' | 'full'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	list: () => []
+	list: () => [],
+	width: 'md'
 });
 
 const name = toRef(props, 'name');
@@ -26,6 +28,8 @@ const name = toRef(props, 'name');
 const { value, errorMessage, meta, handleChange, validate } = useField<string | string[]>(
 	name
 );
+
+const searchSelectRef = useTemplateRef('searchSelect')
 
 const showSelect = ref(false);
 const inputValue = ref('');
@@ -47,6 +51,11 @@ const searchableList = computed(() => {
 
 const toggle = () => {
 	showSelect.value = !showSelect.value;
+	if (showSelect.value) {
+		nextTick(() => {
+			searchSelectRef.value?.focus()
+		})
+	}
 };
 
 const close = async () => {
@@ -96,23 +105,24 @@ const add = () => {
 </script>
 <template>
 	<div>
-		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }]">
+		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }, `w-${width}`]">
 			<label class="the-label" v-if="label" :for="name">
 				{{ label }}
 				<span class="text-red-600" v-if="required">*</span>
 			</label>
 			<div
 				v-click-away="close"
-				class="relative mt-1 flex w-full cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+				:id="name"
+				class="relative mt-1 flex cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all"
 				:class="[
 					{
 						'border-red-500': ((meta.touched && !meta.valid) || errorMessage),
-						'border-indigo-300 ring ring-indigo-200 ring-opacity-50': showSelect
-					}
+						'border-indigo-300 ring ring-indigo-200 ring-opacity-50 rounded-t-md rounded-b-none': showSelect
+					},
 				]"
 			>
 				<div
-					class="flex min-h-[42px] w-full flex-wrap gap-2 px-3 py-2"
+					class="flex min-h-10.5 w-full flex-wrap gap-2 px-3 py-2"
 					@click="toggle"
 				>
 					<template v-if="currentValues.length">
@@ -127,15 +137,17 @@ const add = () => {
 					</template>
 				</div>
 				<div
-					class="absolute left-0 top-[calc(100%+10px)] z-10 w-full rounded-lg bg-white shadow-md"
+					class="absolute left-0 top-[calc(100%+2px)] z-10 w-full rounded-b-lg bg-white shadow-material-1"
 					v-if="showSelect"
 				>
-					<div class="py-2">
+					<div class="pb-2 pt-5">
 						<div class="relative">
 							<div class="px-2">
 								<input
-									class="the-input"
+									ref="searchSelect"
+									class="the-input w-full"
 									name="searchSelect"
+									placeholder="Поиск"
 									v-model="inputValue"
 									@keydown.enter.prevent.stop="add"
 								/>
@@ -143,7 +155,7 @@ const add = () => {
 							<button
 								v-if="!searchableList.length"
 								type="button"
-								class="base-btn absolute right-0 top-0 z-10 mx-2 h-[42px] shadow-lg"
+								class="base-btn absolute right-0 top-0 z-10 mx-2 h-10.5 shadow-lg"
 								@click.stop="add"
 							>
 								Добавить
@@ -164,8 +176,8 @@ const add = () => {
 						</div>
 					</div>
 				</div>
-				<ArrowDown
-					class="transition-all"
+				<ChevronDown
+					class="transition-all w-8 stroke-slate-500"
 					:class="{ 'rotate-180': showSelect }"
 					@click="toggle"
 				/>

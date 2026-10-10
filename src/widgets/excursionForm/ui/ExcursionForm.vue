@@ -21,6 +21,7 @@ const {
 	typesList,
 	isSubmitting,
 	buttonTitle,
+	values,
 	loadExcursion,
 	getCitiesList,
 	getTypesList,
@@ -94,6 +95,7 @@ onMounted(async () => {
 			<BaseArrayFields
 				name="description"
 				label="Программа экскурсии"
+				:max="values.duration"
 				addButtonLabel="Добавить день"
 				:render-field="
 					({index, fieldName}) =>

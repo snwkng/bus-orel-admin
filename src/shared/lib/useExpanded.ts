@@ -1,6 +1,6 @@
 import { ref, readonly } from 'vue';
 
-const isExpanded = ref<boolean>(localStorage.getItem('isExpanded') as unknown as boolean || false);
+const isExpanded = ref<boolean>(localStorage.getItem('isExpanded') === 'true' || false);
 
 export const useExpanded = () => {
   const changeExpanded = (val: boolean) => {
