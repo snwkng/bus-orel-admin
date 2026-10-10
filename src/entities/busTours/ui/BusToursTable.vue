@@ -4,7 +4,7 @@ import { useBusTourStore } from '../model';
 import { useRouter } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
-import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
+import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
 
 const router = useRouter();
 const store = useBusTourStore();
@@ -15,7 +15,7 @@ onMounted(async () => {
 
 const tours = computed(() => store.tours);
 
-const tableDataConfig = reactive<ITableDataConfig[]>([
+const tableDataConfig = reactive<ITableConfig[]>([
 	{ label: 'Название', propertyName: 'name', cellWidth: '250px' },
 	{ label: 'Тип', propertyName: 'type' },
 	{ label: 'Описание', propertyName: 'description', cellWidth: '400px' },
@@ -23,7 +23,6 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 		label: 'Изображения',
 		propertyName: 'images',
 		cellWidth: '350px',
-		dataType: 'images'
 	},
 	{ label: 'Питание', propertyName: 'additionalInfo.food.type' },
 	{ label: 'Тип пляжа', propertyName: 'additionalInfo.beach.type' },
@@ -34,8 +33,8 @@ const tableDataConfig = reactive<ITableDataConfig[]>([
 	{ label: 'Заселение', propertyName: 'additionalInfo.checkInOut.checkIn' },
 	{ label: 'Выселение', propertyName: 'additionalInfo.checkInOut.checkOut' },
 	{ label: 'Адрес', propertyName: 'address.fullAddress', cellWidth: '300px' },
-	{ label: 'Цена (от)', propertyName: 'minPrice', dataType: 'money' },
-	{ label: 'В стоимость включено', propertyName: 'includedInThePrice.serviceName', dataType: 'arrayString' },
+	{ label: 'Цена (от)', propertyName: 'minPrice' },
+	{ label: 'В стоимость включено', propertyName: 'includedInThePrice.serviceName' },
 	{ label: 'Название прайса', propertyName: 'documentName' },
 	{ label: 'Туры', propertyName: 'tours' },
 	{ label: 'Город', propertyName: 'address.city' },

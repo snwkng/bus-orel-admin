@@ -100,13 +100,15 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 	{
 		label: 'В стоимость включено',
 		propertyName: 'thePriceIncludes',
-		cellWidth: '250px'
+		cellWidth: '250px',
+		format: (val: EditExcursionDto['thePriceIncludes']) => val?.join(', ')
 	},
 
 	{
 		label: 'Дополнительно оплачивается',
 		propertyName: 'additionallyPaid',
-		cellWidth: '250px'
+		cellWidth: '250px',
+		format: (val: EditExcursionDto['additionallyPaid']) => val?.join(', ')
 	}
 ] as const);
 
