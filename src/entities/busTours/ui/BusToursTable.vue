@@ -60,23 +60,5 @@ const deleteTour = async (id: string) => {
 		@edit="router.push({ name: 'edit-tour', params: { id: $event } })"
 		@delete="deleteTour"
 	>
-		<template #name="row">
-			<RouterLink
-				class="text-ligth-blue hover:underline"
-				:to="{ name: 'edit-tour', params: { id: row.row._id } }"
-			>
-				{{ row.row.name }}
-			</RouterLink>
-		</template>
-		<template #tours="row">
-			<div
-				class="line-clamp-4"
-				:title="tour.roomName"
-				v-for="tour in row.row.tours"
-				:key="tour"
-			>
-				{{ tour.roomName }}
-			</div>
-		</template>
 	</BaseTable>
 </template>
