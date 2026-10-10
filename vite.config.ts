@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 
 
 import { defineConfig, loadEnv } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
@@ -16,6 +17,7 @@ export default defineConfig(({ mode }: { mode: string; }) => {
     plugins: [
       vue(),
       vueJsx(),
+      tailwindcss(),
     ],
     resolve: {
       alias: {
@@ -29,6 +31,6 @@ export default defineConfig(({ mode }: { mode: string; }) => {
           changeOrigin: true,
         },
       }
-    }
+    },
   };
 });

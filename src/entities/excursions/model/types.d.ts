@@ -1,8 +1,7 @@
-import { ObjectId } from 'bson';
-
 interface IExcursion {
-	_id: ObjectId;
+	_id: string;
 	name: string;
+	type: string
 	description: string[];
 	images: string[];
 	duration: number;
@@ -16,4 +15,4 @@ interface IExcursion {
 }
 
 export type CreateExcursionDto = Omit<IExcursion, '_id'>;
-export type EditExcursionDto = Omit<IExcursion>;
+export type EditExcursionDto = Omit<IExcursion, ''>;

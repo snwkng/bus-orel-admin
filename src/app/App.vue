@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { useRoute } from "vue-router";
+	import BaseToast from '@/shared/ui/toasts/BaseToast.vue';
   const route = useRoute();
 
 // const route = useRoute();
@@ -12,4 +13,5 @@
 			<router-view />
 		</template>
 	</component>
+	<BaseToast />
 </template>

@@ -1,16 +1,27 @@
 import { defineStore } from 'pinia';
 import type { EditExcursionDto, CreateExcursionDto } from './types';
 import { excursionsApi } from '../api';
+import type { IPagination } from '@/shared/config/interfaces/pagination.interface';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
-	state: () => ({
-		excursions: [] as EditExcursionDto[],
-		files: [] as File[],
-		citiesList: [] as SelectItem[],
+	state: () => <{
+		excursions: EditExcursionDto[]
+		pagination: null | IPagination
+		files: File[]
+		citiesList: SelectItem[]
+		typesList: SelectItem[]
+	}>({
+		excursions: [],
+		pagination: null,
+		files: [],
+		citiesList: [],
+		typesList: []
 	}),
 	actions: {
 		async getExcursions(params?: Record<string, string | number | boolean>): Promise<void> {
-			this.excursions = await excursionsApi.getExcursions(params);
+			const response = await excursionsApi.getExcursions(params)
+			this.excursions = response?.data
+			this.pagination = response?.meta?.pagination ?? null
 		},
 
 		async getExcursion(id: string) {
@@ -48,6 +59,10 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getCitiesList(): Promise<void> {
 			this.citiesList = await excursionsApi.getCitiesList();
+		},
+
+		async getTypesList(): Promise<void> {
+			this.typesList = await excursionsApi.getTypesList();
 		}
 	}
 });

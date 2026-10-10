@@ -6,6 +6,7 @@ import {
 } from 'vue-router';
 import { loadLayoutMiddleware } from '@/app/router/middleware/loadLayout';
 import { useAuthStore } from '@/features/auth/model';
+import { RouteNames } from './RouteNames.enum';
 
 const DEFAULT_TITLE = 'Панель управления';
 
@@ -14,7 +15,7 @@ const router = createRouter({
 	routes: [
 		{
 			path: '/login',
-			name: 'login',
+			name: RouteNames.Login,
 			component: () => import('@/pages/login'),
 			meta: {
 				layout: 'auth',
@@ -23,12 +24,12 @@ const router = createRouter({
 		},
 		{
 			path: '/',
-			name: 'home',
+			name: RouteNames.Home,
 			component: () => import('@/pages/home')
 		},
 		{
 			path: '/hotels',
-			name: 'bus-tours',
+			name: RouteNames.Hotels,
 			component: () => import('@/pages/busTours'),
 			meta: {
 				title: 'Автобусные туры к морю'
@@ -36,7 +37,7 @@ const router = createRouter({
 		},
 		{
 			path: '/hotels/create',
-			name: 'create-tour',
+			name: RouteNames.CreateHotel,
 			component: () => import('@/pages/createBusTour'),
 			meta: {
 				title: 'Создать автобусный тур к морю'
@@ -44,7 +45,7 @@ const router = createRouter({
 		},
 		{
 			path: '/hotels/edit/:id',
-			name: 'edit-tour',
+			name: RouteNames.EditHotel,
 			component: () => import('@/pages/editBusTour'),
 			meta: {
 				title: 'Редактировать автобусный тур к морю'
@@ -52,15 +53,15 @@ const router = createRouter({
 		},
 		{
 			path: '/excursions',
-			name: 'excursions',
+			name: RouteNames.Excursions,
 			component: () => import('@/pages/excursions'),
 			meta: {
-				title: 'Экскурсии из Орла'
+				title: 'Экскурсии'
 			}
 		},
 		{
 			path: '/excursions/create',
-			name: 'create-excursion',
+			name: RouteNames.CreateExcursion,
 			component: () => import('@/pages/createExcursion'),
 			meta: {
 				title: 'Создать экскурсию'
@@ -68,7 +69,7 @@ const router = createRouter({
 		},
 		{
 			path: '/excursions/edit/:id',
-			name: 'edit-excursion',
+			name: RouteNames.EditExcursion,
 			component: () => import('@/pages/editExcursion'),
 			meta: {
 				title: 'Редактировать эскурсию'
@@ -76,7 +77,7 @@ const router = createRouter({
 		},
 		{
 			path: '/bus-rent',
-			name: 'bus-rent',
+			name: RouteNames.BusRent,
 			component: () => import('@/pages/busRent'),
 			meta: {
 				title: 'Аренда микроавтобусов'
@@ -88,19 +89,22 @@ const router = createRouter({
 router.beforeEach(async (to) => {
 	await loadLayoutMiddleware(to);
 	const authStore = useAuthStore();
-  
-  // Публичные страницы
-  if (to.meta.public) return;
-	
-	console.log(authStore.isLoggedIn)
-	console.log(to.name)
-  if (!authStore.isLoggedIn && to.name !== 'login') {
-    return { name: 'login' };
-  }
-  
-  if (!authStore.user) {
-    await authStore.checkAuth();
-  }
+
+	// Публичные страницы
+	if (to.meta.public) return true;
+
+	if (!authStore.isLoggedIn && to.name !== 'login') {
+		return { name: 'login' };
+	}
+
+	if (!authStore.user) {
+		try {
+			await authStore.fetchProfile();
+			return to;
+		} catch {
+			return { name: 'login' };
+		}
+	}
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

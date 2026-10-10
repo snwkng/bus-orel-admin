@@ -1,73 +1,120 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, h, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
-import { useRoute, useRouter, type LocationQuery } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
-import type { ITableDataConfig } from '@/shared/config/interfaces/table.interface';
+import { TrashIcon, EditIcon } from '@/shared/ui/icons';
+import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
+import type { EditExcursionDto } from '../model/types';
+import {
+	dateFormat,
+	imageFormat,
+	linkFormat,
+	priceFormat
+} from '@/shared/lib/useRenderFunctions';
+import { storeToRefs } from 'pinia';
+import { useQueryFilters } from '@/shared/lib/useQueryFilters';
+import { excursionSchema } from '../model/excursion.schema';
 
 const router = useRouter();
-const route = useRoute();
 const store = useExcursionStore();
 
-watch(
-	() => route.query,
-	async (val: LocationQuery) => {
-		await store.getExcursions(val as Record<string, string>);
+const { filters, updateFilters } = useQueryFilters(excursionSchema);
+
+const { excursions, pagination } = storeToRefs(store);
+
+watch(filters,
+	(newFilters) => {
+		store.getExcursions(newFilters);
 	},
-	{ immediate: true }
+	{ immediate: true, deep: true }
 );
 
-const excursions = computed(() => store.excursions);
+const tablePagination = computed(() => ({
+	page: filters.value.page,
+	limit: filters.value.limit,
+	lastPage: pagination.value?.lastPage ?? 0,
+	total: pagination.value?.total ?? 0
+}));
 
-const tableDataConfig = reactive<ITableDataConfig[]>([
-	{ label: 'Название', propertyName: 'name', cellWidth: '200px' },
+const tableDataConfig = shallowRef<ITableConfig[]>([
+	{
+		label: 'Название',
+		propertyName: 'name',
+		cellWidth: '200px',
+		format: (val: EditExcursionDto['name'], row: EditExcursionDto) =>
+			linkFormat(val, { name: 'edit-excursion', params: { id: row._id } })
+	},
 	{
 		label: 'Описание',
 		propertyName: 'description',
 		cellWidth: '300px',
-		dataType: 'arrayString'
+		format: (val: EditExcursionDto['description']) =>
+			Array.isArray(val) ? val.join(', ') : val
 	},
-	{ label: 'Изображения', propertyName: 'images', cellWidth: '350px', dataType: 'images' },
+	{
+		label: 'Тип',
+		propertyName: 'type',
+		cellWidth: '160px',
+	},
+	{
+		label: 'Изображения',
+		propertyName: 'images',
+		cellWidth: '350px',
+		format: (val) => imageFormat(val)
+	},
 	{ label: 'Длительность', propertyName: 'duration' },
 	{
 		label: 'Цена',
 		propertyName: 'price',
-		dataType: 'money',
-		cellWidth: '120px'
+		cellWidth: '120px',
+		format: (val: EditExcursionDto['price']) => priceFormat(val)
 	},
 	{ label: 'Отель', propertyName: 'hotelName' },
 	{
-		label: 'Название прайса',
+		label: 'Наличие прайса',
 		propertyName: 'documentName',
-		dataType: 'arrayString'
+		format: (val: EditExcursionDto['documentName']) =>
+			val.length ? 'Есть' : 'Нет'
 	},
 	{
 		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
-		dataType: 'arrayDates'
+		format: (val: string[]) =>
+			h(
+				'div',
+				(val || []).map((t) => h('span', dateFormat(t, 'DD.MM.YYYY')))
+			)
 	},
-	{ label: 'Город', propertyName: 'cities', dataType: 'arrayString' },
+	{
+		label: 'Город(-а)',
+		propertyName: 'cities',
+		format: (val: string[]) =>
+			h(
+				'div',
+				{ class: 'flex flex-col' },
+				(val || []).map((t) => h('span', t))
+			)
+	},
 	{
 		label: 'В стоимость включено',
 		propertyName: 'thePriceIncludes',
-		cellWidth: '250px',
-		dataType: 'arrayString'
+		cellWidth: '250px'
 	},
 
 	{
 		label: 'Дополнительно оплачивается',
 		propertyName: 'additionallyPaid',
-		cellWidth: '250px',
-		dataType: 'arrayString'
+		cellWidth: '250px'
 	}
-]);
+] as const);
 
 const deleteExcursion = async (id: string) => {
 	await store
 		.deleteExcursion(id)
 		.then(async () => {
-			await store.getExcursions();
+			await store.getExcursions(filters.value);
 		})
 		.catch((err) => {
 			console.error(err);
@@ -78,32 +125,31 @@ const deleteExcursion = async (id: string) => {
 	<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
-		@edit="router.push({ name: 'edit-excursion', params: { id: $event } })"
-		@delete="deleteExcursion"
+		:pagination="tablePagination"
+		sticky-header
+		@update-filters="updateFilters"
 	>
-		<template #name="row">
-			<RouterLink
-				class="text-ligth-blue hover:underline"
-				:to="{ name: 'edit-excursion', params: { id: row.row._id } }"
-			>
-				{{ row.row.name }}
-			</RouterLink>
-		</template>
-		<!-- <template #images="row">
-			<div class="flex flex-row flex-wrap gap-1">
-				<div
-					class="relative"
-					v-for="(imageName, index) in row?.row.images"
-					:key="imageName"
+		<template #actions="{ item }">
+			<div class="flex items-center justify-between gap-2">
+				<button
+					type="button"
+					class="cursor-pointer transition-transform hover:scale-110"
+					title="Редактировать"
+					@click="
+						router.push({ name: 'edit-excursion', params: { id: item._id } })
+					"
 				>
-					<img
-						loading="lazy"
-						:src="`/api/s3/download/${imageName}`"
-						:alt="`preview-${index}`"
-						class="h-[70px] w-[80px] rounded-lg object-fill"
-					/>
-				</div>
+					<EditIcon fill="#006DF0" :width="25" :height="25" />
+				</button>
+				<button
+					type="button"
+					class="cursor-pointer transition-transform hover:scale-110"
+					title="Удалить"
+					@click="deleteExcursion(item._id)"
+				>
+					<TrashIcon fill="red" :width="25" :height="25" />
+				</button>
 			</div>
-		</template> -->
+		</template>
 	</BaseTable>
 </template>
