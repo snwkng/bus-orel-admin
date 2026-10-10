@@ -1,6 +1,7 @@
 interface IExcursion {
 	_id: string;
 	name: string;
+	type: string
 	description: string[];
 	images: string[];
 	duration: number;

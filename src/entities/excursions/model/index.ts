@@ -6,14 +6,16 @@ import type { IPagination } from '@/shared/config/interfaces/pagination.interfac
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => <{
 		excursions: EditExcursionDto[]
-		pagination: null | IPagination,
-		files: File[],
+		pagination: null | IPagination
+		files: File[]
 		citiesList: SelectItem[]
+		typesList: SelectItem[]
 	}>({
 		excursions: [],
 		pagination: null,
 		files: [],
 		citiesList: [],
+		typesList: []
 	}),
 	actions: {
 		async getExcursions(params?: Record<string, string | number | boolean>): Promise<void> {
@@ -57,6 +59,10 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async getCitiesList(): Promise<void> {
 			this.citiesList = await excursionsApi.getCitiesList();
+		},
+
+		async getTypesList(): Promise<void> {
+			this.typesList = await excursionsApi.getTypesList();
 		}
 	}
 });

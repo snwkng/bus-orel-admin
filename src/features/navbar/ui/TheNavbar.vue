@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { markRaw, onMounted, ref } from 'vue';
+import { markRaw, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
-import { PanelRightOpenIcon } from '@lucide/vue';
 import { SeaIcon, ExcursionIcon, BusIcon } from '@/shared/ui/icons';
 import { RouteNames } from '@/app/router/RouteNames.enum';
+import { useExpanded } from '@/shared/lib/useExpanded';
+
+const { isExpanded } = useExpanded()
 
 const route = useRoute();
 
@@ -25,22 +27,11 @@ const routes = ref([
 	}
 ]);
 
-const isExpanded = ref(false);
-
-const changeExpanded = (val: boolean) => {
-	isExpanded.value = val;
-	localStorage.setItem('isExpanded', val.toString());
-};
-
-onMounted(() => {
-	const expanded = localStorage.getItem('isExpanded');
-	isExpanded.value = expanded === 'true';
-});
 </script>
 <template>
 	<aside
-		class="flex h-[100vh] flex-col overflow-hidden bg-white transition-all"
-		:class="isExpanded ? 'w-[250px]' : 'w-[60px]'"
+		class="flex h-screen flex-col overflow-hidden bg-white transition-all"
+		:class="isExpanded ? 'w-62.5' : 'w-15'"
 	>
 		<div class="flex items-center justify-center">
 			<RouterLink
@@ -57,7 +48,7 @@ onMounted(() => {
 		<div class="relative h-full">
 			<nav
 				:class="[
-					'flex flex-col gap-2 transition-all base-py',
+					'flex flex-col gap-2 transition-all base-py items-center',
 					{ 'px-3': isExpanded }
 				]"
 			>
@@ -67,7 +58,7 @@ onMounted(() => {
 					:class="[
 						'link w-full',
 						{ 'link-active': route.name === value.name },
-						{ 'justify-center !rounded-xl': !isExpanded }
+						{ 'justify-center rounded-full! w-fit!': !isExpanded }
 					]"
 					:to="{ name: value.name }"
 					:title="value.title"
@@ -85,19 +76,6 @@ onMounted(() => {
 					>
 				</RouterLink>
 			</nav>
-			<div class="absolute bottom-2 right-2">
-				<div
-					class="cursor-pointer rounded-xl bg-gray-300 p-2 shadow-xl transition-all hover:bg-gray-200"
-					@click="changeExpanded(!isExpanded)"
-					:title="isExpanded ? 'Свернуть' : 'Развернуть'"
-				>
-					<PanelRightOpenIcon
-						:size="32"
-						color="#291715"
-						:class="['duration-300', { 'rotate-180': !isExpanded }]"
-					/>
-				</div>
-			</div>
 		</div>
 	</aside>
 </template>

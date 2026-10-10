@@ -50,6 +50,7 @@ const toggle = () => {
 };
 
 const close = async () => {
+	if (!showSelect.value) return
 	await validate()
 	inputValue.value = '';
 	showSelect.value = false;
@@ -105,7 +106,7 @@ const add = () => {
 				class="relative mt-1 flex w-full cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 				:class="[
 					{
-						'border-red-500': (errorMessage),
+						'border-red-500': ((meta.touched && !meta.valid) || errorMessage),
 						'border-indigo-300 ring ring-indigo-200 ring-opacity-50': showSelect
 					}
 				]"
@@ -119,7 +120,7 @@ const add = () => {
 							v-for="(val, idx) in currentValues"
 							:key="idx"
 							@click.stop="removeValue(idx)"
-							class="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1"
+							class="rounded-lg border border-gray-200 bg-slate-100 px-2 py-1"
 						>
 							{{ val }}
 						</div>
@@ -155,7 +156,7 @@ const add = () => {
 							<div
 								v-for="item in searchableList"
 								:key="item.id"
-								class="p-2 hover:bg-gray-50"
+								class="p-2 hover:bg-slate-50"
 								@click.stop="addToSelected(item)"
 							>
 								<span>{{ item.name }}</span>
@@ -172,7 +173,7 @@ const add = () => {
 			<span
 			:name="name"
 			class="text-red-600"
-			v-show="(errorMessage)"
+			v-show="((meta.touched && !meta.valid) || errorMessage)"
 		>
 			{{ errorMessage }}
 		</span>

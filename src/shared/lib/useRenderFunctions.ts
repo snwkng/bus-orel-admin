@@ -6,7 +6,7 @@ export const imageFormat = (val: string[]) => {
   return h(
     'div',
     { class: 'flex flex-row flex-wrap gap-1' },
-    (val || []).map((t) => h('img', { src: `/api/s3/download/${t}`, alt: t, loading: 'lazy', class: 'w-[100px] h-[100px] rounded-xl object-cover' }, t))
+    (val || []).map((t) => h('img', { src: `/api/s3/download/${t}`, alt: t, loading: 'lazy', class: 'w-[70px] h-[70px] bg-slate-300 rounded-xl object-cover transition-all' }, t))
   );
 };
 

@@ -17,6 +17,7 @@ const schema = yup.object({
   documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
   excursionStartDates: yup.array().of(yup.string()).defined(),
   cities: yup.array().required().min(1, 'Укажите минимум 1 город').of(yup.string()).defined(),
+  type: yup.string().required('Укажите тип экскурсии').defined('Укажите тип экскурсии').typeError('Поле должно быть текстовым'),
   hotelName: yup.string().defined(),
   thePriceIncludes: yup.array().of(yup.string()).defined(),
   additionallyPaid: yup.array().of(yup.string()).defined()
@@ -53,8 +54,8 @@ export function useExcursionForm(exId?: string) {
 
 
 
-  const { createExcursion, editExcursion, getExcursion, getCitiesList } = useExcursionStore();
-  const { citiesList } = storeToRefs(useExcursionStore());
+  const { createExcursion, editExcursion, getExcursion, getCitiesList, getTypesList } = useExcursionStore();
+  const { citiesList, typesList } = storeToRefs(useExcursionStore());
 
   const buttonTitle = computed(() => exId ? 'Сохранить' : 'Создать экскурсию');
 
@@ -99,10 +100,12 @@ export function useExcursionForm(exId?: string) {
   return {
     meta,
     citiesList,
+    typesList,
     isSubmitting,
     buttonTitle,
     loadExcursion,
     getCitiesList,
+    getTypesList,
     handleSubmit
   };
 }
