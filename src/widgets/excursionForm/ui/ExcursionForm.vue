@@ -18,10 +18,13 @@ const exId = computed(() => (route?.params?.id as string) || '');
 const {
 	meta,
 	citiesList,
+	typesList,
 	isSubmitting,
 	buttonTitle,
+	values,
 	loadExcursion,
 	getCitiesList,
+	getTypesList,
 	handleSubmit
 } = useExcursionForm(exId.value);
 
@@ -34,11 +37,12 @@ const onSubmit = async () => {
 
 onMounted(async () => {
 	await getCitiesList();
+	await getTypesList();
 	await loadExcursion();
 });
 </script>
 <template>
-	<form class="form-container" @submit.prevent="onSubmit">
+	<form class="form-container" @submit.prevent>
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
@@ -52,6 +56,13 @@ onMounted(async () => {
 				type="number"
 				label="Длительность экскурсии (в днях)"
 				column
+			/>
+			<BaseSelect
+				name="type"
+				label="Тип экскурсии"
+				column
+				required
+				:list="typesList"
 			/>
 			<BaseSelect
 				name="cities"
@@ -84,6 +95,7 @@ onMounted(async () => {
 			<BaseArrayFields
 				name="description"
 				label="Программа экскурсии"
+				:max="values.duration"
 				addButtonLabel="Добавить день"
 				:render-field="
 					({index, fieldName}) =>
@@ -142,14 +154,15 @@ onMounted(async () => {
 				place="excursion"
 			/>
 		</div>
-		<div class="sticky bottom-0 flex w-full items-center bg-white px-6 py-4">
+		<div class="sticky bottom-0 flex w-full items-center rounded-b-lg bg-white px-6 py-4">
 			<button
-				class="base-btn max-w-[300px]"
+				class="base-btn max-w-75 cursor-pointer"
 				:class="{
-					'pointer-events-none !bg-deep-orange/70': !meta.dirty || isSubmitting
+					'pointer-events-none bg-deep-orange/70!': !meta.dirty || isSubmitting
 				}"
-				type="submit"
+				type="button"
 				:disabled="!meta.dirty || isSubmitting"
+				@click.stop.prevent="onSubmit"
 			>
 				{{ buttonTitle }}
 			</button>

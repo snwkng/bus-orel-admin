@@ -78,7 +78,7 @@ const updateFilters = (data: Record<string, any>) => {
 </script>
 <template>
 	<div
-		class="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white p-4"
+		class="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white"
 	>
 		<div class="h-full w-full overflow-x-auto rounded-xl">
 			<!-- шапка таблицы -->
@@ -96,7 +96,7 @@ const updateFilters = (data: Record<string, any>) => {
 				<div
 					v-for="config in tableHeader"
 					:key="config.propertyName"
-					class="flex items-center border-b border-gray-300 bg-slate-100 p-4 font-bold text-slate-700"
+					class="flex items-center border-b border-gray-300 bg-slate-50 p-4 font-bold text-slate-700"
 					:class="{
 						'sticky right-0 top-0 shadow-rounded-left':
 							config.propertyName === 'actions'

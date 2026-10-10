@@ -6,7 +6,7 @@ import ExcursionsTable from '@/entities/excursions';
 	<div class="h-full flex flex-col">
 		<div class="mb-4 flex flex-col gap-y-1">
 			<div class="flex items-center" title="Добавить экскурсию">
-				<router-link class="base-btn" :to="{name: RouteNames.CreateExcursion}">Добавить экскурсию</router-link>
+				<router-link class="base-btn font-semibold" :to="{name: RouteNames.CreateExcursion}">Добавить экскурсию</router-link>
 			</div>
 		</div>
 

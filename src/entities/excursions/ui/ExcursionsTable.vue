@@ -54,6 +54,11 @@ const tableDataConfig = shallowRef<ITableConfig[]>([
 			Array.isArray(val) ? val.join(', ') : val
 	},
 	{
+		label: 'Тип',
+		propertyName: 'type',
+		cellWidth: '160px',
+	},
+	{
 		label: 'Изображения',
 		propertyName: 'images',
 		cellWidth: '350px',
