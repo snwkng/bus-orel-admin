@@ -11,11 +11,11 @@ export interface IProps {
 	placeholder?: string;
 	column?: boolean;
 	required?: boolean;
-	width?: 'sm' | 'md' | 'lg' | 'full'
+	width?: 'w-sm' | 'w-md' | 'w-lg' | 'w-2xl' | 'w-3xl' | 'w-4xl' | 'w-full';
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-	width: 'lg'
+	width: 'w-lg'
 });
 
 const name = toRef(props, 'name');
@@ -24,25 +24,31 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 	useField<string>(name);
 </script>
 <template>
-	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, `w-${width}`]">
+	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, width]">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
 			<span class="text-red-600" v-if="required"> * </span>
 		</label>
-		<input
-			:id="name"
-			:name="name"
-			type="text"
-			:value="value"
-			:placeholder="placeholder"
-			:class="[{ 'border-red-600!': ((meta.touched && !meta.valid) || errorMessage) }, 'the-input']"
-			@input="handleChange"
-			@blur="handleBlur($event, true)" 
-		/>
+		<div class="relative">
+			<input
+				:id="name"
+				:name="name"
+				type="text"
+				:value="value"
+				:placeholder="placeholder"
+				:class="[
+					{ 'border-red-600!': (meta.touched && !meta.valid) || errorMessage },
+					'the-input'
+				]"
+				@input="handleChange"
+				@blur="handleBlur($event, true)"
+			/>
+			<slot name="actions" />
+		</div>
 		<span
 			:name="name"
-			class="text-red-600"
-			v-show="((meta.touched && !meta.valid) || errorMessage)"
+			class="text-sm text-red-600"
+			v-show="(meta.touched && !meta.valid) || errorMessage"
 		>
 			{{ errorMessage }}
 		</span>

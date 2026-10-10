@@ -75,7 +75,7 @@
 }
 
 .the-input {
-	@apply block rounded-md border-slate-400/50 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200;
+	@apply block rounded-md border-slate-400/50 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200 w-full;
 }
 
 .the-label {

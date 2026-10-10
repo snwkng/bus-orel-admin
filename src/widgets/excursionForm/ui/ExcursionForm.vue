@@ -42,7 +42,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-	<form class="form-container" @submit.prevent="onSubmit">
+	<form class="form-container" @submit.prevent>
 		<div class="form-container-content">
 			<BaseInput
 				name="name"
@@ -156,12 +156,13 @@ onMounted(async () => {
 		</div>
 		<div class="sticky bottom-0 flex w-full items-center rounded-b-lg bg-white px-6 py-4">
 			<button
-				class="base-btn max-w-75"
+				class="base-btn max-w-75 cursor-pointer"
 				:class="{
 					'pointer-events-none bg-deep-orange/70!': !meta.dirty || isSubmitting
 				}"
-				type="submit"
+				type="button"
 				:disabled="!meta.dirty || isSubmitting"
+				@click.stop.prevent="onSubmit"
 			>
 				{{ buttonTitle }}
 			</button>

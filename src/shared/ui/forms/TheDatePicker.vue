@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ru } from 'date-fns/locale';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
-import type { StringSchema } from 'yup';
 
 export interface IProps {
 	name: string;
@@ -13,12 +12,12 @@ export interface IProps {
 	column?: boolean;
 	multiDates?: boolean;
 	required?: boolean;
-	width?: 'sm' | 'md' | 'lg' | 'full'
+	width?: 'w-sm' | 'w-md' | 'w-lg' | 'w-2xl' | 'w-3xl' | 'w-4xl' | 'w-full'
 }
 
 const props = withDefaults(defineProps<IProps>(), {
 	multiDates: false,
-	width: 'lg'
+	width: 'w-lg'
 });
 
 const name = toRef(props, 'name');
@@ -28,7 +27,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 </script>
 
 <template>
-	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, `w-${width}`]">
+	<div :class="['flex gap-x-5 gap-y-1', { 'flex-col': column }, width]" @blur="handleBlur">
 		<label class="the-label" v-if="label" :for="name">
 			{{ label }}
 			<span class="text-red-600" v-if="required">*</span>
@@ -36,12 +35,13 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 		<VueDatePicker
 			:id="name"
 			v-model="value"
-			:format-locale="ru"
+			:locale="ru"
 			:multi-dates="multiDates"
 			:enable-time-picker="false"
 			:min-date="new Date()"
-			format="dd MMMM yyyy"
-			:ui="{ input: (!meta.valid || errorMessage) ? 'date-picker-error' : '' }"
+			:formats="{ input: 'dd.MM.yyyy' }"
+			:time-config="{ enableTimePicker: false }"
+			:ui="{ input: ((meta.touched && !meta.valid) || errorMessage) ? 'date-picker-error' : '' }"
 		>
 			<template #action-row="{ selectDate }">
 				<button class="secondary-btn w-full" @click.stop.prevent="selectDate">
@@ -51,8 +51,8 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 		</VueDatePicker>
 		<span
 			:name="name"
-			class="text-red-600"
-			v-show="(!meta.valid || errorMessage)"
+			class="text-red-600 text-sm"
+			v-show="((meta.touched && !meta.valid) || errorMessage)"
 		>
 			{{ errorMessage }}
 		</span>

@@ -19,7 +19,7 @@
     "@lucide/vue": "^1.54.0",
     "@tailwindcss/vite": "^4.3.3",
     "@vee-validate/rules": "^4.15.1",
-    "@vuepic/vue-datepicker": "^11.0.3",
+    "@vuepic/vue-datepicker": "^14.0.0",
     "dayjs": "^1.11.23",
     "pinia": "^2.3.1",
     "vee-validate": "^4.15.1",

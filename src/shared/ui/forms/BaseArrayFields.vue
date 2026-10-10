@@ -29,20 +29,20 @@ const props = defineProps({
 		type: [Function, Object, String, Number, Array] as PropType<InitialValue>,
 		default: () => ''
 	},
-	max: { type: Number, default: null },
+	max: { type: Number, default: null }
 });
 
 const name = toRef(props, 'name');
 
 const { remove, push, fields } = useFieldArray(name);
 
-const showAddButton  = computed(() => {
+const showAddButton = computed(() => {
 	if (typeof props.max === 'number') {
-		return fields.value.length < props.max
+		return fields.value.length < props.max;
 	} else {
-		return true
+		return true;
 	}
-})
+});
 
 const handlePush = () => {
 	if (typeof props.initialValue === 'function') {
@@ -57,7 +57,7 @@ const handlePush = () => {
 	<div class="flex flex-col gap-y-4">
 		<div class="the-label" v-if="!fields.length">{{ label }}</div>
 
-		<div class="relative" v-for="(field, idx) in fields" :key="field.key">
+		<div v-for="(field, idx) in fields" :key="field.key">
 			<component
 				:is="
 					renderField({
@@ -67,20 +67,25 @@ const handlePush = () => {
 						remove
 					})
 				"
-			/>
-
-			<button
-				type="button"
-				title="Удалить поле"
-				@click="() => remove(idx)"
-				class="absolute -right-2.5 -top-2.5 rounded-full bg-red-500 p-1 cursor-pointer text-white shadow-md transition-all hover:bg-red-600/95"
-				:class="{ 'my-8': idx === 0 }"
 			>
-				<X :width="20" :height="20" fill="white" />
-			</button>
+				<template #actions>
+					<button
+						type="button"
+						title="Удалить поле"
+						@click="() => remove(idx)"
+						class="absolute -top-2.5 -right-2.5 cursor-pointer rounded-full bg-red-500 p-1 text-white shadow-md transition-all hover:bg-red-600/95"
+					>
+						<X :width="20" :height="20" fill="white" />
+					</button>
+				</template>
+			</component>
 		</div>
-
-		<button v-if="showAddButton" type="button" class="secondary-btn mt-1 w-fit" @click="handlePush">
+		<button
+			v-if="showAddButton"
+			type="button"
+			class="secondary-btn mt-1 w-fit"
+			@click="handlePush"
+		>
 			{{ addButtonLabel }}
 		</button>
 	</div>

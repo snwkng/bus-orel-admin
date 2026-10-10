@@ -11,16 +11,16 @@ import { useToast } from '@/shared/lib/useToasts';
 const schema = yup.object({
   name: yup.string().required('Укажите название экскурсии').defined().typeError('Поле должно быть текстовым'),
   description: yup.array().of(yup.string()).defined(),
-  images: yup.array().of(yup.string()).defined(),
+  images: yup.array().of(yup.string()).defined().ensure(),
   duration: yup.number().min(1, 'Длительность эскурсии должна быть больше 0').defined().transform((value, originalValue) => originalValue === '' || originalValue === 0 ? 0 : +value).typeError('Поле должно быть числом'),
   price: yup.number().required('Укажите цену').min(1, 'Цена должна быть больше 0').defined().typeError('Поле должно быть числом'),
   documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
-  excursionStartDates: yup.array().of(yup.string()).defined().nonNullable('Укажите хотя бы одну дату'),
+  excursionStartDates: yup.array().of(yup.string()).ensure(),
   cities: yup.array().required().min(1, 'Укажите минимум 1 город').of(yup.string()).defined(),
   type: yup.string().required('Укажите тип экскурсии').defined('Укажите тип экскурсии').typeError('Поле должно быть текстовым'),
   hotelName: yup.string().defined(),
-  thePriceIncludes: yup.array().of(yup.string()).defined(),
-  additionallyPaid: yup.array().of(yup.string()).defined()
+  thePriceIncludes: yup.array().of(yup.string()).defined().ensure(),
+  additionallyPaid: yup.array().of(yup.string()).defined().ensure()
 }) as yup.ObjectSchema<CreateExcursionDto>;
 
 const { show } = useToast();
@@ -81,7 +81,6 @@ export function useExcursionForm(exId?: string) {
 
   const handleSubmit = async () => {
     const result = await validate();
-    console.log(result)
     if (!result.valid) {
       return onInvalidSubmit(errors.value);
     }
@@ -89,7 +88,7 @@ export function useExcursionForm(exId?: string) {
       await saveExcursion();
       return true;
     } catch (err: unknown) {
-      console.log(Array.isArray((err as ApiError)?.data))
+      console.error(Array.isArray((err as ApiError)?.data))
       if (Array.isArray((err as ApiError)?.data)) {
         (err as ApiError)?.data?.forEach((message: string) => {
           show(message, 'error', 300000);

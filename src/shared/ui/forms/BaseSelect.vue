@@ -15,17 +15,17 @@ export interface Props {
 	column?: boolean;
 	multiple?: boolean;
 	required?: boolean;
-	width?: 'sm' | 'md' | 'lg' | 'full'
+	width?: 'w-sm' | 'w-md' | 'w-lg' | 'w-2xl' | 'w-3xl' | 'w-4xl' | 'w-full'
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	list: () => [],
-	width: 'lg'
+	width: 'w-lg'
 });
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange, validate } = useField<string | string[]>(
+const { value, errorMessage, meta, handleChange, validate, handleBlur } = useField<string | string[]>(
 	name
 );
 
@@ -105,7 +105,7 @@ const add = () => {
 </script>
 <template>
 	<div>
-		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }, `w-${width}`]">
+		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }, width]">
 			<label class="the-label" v-if="label" :for="name">
 				{{ label }}
 				<span class="text-red-600" v-if="required">*</span>
@@ -120,6 +120,7 @@ const add = () => {
 						'border-indigo-300 ring ring-indigo-200 ring-opacity-50 rounded-t-md rounded-b-none': showSelect
 					},
 				]"
+				@blur="handleBlur"
 			>
 				<div
 					class="flex min-h-10.5 w-full flex-wrap gap-2 px-3 py-2"
@@ -184,7 +185,7 @@ const add = () => {
 			</div>
 			<span
 			:name="name"
-			class="text-red-600"
+			class="text-red-600 text-sm"
 			v-show="((meta.touched && !meta.valid) || errorMessage)"
 		>
 			{{ errorMessage }}
