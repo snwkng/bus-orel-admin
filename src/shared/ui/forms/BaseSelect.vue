@@ -113,11 +113,11 @@ const add = () => {
 			<div
 				v-click-away="close"
 				:id="name"
-				class="relative mt-1 flex cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all"
+				class="relative mt-1 flex cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-deep-teal focus:ring focus:ring-deep-teal/20 transition-all"
 				:class="[
 					{
 						'border-red-500': ((meta.touched && !meta.valid) || errorMessage),
-						'border-indigo-300 ring ring-indigo-200 ring-opacity-50 rounded-t-md rounded-b-none': showSelect
+						'border-deep-teal ring ring-deep-teal/20 rounded-t-md rounded-b-none': showSelect
 					},
 				]"
 				@blur="handleBlur"

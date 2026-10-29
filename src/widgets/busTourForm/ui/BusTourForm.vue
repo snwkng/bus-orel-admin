@@ -129,7 +129,7 @@ onMounted(async () => {
 				v-if="tourId"
 				class="secondary-btn max-w-[300px]"
 				:class="{
-					'pointer-events-none !bg-deep-blue/70': meta.dirty || isSubmitting
+					'pointer-events-none !bg-deep-teal/70': meta.dirty || isSubmitting
 				}"
 				@click="changeStatus(!isPublished)"
 				:disabled="meta.dirty || isSubmitting"

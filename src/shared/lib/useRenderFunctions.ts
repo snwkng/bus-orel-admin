@@ -13,7 +13,7 @@ export const imageFormat = (val: string[]) => {
 export const linkFormat = (title: string, route: RouteLocationAsRelativeGeneric) => {
   return h(
     RouterLink,
-    { to: route, class: 'text-ligth-blue hover:underline' },
+    { to: route, class: 'text-teal-link hover:underline' },
     () => title
   );
 };

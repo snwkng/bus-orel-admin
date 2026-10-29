@@ -18,27 +18,29 @@ const loginHandler = async () => {
 </script>
 
 <template>
-	<form class="mx-auto w-72">
+	<form class="w-90 rounded-2xl bg-white p-8 shadow-card">
+		<h1 class="mb-1 text-2xl font-bold text-slate-900">Вход в панель управления</h1>
+		<p class="mb-6 text-sm text-slate-500">Галатур — автобусные туры и экскурсии</p>
 		<div class="mb-5">
 			<label
 				for="username"
-				class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+				class="mb-2 block text-sm font-medium text-slate-700"
 				>Логин</label
 			>
 			<input
-				type="username"
+				type="text"
 				id="username"
-				class="block w-full rounded-lg border border-gray-300 bg-slate-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+				class="the-input"
 				placeholder="login"
 				required
         v-model="username"
 				@keydown.enter="loginHandler"
 			/>
 		</div>
-		<div class="mb-5">
+		<div class="mb-6">
 			<label
 				for="password"
-				class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+				class="mb-2 block text-sm font-medium text-slate-700"
 			>
 				Пароль
 			</label>
@@ -46,7 +48,7 @@ const loginHandler = async () => {
 				type="password"
 				id="password"
 				autocomplete="current-password webauthn"
-				class="block w-full rounded-lg border border-gray-300 bg-slate-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+				class="the-input"
 				required
         v-model="password"
 				@keydown.enter="loginHandler"
@@ -54,7 +56,7 @@ const loginHandler = async () => {
 		</div>
 		<button
 			type="button"
-			class="w-32 base-btn"
+			class="base-btn w-full"
       @click="loginHandler"
 		>
 			Войти
