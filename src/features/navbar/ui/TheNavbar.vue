@@ -49,7 +49,7 @@ const routes = ref([
 			<nav
 				:class="[
 					'flex flex-col gap-1 transition-all base-py items-stretch px-3',
-					{ 'items-center px-2': !isExpanded }
+					{ 'px-2': !isExpanded }
 				]"
 			>
 				<RouterLink
@@ -58,7 +58,7 @@ const routes = ref([
 					:class="[
 						'link w-full',
 						{ 'link-active': route.name === value.name },
-						{ 'justify-center !w-fit rounded-full': !isExpanded }
+						{ 'justify-center': !isExpanded }
 					]"
 					:to="{ name: value.name }"
 					:title="value.title"
