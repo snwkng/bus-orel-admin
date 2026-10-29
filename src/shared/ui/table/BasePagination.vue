@@ -2,7 +2,7 @@
 import { type IPagination } from '@/shared/config/interfaces/pagination.interface';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
 
-const props = defineProps<IPagination>();
+defineProps<IPagination>();
 
 const emit = defineEmits<{
 	(e: 'update:page', value: number): void;

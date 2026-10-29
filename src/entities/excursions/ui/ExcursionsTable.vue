@@ -38,7 +38,7 @@ const tablePagination = computed(() => ({
 	total: pagination.value?.total ?? 0
 }));
 
-const tableDataConfig = shallowRef<ITableConfig[]>([
+const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 	{
 		label: 'Название',
 		propertyName: 'name',

@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isDragging = ref(false);
 const files = ref<File[]>([]);
-const file = ref<any>(null);
+const file = ref<HTMLInputElement | null>(null);
 
 const emit = defineEmits<(event: 'change', payload: File[]) => void>();
 
@@ -28,7 +28,7 @@ watch(() => props.value, () => {
 	files.value = props.value;
 })
 const onChange = () => {
-	const newFiles = Array.from(file.value.files).filter(
+	const newFiles = Array.from(file.value?.files ?? []).filter(
 		(outerFile: unknown) =>
 			!files.value.some(
 				(innerFile: File) =>
@@ -63,7 +63,7 @@ const drop = (event: DragEvent) => {
 			}
 		});
 	}
-	if (!acceptFiles.files.length) return;
+	if (!acceptFiles.files.length || !file.value) return;
 	file.value.files = acceptFiles.files;
 	onChange();
 	isDragging.value = false;

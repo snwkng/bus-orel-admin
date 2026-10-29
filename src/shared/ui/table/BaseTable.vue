@@ -36,24 +36,24 @@ const tableHeader = computed(() => {
 	];
 });
 
-const getValue = (obj: T, path: string): any => {
+const getValue = (obj: T, path: string): unknown => {
 	if (!path) return obj;
 
-	return path.split('.').reduce((acc: any, part: string) => {
+	return path.split('.').reduce<unknown>((acc, part: string) => {
 		// Проверяем, что аккамулятор существует и является объектом
 		if (acc && typeof acc === 'object' && part in acc) {
-			return acc[part];
+			return (acc as Record<string, unknown>)[part];
 		}
 		return undefined;
 	}, obj);
 };
 
 // Функция рендеринга
-const getRenderedValue = (row: T, col: ITableConfig<T>): any => {
+const getRenderedValue = (row: T, col: ITableConfig<T>): unknown => {
 	const rawValue = getValue(row, col.propertyName);
 
 	if (col.format) {
-		const rendered = col.format(rawValue, row);
+		const rendered = col.format(rawValue as never, row);
 		// Обязательно помечаем объект как Raw, если это VNode (объект)
 		return rendered && typeof rendered === 'object'
 			? markRaw(rendered)
@@ -63,7 +63,7 @@ const getRenderedValue = (row: T, col: ITableConfig<T>): any => {
 	return rawValue;
 };
 
-const RenderValue = (props: { value: any }) => {
+const RenderValue = (props: { value: unknown }) => {
 	// Если это VNode или массив VNode, возвращаем как есть
 	if (isVNode(props.value) || Array.isArray(props.value)) {
 		return props.value;
@@ -72,7 +72,7 @@ const RenderValue = (props: { value: any }) => {
 	return String(props.value ?? '—');
 };
 
-const updateFilters = (data: Record<string, any>) => {
+const updateFilters = (data: Record<string, unknown>) => {
 	emit('update-filters', data);
 };
 </script>

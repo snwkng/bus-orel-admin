@@ -120,7 +120,8 @@ export const api = {
     config: { params?: ParamsObject; headers?: HeadersInit; signal?: AbortSignal; } = {},
   ) => {
     const finalUrl = buildUrlWithParams(url, config.params);
-    const { params: _, ...rest } = config;
+    const rest = { ...config };
+    delete rest.params;
     return _request<T>('GET', finalUrl, rest);
   },
 

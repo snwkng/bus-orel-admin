@@ -9,7 +9,7 @@ export const useBusTourStore = defineStore('useBusTourStore', {
 		citiesList: [] as SelectItem[]
 	}),
 	actions: {
-		async getTours(params?: any): Promise<void> {
+		async getTours(params?: Record<string, string | number | boolean>): Promise<void> {
 			this.tours = await busToursApi.getTours(params);
 		},
 

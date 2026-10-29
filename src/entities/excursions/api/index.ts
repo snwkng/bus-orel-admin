@@ -10,7 +10,7 @@ export const excursionsApi = {
       const response = await api.get<EditExcursionDto[]>('/api/admin/excursions', { params });
       console.log(response.data);
       return response;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -20,7 +20,7 @@ export const excursionsApi = {
     try {
       const response = await api.get('/api/admin/excursions/cities-list');
       return response?.data as SelectItem[];
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -30,7 +30,7 @@ export const excursionsApi = {
     try {
       const response = await api.get('/api/admin/excursions/types-list');
       return response?.data as SelectItem[];
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -40,7 +40,7 @@ export const excursionsApi = {
     try {
       const response = await api.get<EditExcursionDto>('/api/admin/excursions/' + id);
       return response?.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -60,7 +60,7 @@ export const excursionsApi = {
   deleteExcursion: async (id: string): Promise<void> => {
     try {
       await api.delete('/api/admin/excursions/' + id);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -72,7 +72,7 @@ export const excursionsApi = {
     try {
       const res = await api.upload('/api/admin/s3/upload', File);
       return res;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -84,7 +84,7 @@ export const excursionsApi = {
     try {
       const res = await api.downloadBlob(`/api/s3/download/${fileName}`,);
       return new File([res], fileName);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
@@ -96,7 +96,7 @@ export const excursionsApi = {
     try {
       const res = await api.delete<boolean>(`/api/admin/s3/delete?uuid=${fileName}`);
       return res?.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       throw err;
     }
