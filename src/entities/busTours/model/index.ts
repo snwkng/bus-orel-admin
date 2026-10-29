@@ -1,16 +1,20 @@
 import { defineStore } from 'pinia';
 import type { CreateHotelDto, EditHotelDto } from './types';
 import { busToursApi } from '../api';
+import type { IPagination } from '@/shared/config/interfaces/pagination.interface';
 
 export const useBusTourStore = defineStore('useBusTourStore', {
 	state: () => ({
 		tours: [] as EditHotelDto[],
+		pagination: null as null | IPagination,
 		files: [] as File[],
 		citiesList: [] as SelectItem[]
 	}),
 	actions: {
 		async getTours(params?: Record<string, string | number | boolean>): Promise<void> {
-			this.tours = await busToursApi.getTours(params);
+			const response = await busToursApi.getTours(params);
+			this.tours = response?.data;
+			this.pagination = response?.meta?.pagination ?? null;
 		},
 
 		async getTour(id: string): Promise<EditHotelDto> {

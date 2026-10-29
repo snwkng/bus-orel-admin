@@ -1,13 +1,14 @@
 import { api } from '@/shared/api/api';
 import type { CreateHotelDto, EditHotelDto } from '../model/types';
+import type { ApiResponse } from '@/shared/api/types';
 
 export const busToursApi = {
 	getTours: async (
 		params?: Record<string, string | number | boolean>
-	): Promise<EditHotelDto[]> => {
+	): Promise<ApiResponse<EditHotelDto[]>> => {
 		try {
 			const response = await api.get<EditHotelDto[]>('/api/admin/hotels', { params });
-			return response?.data;
+			return response;
 		} catch (err: unknown) {
 			console.error(err);
 			throw err;
