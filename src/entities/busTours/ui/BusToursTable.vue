@@ -74,7 +74,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditHotelDto>[]>([
 ] as const);
 
 const openTour = (item: EditHotelDto) => {
-	router.push({ name: 'edit-tour', params: { id: item._id } });
+	router.push({ name: 'edit-hotel', params: { id: item._id } });
 };
 
 const deleteTour = async (id: string) => {

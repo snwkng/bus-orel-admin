@@ -4,5 +4,6 @@ import TheFileInput from './TheFileInput.vue';
 import BaseSelect from './BaseSelect.vue';
 import TheDatePicker from './TheDatePicker.vue';
 import BaseArrayFields from './BaseArrayFields.vue'
+import FormSection from './FormSection.vue';
 
-export { BaseInput, BaseTextArea, TheFileInput, BaseSelect, TheDatePicker, BaseArrayFields };
+export { BaseInput, BaseTextArea, TheFileInput, BaseSelect, TheDatePicker, BaseArrayFields, FormSection };
