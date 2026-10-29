@@ -44,7 +44,10 @@ onMounted(async () => {
 </script>
 <template>
 	<form class="form-container" @submit.prevent>
-		<div class="form-container-content">
+		<div
+			class="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-card"
+		>
+			<div class="form-container-content">
 			<FormSection title="Основная информация">
 				<BaseInput
 					name="name"
@@ -171,7 +174,9 @@ onMounted(async () => {
 				/>
 			</FormSection>
 		</div>
-		<div class="sticky bottom-0 flex w-full items-center rounded-2xl bg-white px-6 py-4 shadow-card">
+		<div
+			class="flex w-full shrink-0 items-center border-t border-slate-100 px-6 py-4 md:px-12"
+		>
 			<button
 				class="base-btn max-w-75 cursor-pointer"
 				:class="{
@@ -183,6 +188,7 @@ onMounted(async () => {
 			>
 				{{ buttonTitle }}
 			</button>
+		</div>
 		</div>
 	</form>
 </template>
