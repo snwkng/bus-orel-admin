@@ -58,7 +58,7 @@ const routes = ref([
 					:class="[
 						'link w-full',
 						{ 'link-active': route.name === value.name },
-						{ 'justify-center': !isExpanded }
+						{ 'justify-center !px-1': !isExpanded }
 					]"
 					:to="{ name: value.name }"
 					:title="value.title"
@@ -66,8 +66,9 @@ const routes = ref([
 					<component
 						:is="value.iconComponent"
 						:fill="'currentColor'"
-						:width="22"
-						:height="22"
+						:width="isExpanded ? 22 : 34"
+						:height="isExpanded ? 22 : 34"
+						class="shrink-0"
 					/>
 					<span
 						class="text-nowrap transition-all"
