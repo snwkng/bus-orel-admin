@@ -11,6 +11,7 @@ const props = withDefaults(
 		emptyText?: string;
 		pagination?: IPagination | null;
 		stickyHeader?: boolean;
+		clickableRows?: boolean;
 		filters?: Record<string, unknown>;
 	}>(),
 	{
@@ -18,12 +19,14 @@ const props = withDefaults(
 		tableData: () => [],
 		emptyText: 'Здесь пусто...',
 		pagination: null,
-		stickyHeader: false
+		stickyHeader: false,
+		clickableRows: false
 	}
 );
 
 const emit = defineEmits<{
 	(e: 'update-filters', data: Record<string, unknown>): void;
+	(e: 'row-click', row: T): void;
 }>();
 
 const slots = useSlots();
@@ -35,6 +38,13 @@ const tableHeader = computed(() => {
 		{ label: 'Действия', propertyName: 'actions', cellWidth: '110px' }
 	];
 });
+
+const getRowKey = (row: T, idx: number): string | number => {
+	if (row && typeof row === 'object' && '_id' in row) {
+		return String((row as { _id: unknown })._id);
+	}
+	return idx;
+};
 
 const getValue = (obj: T, path: string): unknown => {
 	if (!path) return obj;
@@ -72,15 +82,19 @@ const RenderValue = (props: { value: unknown }) => {
 	return String(props.value ?? '—');
 };
 
+const onRowClick = (row: T) => {
+	if (props.clickableRows) emit('row-click', row);
+};
+
 const updateFilters = (data: Record<string, unknown>) => {
 	emit('update-filters', data);
 };
 </script>
 <template>
 	<div
-		class="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white"
+		class="flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white shadow-card"
 	>
-		<div class="h-full w-full overflow-x-auto rounded-xl">
+		<div class="h-full w-full overflow-x-auto">
 			<!-- шапка таблицы -->
 			<div
 				class="z-10 grid bg-white md:min-w-full"
@@ -89,14 +103,14 @@ const updateFilters = (data: Record<string, unknown>) => {
 				}"
 				:style="{
 					gridTemplateColumns: tableHeader
-						.map((c) => c.cellWidth || 'minmax(160px, 300px)')
+						.map((c) => c.cellWidth || 'minmax(140px, 1fr)')
 						.join(' ')
 				}"
 			>
 				<div
 					v-for="config in tableHeader"
 					:key="config.propertyName"
-					class="flex items-center border-b border-gray-300 bg-slate-50 p-4 font-bold text-slate-700"
+					class="flex items-center border-b border-slate-200 bg-white px-4 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase"
 					:class="{
 						'sticky right-0 top-0 shadow-rounded-left':
 							config.propertyName === 'actions'
@@ -111,41 +125,52 @@ const updateFilters = (data: Record<string, unknown>) => {
 				class="grid bg-white md:min-w-full"
 				:style="{
 					gridTemplateColumns: tableHeader
-						.map((c) => c.cellWidth || 'minmax(160px, 300px)')
+						.map((c) => c.cellWidth || 'minmax(140px, 1fr)')
 						.join(' ')
 				}"
 			>
-				<template v-for="(tableItem, idx) in tableData" :key="idx">
-					<template v-for="config in tableHeader" :key="config.propertyName">
-						<div
-							class="line-clamp-4 min-w-0 text-wrap bg-inherit p-4"
-							:class="{
-								'border-b border-gray-100': idx !== tableData.length - 1,
-								'sticky right-0 z-0 shadow-rounded-left':
-									config.propertyName === 'actions'
-							}"
-						>
-							<div class="line-clamp-4 break-words">
-								<slot
-									v-if="config.propertyName === 'actions'"
-									name="actions"
-									:item="tableItem"
-								/>
-								<slot
-									v-else
-									:name="`cell(${config.propertyName})`"
-									:value="getValue(tableItem, config.propertyName)"
-									:row="tableItem"
-								>
-									<RenderValue :value="getRenderedValue(tableItem, config)" />
-								</slot>
-							</div>
+				<div
+					v-if="!tableData.length"
+					class="col-span-full px-4 py-12 text-center text-sm text-slate-400"
+				>
+					{{ emptyText }}
+				</div>
+				<div
+					v-for="(tableItem, idx) in tableData"
+					:key="getRowKey(tableItem, idx)"
+					class="group/row contents"
+					:class="{ 'cursor-pointer': clickableRows }"
+					@click="onRowClick(tableItem)"
+				>
+					<div
+						v-for="config in tableHeader"
+						:key="config.propertyName"
+						class="line-clamp-4 min-w-0 border-b border-slate-100 bg-white px-4 py-3 text-sm text-slate-700 transition-colors group-hover/row:bg-slate-50"
+						:class="{
+							'sticky right-0 z-0 shadow-rounded-left group-hover/row:bg-slate-50':
+								config.propertyName === 'actions'
+						}"
+					>
+						<div class="line-clamp-4 break-words">
+							<slot
+								v-if="config.propertyName === 'actions'"
+								name="actions"
+								:item="tableItem"
+							/>
+							<slot
+								v-else
+								:name="`cell(${config.propertyName})`"
+								:value="getValue(tableItem, config.propertyName)"
+								:row="tableItem"
+							>
+								<RenderValue :value="getRenderedValue(tableItem, config)" />
+							</slot>
 						</div>
-					</template>
-				</template>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="base-py base-px bg-white" v-if="pagination">
+		<div class="base-py base-px border-t border-slate-100 bg-white" v-if="pagination">
 			<BasePagination
 				:total="pagination.total"
 				:limit="pagination.limit"

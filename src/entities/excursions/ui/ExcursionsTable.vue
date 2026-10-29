@@ -10,7 +10,6 @@ import type { EditExcursionDto } from '../model/types';
 import {
 	dateFormat,
 	imageFormat,
-	linkFormat,
 	priceFormat
 } from '@/shared/lib/useRenderFunctions';
 import { storeToRefs } from 'pinia';
@@ -42,45 +41,30 @@ const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 	{
 		label: 'Название',
 		propertyName: 'name',
-		cellWidth: '200px',
-		format: (val: EditExcursionDto['name'], row: EditExcursionDto) =>
-			linkFormat(val, { name: 'edit-excursion', params: { id: row._id } })
-	},
-	{
-		label: 'Описание',
-		propertyName: 'description',
-		cellWidth: '300px',
-		format: (val: EditExcursionDto['description']) =>
-			Array.isArray(val) ? val.join(', ') : val
-	},
-	{
-		label: 'Тип',
-		propertyName: 'type',
-		cellWidth: '160px',
+		cellWidth: '240px'
 	},
 	{
 		label: 'Изображения',
 		propertyName: 'images',
-		cellWidth: '350px',
+		cellWidth: '280px',
 		format: (val) => imageFormat(val)
 	},
-	{ label: 'Длительность', propertyName: 'duration' },
+	{
+		label: 'Тип',
+		propertyName: 'type',
+		cellWidth: '140px'
+	},
+	{ label: 'Длительность', propertyName: 'duration', cellWidth: '130px' },
 	{
 		label: 'Цена',
 		propertyName: 'price',
-		cellWidth: '120px',
+		cellWidth: '110px',
 		format: (val: EditExcursionDto['price']) => priceFormat(val)
-	},
-	{ label: 'Отель', propertyName: 'hotelName' },
-	{
-		label: 'Наличие прайса',
-		propertyName: 'documentName',
-		format: (val: EditExcursionDto['documentName']) =>
-			val.length ? 'Есть' : 'Нет'
 	},
 	{
 		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
+		cellWidth: '140px',
 		format: (val: string[]) =>
 			h(
 				'div',
@@ -96,21 +80,12 @@ const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 				{ class: 'flex flex-col' },
 				(val || []).map((t) => h('span', t))
 			)
-	},
-	{
-		label: 'В стоимость включено',
-		propertyName: 'thePriceIncludes',
-		cellWidth: '250px',
-		format: (val: EditExcursionDto['thePriceIncludes']) => val?.join(', ')
-	},
-
-	{
-		label: 'Дополнительно оплачивается',
-		propertyName: 'additionallyPaid',
-		cellWidth: '250px',
-		format: (val: EditExcursionDto['additionallyPaid']) => val?.join(', ')
 	}
 ] as const);
+
+const openExcursion = (item: EditExcursionDto) => {
+	router.push({ name: 'edit-excursion', params: { id: item._id } });
+};
 
 const deleteExcursion = async (id: string) => {
 	await store
@@ -129,27 +104,30 @@ const deleteExcursion = async (id: string) => {
 		:table-data="excursions"
 		:pagination="tablePagination"
 		sticky-header
+		clickable-rows
 		@update-filters="updateFilters"
+		@row-click="openExcursion"
 	>
+		<template #cell(name)="{ value }">
+			<span class="font-medium text-slate-900">{{ value }}</span>
+		</template>
 		<template #actions="{ item }">
-			<div class="flex items-center justify-between gap-2">
+			<div class="flex items-center gap-1">
 				<button
 					type="button"
-					class="cursor-pointer transition-transform hover:scale-110"
+					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-deep-teal"
 					title="Редактировать"
-					@click="
-						router.push({ name: 'edit-excursion', params: { id: item._id } })
-					"
+					@click.stop="openExcursion(item)"
 				>
-					<EditIcon fill="#006DF0" :width="25" :height="25" />
+					<EditIcon fill="currentColor" :width="20" :height="20" />
 				</button>
 				<button
 					type="button"
-					class="cursor-pointer transition-transform hover:scale-110"
+					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
 					title="Удалить"
-					@click="deleteExcursion(item._id)"
+					@click.stop="deleteExcursion(item._id)"
 				>
-					<TrashIcon fill="red" :width="25" :height="25" />
+					<TrashIcon fill="currentColor" :width="20" :height="20" />
 				</button>
 			</div>
 		</template>
