@@ -105,7 +105,7 @@ const add = () => {
 </script>
 <template>
 	<div>
-		<div :class="['flex w-full gap-x-5 gap-y-2', { 'flex-col': column }, width]">
+		<div :class="['flex w-full gap-x-5 gap-y-1', { 'flex-col': column }, width]">
 			<label class="the-label" v-if="label" :for="name">
 				{{ label }}
 				<span class="text-red-600" v-if="required">*</span>
@@ -113,7 +113,7 @@ const add = () => {
 			<div
 				v-click-away="close"
 				:id="name"
-				class="relative mt-1 flex cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-deep-teal focus:ring focus:ring-deep-teal/20 transition-all"
+				class="relative flex cursor-pointer items-center justify-between border rounded-md border-gray-300 bg-white shadow-sm focus:border-deep-teal focus:ring focus:ring-deep-teal/20 transition-all"
 				:class="[
 					{
 						'border-red-500': ((meta.touched && !meta.valid) || errorMessage),
