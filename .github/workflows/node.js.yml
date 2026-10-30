@@ -25,6 +25,10 @@ jobs:
       run: |
         touch .env
         echo "VITE_BASE_URL=${{secrets.VITE_BASE_URL}}" >> .env
+    # Бинарник Cypress (~500 МБ) в джобе деплоя не нужен — только для e2e;
+    # без переменной его postinstall скачивает бинарник и упирается в диск раннера
     - run: npm ci
+      env:
+        CYPRESS_INSTALL_BINARY: 0
     - run: npm run build --if-present
     - run: pm2 restart admin
