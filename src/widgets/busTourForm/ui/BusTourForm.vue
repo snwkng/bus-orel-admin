@@ -7,7 +7,8 @@ import {
 	BaseTextArea,
 	TheFileInput,
 	BaseSelect,
-	BaseArrayFields
+	BaseArrayFields,
+	FormSection
 } from '@/shared/ui/forms';
 import { useBusTourForm } from '@/widgets/busTourForm/composables/useBusTourForm';
 import HotelRooms from '@/entities/hotelRooms/ui/HotelRooms.vue';
@@ -57,62 +58,140 @@ onMounted(async () => {
 </script>
 <template>
 	<form class="form-container" @submit.prevent="onSubmit">
-		<div class="form-container-content">
-			<BaseInput name="name" label="Название Гостиницы" column required />
-			<BaseInput name="type" label="Тип (отель, гостиница и т.д)" column required />
-			<BaseInput name="registryNumber" label="Регистрационный номер" column required />
-			<BaseTextArea name="description" label="Описание гостиницы" column />
-			<HotelRooms name="rooms" label="Номера" required />
-			<BaseInput name="additionalInfo.food.type" label="Питание" column />
-			<BaseInput name="additionalInfo.beach.type" label="Тип пляжа" column />
-			<BaseInput
-				name="additionalInfo.beach.distanceMinutes"
-				label="Расстояние до пляжа в минутах"
-				type="number"
-				column
-			/>
-			<BaseInput
-				name="additionalInfo.checkInOut.checkIn"
-				label="Время заселения"
-				column
-			/>
-			<BaseInput
-				name="additionalInfo.checkInOut.checkOut"
-				label="Время выселения"
-				column
-			/>
-			<BaseInput name="address.fullAddress" label="Адрес гостиницы" column />
-			<BaseInput name="minPrice" label="Минимальная цена заезда" column required />
-			<BaseInput name="address.region" label="Регион" column />
-			<BaseSelect name="address.city" label="Город" column :list="citiesList" />
-			<BaseInput name="seaType" label="Море" column />
+		<div
+			class="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-card"
+		>
+			<div class="form-container-content">
+			<FormSection title="Основная информация">
+				<BaseInput
+					name="name"
+					label="Название гостиницы"
+					column
+					required
+					width="w-full"
+				/>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						name="type"
+						label="Тип (отель, гостиница и т.д)"
+						column
+						required
+						width="w-full"
+					/>
+					<BaseInput
+						name="registryNumber"
+						label="Регистрационный номер"
+						column
+						required
+						width="w-full"
+					/>
+				</div>
+				<BaseTextArea
+					name="description"
+					label="Описание гостиницы"
+					column
+					width="w-full"
+				/>
+			</FormSection>
 
-			<BaseArrayFields
-				name="includedInThePrice"
-				label="В стоимость включено"
-				addButtonLabel="Добавить опцию"
-				:initial-value="() => ({ serviceName: '' })"
-				:render-field="renderServiceField"
-			/>
+			<FormSection title="Номера">
+				<HotelRooms name="rooms" required />
+			</FormSection>
 
-			<TheFileInput
-				label="Изображения гостиницы"
-				column
-				name="images"
-				accept="image/*"
-				multiple
-				place="busTour"
-			/>
-			<TheFileInput
-				label="Файл прайса"
-				column
-				name="documentName"
-				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-				place="busTour"
-			/>
+			<FormSection title="Расположение">
+				<BaseInput
+					name="address.fullAddress"
+					label="Адрес гостиницы"
+					column
+					width="w-full"
+				/>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						name="address.region"
+						label="Регион"
+						column
+						width="w-full"
+					/>
+					<BaseSelect
+						name="address.city"
+						label="Город"
+						column
+						width="w-full"
+						:list="citiesList"
+					/>
+				</div>
+				<BaseInput name="seaType" label="Море" column />
+			</FormSection>
+
+			<FormSection title="Условия проживания">
+				<BaseInput name="additionalInfo.food.type" label="Питание" column />
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						name="additionalInfo.beach.type"
+						label="Тип пляжа"
+						column
+						width="w-full"
+					/>
+					<BaseInput
+						name="additionalInfo.beach.distanceMinutes"
+						label="Расстояние до пляжа в минутах"
+						type="number"
+						column
+						width="w-full"
+					/>
+				</div>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						name="additionalInfo.checkInOut.checkIn"
+						label="Время заселения"
+						column
+						width="w-full"
+					/>
+					<BaseInput
+						name="additionalInfo.checkInOut.checkOut"
+						label="Время выселения"
+						column
+						width="w-full"
+					/>
+				</div>
+			</FormSection>
+
+			<FormSection title="Цена и услуги">
+				<BaseInput
+					name="minPrice"
+					label="Минимальная цена заезда"
+					column
+					required
+				/>
+				<BaseArrayFields
+					name="includedInThePrice"
+					label="В стоимость включено"
+					addButtonLabel="Добавить опцию"
+					:initial-value="() => ({ serviceName: '' })"
+					:render-field="renderServiceField"
+				/>
+			</FormSection>
+
+			<FormSection title="Файлы">
+				<TheFileInput
+					label="Изображения гостиницы"
+					column
+					name="images"
+					accept="image/*"
+					multiple
+					place="busTour"
+				/>
+				<TheFileInput
+					label="Файл прайса"
+					column
+					name="documentName"
+					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					place="busTour"
+				/>
+			</FormSection>
 		</div>
 		<div
-			class="sticky bottom-0 flex w-full items-center gap-x-2 bg-white px-6 py-4"
+			class="flex w-full shrink-0 items-center gap-x-2 border-t border-slate-100 px-6 py-4 md:px-12"
 		>
 			<button
 				class="base-btn max-w-[300px]"
@@ -129,13 +208,14 @@ onMounted(async () => {
 				v-if="tourId"
 				class="secondary-btn max-w-[300px]"
 				:class="{
-					'pointer-events-none !bg-deep-blue/70': meta.dirty || isSubmitting
+					'pointer-events-none !bg-deep-teal/70': meta.dirty || isSubmitting
 				}"
 				@click="changeStatus(!isPublished)"
 				:disabled="meta.dirty || isSubmitting"
 			>
 				{{ publishTitle }}
 			</button>
+		</div>
 		</div>
 	</form>
 </template>

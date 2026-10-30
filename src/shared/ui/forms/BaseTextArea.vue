@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
-import type { StringSchema } from 'yup';
-defineOptions({
-	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
+defineOptions({	inheritAttrs: false // Отключаем автоматическую передачу атрибутов
 });
 
 export interface IProps {

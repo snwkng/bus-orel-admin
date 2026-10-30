@@ -24,13 +24,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const { remove, push, replace, fields } = useFieldArray(name);
+const { remove, replace, fields } = useFieldArray(name);
 
 const store =
 	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
 const { getFile, uploadFile, deleteFile } = store;
 const files = ref<File[]>([]);
-const file = ref<any>(null);
+const file = ref<HTMLInputElement | null>(null);
 
 watch(
 	() => fields.value,
@@ -58,13 +58,13 @@ const removeFile = async (index: number, fileName: string) => {
 		await deleteFile(fileName);
 		files.value.splice(index, 1);
 		remove(index);
-	} catch (error) {
+	} catch {
 		console.error('err');
 	}
 };
 
 const onChange = () => {
-	const newFiles = Array.from(file.value.files) as File[];
+	const newFiles = Array.from(file.value?.files ?? []) as File[];
 	const arrayFunctions = newFiles.map((x: File) => {
 		const formData = new FormData();
 		formData.append('file', x);

@@ -9,7 +9,7 @@ const getToastType = (type: ToastItem['type']) => {
 		case 'error':
 			return 'bg-red-300';
 		case 'info':
-			return 'bg-blue-300';
+			return 'bg-deep-teal/60';
 	}
 };
 </script>

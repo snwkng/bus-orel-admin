@@ -5,7 +5,8 @@ import {
 	TheFileInput,
 	BaseSelect,
 	TheDatePicker,
-	BaseArrayFields
+	BaseArrayFields,
+	FormSection
 } from '@/shared/ui/forms';
 import { computed, h, onMounted } from 'vue';
 import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
@@ -43,118 +44,139 @@ onMounted(async () => {
 </script>
 <template>
 	<form class="form-container" @submit.prevent>
-		<div class="form-container-content">
-			<BaseInput
-				name="name"
-				type="text"
-				label="Название экскурсии"
-				column
-				required
-			/>
-			<BaseInput
-				name="duration"
-				type="number"
-				label="Длительность экскурсии (в днях)"
-				column
-			/>
-			<BaseSelect
-				name="type"
-				label="Тип экскурсии"
-				column
-				required
-				:list="typesList"
-			/>
-			<BaseSelect
-				name="cities"
-				label="Города"
-				column
-				multiple
-				required
-				:list="citiesList"
-			/>
-			<BaseInput
-				name="price"
-				type="number"
-				label="Стоимость экскрусии (от)"
-				column
-				required
-			/>
-			<TheDatePicker
-				name="excursionStartDates"
-				label="Даты отправления"
-				multi-dates
-				column
-			/>
-			<BaseInput
-				name="hotelName"
-				type="text"
-				label="Название отеля (если есть)"
-				column
-			/>
+		<div
+			class="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-card"
+		>
+			<div class="form-container-content">
+			<FormSection title="Основная информация">
+				<BaseInput
+					name="name"
+					type="text"
+					label="Название экскурсии"
+					column
+					required
+					width="w-full"
+				/>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseSelect
+						name="type"
+						label="Тип экскурсии"
+						column
+						required
+						width="w-full"
+						:list="typesList"
+					/>
+					<BaseSelect
+						name="cities"
+						label="Города"
+						column
+						multiple
+						required
+						width="w-full"
+						:list="citiesList"
+					/>
+				</div>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						name="duration"
+						type="number"
+						label="Длительность экскурсии (в днях)"
+						column
+						width="w-full"
+					/>
+					<BaseInput
+						name="price"
+						type="number"
+						label="Стоимость экскурсии (от)"
+						column
+						required
+						width="w-full"
+					/>
+				</div>
+				<BaseInput
+					name="hotelName"
+					type="text"
+					label="Название отеля (если есть)"
+					column
+				/>
+				<TheDatePicker
+					name="excursionStartDates"
+					label="Даты отправления"
+					multi-dates
+					column
+					width="w-full"
+				/>
+			</FormSection>
 
-			<BaseArrayFields
-				name="description"
-				label="Программа экскурсии"
-				:max="values.duration"
-				addButtonLabel="Добавить день"
-				:render-field="
-					({index, fieldName}) =>
-						h(BaseTextArea, {
-							label: index === 0 ? 'Программа экскурсии' : '',
-							column: true,
-							name: fieldName,
-							placeholder: `День ${index + 1}`,
-						})
-				"
-			/>
+			<FormSection title="Программа и услуги">
+				<BaseArrayFields
+					name="description"
+					label="Программа экскурсии"
+					:max="values.duration"
+					addButtonLabel="Добавить день"
+					:render-field="
+						({index, fieldName}) =>
+							h(BaseTextArea, {
+								label: index === 0 ? 'Программа экскурсии' : '',
+								column: true,
+								name: fieldName,
+								placeholder: `День ${index + 1}`,
+							})
+					"
+				/>
 
-			<BaseArrayFields
-				name="thePriceIncludes"
-				label="В стоимость включено"
-				addButtonLabel="Добавить опцию"
-				:render-field="
-					({index, fieldName}) =>
-						h(BaseInput, {
-							label: index === 0 ? 'В стоимость включено' : '',
-							column: true,
-							name: fieldName,
-							placeholder: `Дополнительная опция ${index + 1}`,
-						})
-				"
-			/>
+				<BaseArrayFields
+					name="thePriceIncludes"
+					label="В стоимость включено"
+					addButtonLabel="Добавить опцию"
+					:render-field="
+						({index, fieldName}) =>
+							h(BaseInput, {
+								label: index === 0 ? 'В стоимость включено' : '',
+								column: true,
+								name: fieldName,
+								placeholder: `Дополнительная опция ${index + 1}`,
+							})
+					"
+				/>
 
-			<BaseArrayFields
-				name="additionallyPaid"
-				label="Дополнительно оплачивается"
-				addButtonLabel="Добавить опцию"
-				:render-field="
-					({index, fieldName}) =>
-						h(BaseInput, {
-							label: index === 0 ? 'Дополнительно оплачивается' : '',
-							column: true,
-							name: fieldName,
-							placeholder: `Платная опция  ${index + 1}`,
-						})
-				"
-			/>
+				<BaseArrayFields
+					name="additionallyPaid"
+					label="Дополнительно оплачивается"
+					addButtonLabel="Добавить опцию"
+					:render-field="
+						({index, fieldName}) =>
+							h(BaseInput, {
+								label: index === 0 ? 'Дополнительно оплачивается' : '',
+								column: true,
+								name: fieldName,
+								placeholder: `Платная опция  ${index + 1}`,
+							})
+					"
+				/>
+			</FormSection>
 
-			<TheFileInput
-				label="Изображения эксркусии"
-				column
-				name="images"
-				accept="image/*"
-				multiple
-				place="excursion"
-			/>
-			<TheFileInput
-				label="Файл прайса"
-				column
-				name="documentName"
-				accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-				place="excursion"
-			/>
+			<FormSection title="Файлы">
+				<TheFileInput
+					label="Изображения экскурсии"
+					column
+					name="images"
+					accept="image/*"
+					multiple
+					place="excursion"
+				/>
+				<TheFileInput
+					label="Файл прайса"
+					column
+					name="documentName"
+					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					place="excursion"
+				/>
+			</FormSection>
 		</div>
-		<div class="sticky bottom-0 flex w-full items-center rounded-b-lg bg-white px-6 py-4">
+		<div
+			class="flex w-full shrink-0 items-center border-t border-slate-100 px-6 py-4 md:px-12"
+		>
 			<button
 				class="base-btn max-w-75 cursor-pointer"
 				:class="{
@@ -166,6 +188,7 @@ onMounted(async () => {
 			>
 				{{ buttonTitle }}
 			</button>
+		</div>
 		</div>
 	</form>
 </template>

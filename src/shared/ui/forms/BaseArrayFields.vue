@@ -3,7 +3,7 @@ import { useFieldArray, type FieldEntry } from 'vee-validate';
 import { computed, toRef, type PropType } from 'vue';
 import { X } from '@lucide/vue';
 
-type ArrayItem = string | number | boolean | Record<string, any> | any[];
+type ArrayItem = string | number | boolean | Record<string, unknown> | unknown[];
 type InitialValue = ArrayItem | (() => ArrayItem);
 type FieldItem = FieldEntry<unknown>;
 
@@ -19,9 +19,9 @@ const props = defineProps({
 				fieldName: string;
 				field: FieldItem;
 				remove?: (idx: number) => void;
-				push?: (data: [Object, String, Number]) => void;
+				push?: (data: [object, string, number]) => void;
 				// опционально: remove, push — если нужны вложенные операции
-			}) => any
+			}) => unknown
 		>,
 		required: true
 	},

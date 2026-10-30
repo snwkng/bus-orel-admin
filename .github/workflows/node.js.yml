@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.17.0]
+        node-version: [22]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     env:
       VITE_BASE_URL: ${{secrets.VITE_BASE_URL}} 

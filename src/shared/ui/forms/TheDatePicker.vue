@@ -8,7 +8,6 @@ import { toRef } from 'vue';
 export interface IProps {
 	name: string;
 	label?: string;
-	value?: string[] | string;
 	column?: boolean;
 	multiDates?: boolean;
 	required?: boolean;
@@ -22,7 +21,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange, handleBlur } =
+const { value, errorMessage, meta, handleBlur } =
 	useField<string>(name);
 </script>
 

@@ -30,16 +30,16 @@ const routes = ref([
 </script>
 <template>
 	<aside
-		class="flex h-screen flex-col overflow-hidden bg-white transition-all"
+		class="flex h-screen shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white transition-all"
 		:class="isExpanded ? 'w-62.5' : 'w-15'"
 	>
-		<div class="flex items-center justify-center">
+		<div class="flex items-center justify-center border-b border-slate-100">
 			<RouterLink
 				class="header-height flex flex-row items-center justify-center"
 				to="/"
 			>
 				<img
-					class="h-full w-full"
+					class="h-8 w-auto max-w-full object-contain px-1"
 					src="/src/app/assets/icons/logo_black.svg"
 					alt="logo"
 				/>
@@ -48,8 +48,8 @@ const routes = ref([
 		<div class="relative h-full">
 			<nav
 				:class="[
-					'flex flex-col gap-2 transition-all base-py items-center',
-					{ 'px-3': isExpanded }
+					'flex flex-col gap-1 transition-all base-py items-stretch px-3',
+					{ 'px-2': !isExpanded }
 				]"
 			>
 				<RouterLink
@@ -58,16 +58,17 @@ const routes = ref([
 					:class="[
 						'link w-full',
 						{ 'link-active': route.name === value.name },
-						{ 'justify-center rounded-full! w-fit!': !isExpanded }
+						{ 'justify-center px-1!': !isExpanded }
 					]"
 					:to="{ name: value.name }"
 					:title="value.title"
 				>
 					<component
 						:is="value.iconComponent"
-						:fill="'#020202'"
-						:width="28"
-						:height="28"
+						:fill="'currentColor'"
+						:width="22"
+						:height="22"
+						class="shrink-0"
 					/>
 					<span
 						class="text-nowrap transition-all"

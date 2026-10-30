@@ -1,8 +1,8 @@
 import { type VNode } from 'vue';
-export interface ITableConfig<T = any> {
+export interface ITableConfig<T = unknown> {
   label: string;
   propertyName: string;
   cellWidth?: string;
-  format?: (val: any, row: T) => string | number | VNode | VNode[];
+  format?(val: never, row: T): string | number | VNode | VNode[];
 }
 
