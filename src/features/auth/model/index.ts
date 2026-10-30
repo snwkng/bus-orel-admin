@@ -35,10 +35,8 @@ export const useAuthStore = defineStore('auth', {
         const res = await api.get<{ _id: string; username: string; }>('/api/users/profile');
         this.user = res.data;
       } catch (err) {
+        // Не 401 (например, обрыв сети): сессию не трогаем, профиль подгрузится позже
         console.error('[Store] Failed to fetch profile', err);
-        clearAuthTokens();
-        this.token = null;
-        throw err;
       }
     },
 

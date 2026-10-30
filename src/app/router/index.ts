@@ -98,11 +98,9 @@ router.beforeEach(async (to) => {
 	}
 
 	if (!authStore.user) {
-		try {
-			await authStore.fetchProfile();
-		} catch {
-			return { name: 'login' };
-		}
+		// Профиль подгружаем в фоне: ошибка запроса не должна разлогинивать
+		// валидную сессию, реальный 401 обработает api-клиент
+		void authStore.fetchProfile();
 	}
 
 	return true;
