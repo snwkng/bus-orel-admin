@@ -1,39 +1,43 @@
 import { api } from '@/shared/api/api';
+import { saveAuthTokens } from '@/shared/api/auth-session';
 
 export interface AuthResponse {
-  access_token: string;
-  // Если бэкенд отдаёт expires_in — добавьте:
-  // expires_in: number; // секунды
+	access_token: string;
+	refresh_token?: string;
 }
 
 /**
  * Аутентификация пользователя.
- * Сохраняет токен в localStorage с метаданными (lastActive, expiresAt).
+ * Сохраняет пару токенов в localStorage (см. auth-session).
  * @param username логин
  * @param password пароль
  * @returns access_token
  */
 export const login = async (username: string, password: string): Promise<string> => {
-  try {
-    const res = await api.post<AuthResponse>('/api/auth/login', { username, password });
-    if (!res.data?.access_token) {
-      throw new Error('Access token not found in response');
-    }
+	try {
+		const res = await api.post<AuthResponse>('/api/auth/login', { username, password });
+		if (!res.data?.access_token) {
+			throw new Error('Access token not found in response');
+		}
 
-    const { access_token } = res.data;
-    
-    // 🔐 Сохраняем сессию с защитой
-    const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 часа
-    const authState = {
-      accessToken: access_token,
-      lastActive: Date.now(),
-      expiresAt,
-    };
-    localStorage.setItem('token', JSON.stringify(authState));
+		const { access_token, refresh_token } = res.data;
+		saveAuthTokens(access_token, refresh_token);
 
-    return access_token;
-  } catch (err) {
-    console.error('[API] Login failed', err);
-    throw err;
-  }
+		return access_token;
+	} catch (err) {
+		console.error('[API] Login failed', err);
+		throw err;
+	}
+};
+
+/**
+ * Инвалидация refresh-токена на сервере.
+ * Ошибки не пробрасываются: локальный выход состоится в любом случае.
+ */
+export const logoutRequest = async (): Promise<void> => {
+	try {
+		await api.post<void>('/api/auth/logout');
+	} catch (err) {
+		console.warn('[API] Logout request failed', err);
+	}
 };

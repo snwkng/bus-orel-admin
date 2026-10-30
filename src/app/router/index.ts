@@ -93,18 +93,19 @@ router.beforeEach(async (to) => {
 	// Публичные страницы
 	if (to.meta.public) return true;
 
-	if (!authStore.isLoggedIn && to.name !== 'login') {
+	if (!authStore.isLoggedIn) {
 		return { name: 'login' };
 	}
 
 	if (!authStore.user) {
 		try {
 			await authStore.fetchProfile();
-			return to;
 		} catch {
 			return { name: 'login' };
 		}
 	}
+
+	return true;
 });
 
 router.afterEach((to: RouteLocationNormalized) => {

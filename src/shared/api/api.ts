@@ -1,5 +1,6 @@
 import type { ApiResponse, HttpMethod, ParamsObject } from './types';
 import { ApiError } from './types';
+import { clearAuthTokens, getAuthState, saveAuthTokens } from './auth-session';
 
 // === Вспомогательные функции ===
 
@@ -18,31 +19,55 @@ function buildUrlWithParams(url: string, params?: ParamsObject): string {
   return `${url}${delimiter}${searchParams.toString()}`;
 }
 
-/**
- * Безопасное чтение токена с защитой от неактивной сессии
- */
 function getAuthHeader(): string | null {
+  const state = getAuthState();
+  return state?.accessToken ? `Bearer ${state.accessToken}` : null;
+}
+
+const AUTH_PATHS = ['/api/auth/login', '/api/auth/refresh', '/api/auth/logout'];
+const isAuthEndpoint = (url: string) => AUTH_PATHS.some((p) => url.includes(p));
+
+let refreshPromise: Promise<boolean> | null = null;
+
+async function refreshTokens(): Promise<boolean> {
+  const state = getAuthState();
+  if (!state?.refreshToken) return false;
+
   try {
-    const raw = localStorage.getItem('token');
-    if (!raw) return null;
+    const response = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${state.refreshToken}` },
+    });
 
-    const state = JSON.parse(raw) as { accessToken: string; lastActive: number; expiresAt: number; } | null;
-    if (!state?.accessToken) return null;
+    if (!response.ok) return false;
 
-    const now = Date.now();
-    const tokenAlive = now < state.expiresAt;
-    const activeRecently = state.lastActive && now - state.lastActive < 30 * 60 * 1000; // 30 мин
+    const body = await response.json();
+    const data =
+      (body as ApiResponse<{ access_token?: string; refresh_token?: string }>)?.data ?? body;
+    if (!data?.access_token) return false;
 
-    if (tokenAlive && activeRecently) {
-      // Обновляем lastActive при использовании токена
-      state.lastActive = now;
-      localStorage.setItem('token', JSON.stringify(state));
-      return `Bearer ${state.accessToken}`;
-    }
-  } catch (e) {
-    console.warn('[api] Failed to get auth header', e);
+    saveAuthTokens(data.access_token, data.refresh_token);
+    return true;
+  } catch {
+    return false;
   }
-  return null;
+}
+
+// Параллельные запросы с протухшим access-токеном делят один refresh
+function refreshTokensSingleFlight(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = refreshTokens().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+function forceLogout(): void {
+  clearAuthTokens();
+  if (!window.location.pathname.startsWith('/login')) {
+    window.location.assign('/login');
+  }
 }
 
 // === Приватный request (не экспортируем) ===
@@ -52,6 +77,7 @@ async function _request<T>(
   url: string,
   config: { headers?: HeadersInit; signal?: AbortSignal; } = {},
   body?: BodyInit,
+  isRetry = false,
 ): Promise<ApiResponse<T>> {
   const headers = new Headers(config.headers ?? {});
 
@@ -59,7 +85,6 @@ async function _request<T>(
     headers.set('Content-Type', 'application/json');
   }
 
-  // Добавляем Authorization, только если сессия активна
   const authHeader = getAuthHeader();
   if (authHeader) {
     headers.set('Authorization', authHeader);
@@ -73,13 +98,19 @@ async function _request<T>(
       signal: config.signal,
     });
 
-    if (response.status === 401) {
-      const { useAuthStore } = await import('@/features/auth/model');
-      const authStore = useAuthStore();
+    if (response.status === 401 && !isAuthEndpoint(url)) {
+      const refreshed = !isRetry ? await refreshTokensSingleFlight() : false;
 
-      authStore.logout();
+      if (refreshed) {
+        return _request<T>(method, url, config, body, true);
+      }
 
+      forceLogout();
       throw new ApiError('Session expired', 401, url, 'Unauthorized');
+    }
+
+    if (response.status === 401) {
+      throw new ApiError('Unauthorized', 401, url, 'Unauthorized');
     }
 
     let data: unknown;
@@ -182,6 +213,7 @@ export const api = {
   downloadBlob: async (
     url: string,
     config: { params?: ParamsObject; headers?: HeadersInit; signal?: AbortSignal; } = {},
+    isRetry = false,
   ): Promise<Blob> => {
     const finalUrl = buildUrlWithParams(url, config.params);
     const headers = new Headers(config.headers ?? {});
@@ -195,6 +227,17 @@ export const api = {
       headers,
       signal: config.signal,
     });
+
+    if (response.status === 401 && !isAuthEndpoint(finalUrl)) {
+      const refreshed = !isRetry ? await refreshTokensSingleFlight() : false;
+
+      if (refreshed) {
+        return api.downloadBlob(url, config, true);
+      }
+
+      forceLogout();
+      throw new ApiError('Session expired', 401, finalUrl, 'Unauthorized');
+    }
 
     if (!response.ok) {
       let errorText = '';
