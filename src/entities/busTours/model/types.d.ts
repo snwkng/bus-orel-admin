@@ -1,7 +1,5 @@
-import { ObjectId } from 'bson';
-
-interface IHotel {
-	_id: ObjectId;
+export interface IHotel {
+	_id: string;
 	name: string;
 	type: string;
 	registryNumber: string;
@@ -11,7 +9,7 @@ interface IHotel {
 		region: string;
 		country: string;
 		fullAddress: string;
-		_id?: ObjectId;
+		_id?: string;
 	};
 	additionalInfo: {
 		food: {
@@ -39,12 +37,12 @@ interface IHotel {
 	published: boolean;
 }
 
-export type CreateHotelDto = Omit<ITour, 'id'>;
-export type EditHotelDto = Omit<ITour>;
+export type CreateHotelDto = Omit<IHotel, '_id'>;
+export type EditHotelDto = IHotel;
 
 export interface IHotelRoomInfo {
 	type: string;
-	roomName: string;
+	name: string;
 	capacity: number;
 	inRoom?: string;
 }
@@ -53,5 +51,5 @@ export interface IDatesAndPrices {
 	startDate?: Date | string;
 	endDate?: Date | string;
 	pricePerPerson?: number;
-	_id?: ObjectId;
+	_id?: string;
 }

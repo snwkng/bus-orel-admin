@@ -13,7 +13,7 @@ const schema = yup.object().shape({
   registryNumber: yup.string().required('Укажите регистрационные номер гостиницы').defined().typeError('Поле должно быть текстовым'),
   description: yup.string().defined(),
   address: yup.object().shape({
-    city: yup.string().defined(),
+    city: yup.string().required('Укажите город'),
     region: yup.string().defined(),
     country: yup.string().defined(),
     fullAddress: yup.string().defined(),

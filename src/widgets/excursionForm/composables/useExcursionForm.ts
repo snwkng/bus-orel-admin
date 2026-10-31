@@ -15,7 +15,9 @@ const schema = yup.object({
   duration: yup.number().min(1, 'Длительность эскурсии должна быть больше 0').defined().transform((value, originalValue) => originalValue === '' || originalValue === 0 ? 0 : +value).typeError('Поле должно быть числом'),
   price: yup.number().required('Укажите цену').min(1, 'Цена должна быть больше 0').defined().typeError('Поле должно быть числом'),
   documentName: yup.array().of(yup.string()).max(1, 'Максимум 1 файл').defined(),
-  excursionStartDates: yup.array().of(yup.string()).ensure(),
+  excursionStartDates: yup.array().of(
+    yup.string().test('is-date', 'Некорректная дата начала экскурсии', (value) => !value || !Number.isNaN(Date.parse(value)))
+  ).ensure(),
   cities: yup.array().required().min(1, 'Укажите минимум 1 город').of(yup.string()).defined(),
   type: yup.string().required('Укажите тип экскурсии').defined('Укажите тип экскурсии').typeError('Поле должно быть текстовым'),
   hotelName: yup.string().defined(),
@@ -92,10 +94,9 @@ export function useExcursionForm(exId?: string) {
       await saveExcursion();
       return true;
     } catch (err: unknown) {
-      console.error(Array.isArray((err as ApiError)?.data))
       if (Array.isArray((err as ApiError)?.data)) {
         (err as ApiError)?.data?.forEach((message: string) => {
-          show(message, 'error', 300000);
+          show(message, 'error');
         });
       }
     }

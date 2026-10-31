@@ -116,6 +116,7 @@ onMounted(async () => {
 						name="address.city"
 						label="Город"
 						column
+						required
 						width="w-full"
 						:list="citiesList"
 					/>
