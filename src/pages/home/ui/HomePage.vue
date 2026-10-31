@@ -7,6 +7,7 @@ import { excursionsApi } from '@/entities/excursions/api';
 import type { EditHotelDto } from '@/entities/busTours/model/types';
 import type { EditExcursionDto } from '@/entities/excursions/model/types';
 import { pluralize } from '@/shared/lib/pluralize';
+import { formatPrice } from '@/shared/lib/useRenderFunctions';
 import StatCard from './StatCard.vue';
 import RecentList, { type RecentItem } from './RecentList.vue';
 
@@ -52,7 +53,7 @@ const hotelItems = computed<RecentItem[]>(() =>
 		id: String(hotel._id),
 		title: hotel.name,
 		subtitle: [hotel.address?.city, hotel.seaType].filter(Boolean).join(' · '),
-		value: `${hotel.minPrice}₽`,
+		value: formatPrice(hotel.minPrice),
 		to: { name: 'edit-hotel', params: { id: String(hotel._id) } }
 	}))
 );

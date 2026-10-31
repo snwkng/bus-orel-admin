@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue';
+import docxIcon from '@/app/assets/icons/docxIcon.svg';
+import pdfIcon from '@/app/assets/icons/pdfIcon.svg';
 
 export interface Props {
 	getFile: Promise<File | void> | File;
@@ -22,12 +24,12 @@ const generatePreview = (): string => {
 		file.value?.name?.includes('.docx') ||
 		file.value?.name?.includes('.doc')
 	) {
-		fileSrc = '/src/app/assets/icons/docxIcon.svg';
+		fileSrc = docxIcon;
 	} else if (
 		file.value?.type?.includes('pdf') ||
 		file.value?.name?.includes('.pdf')
 	) {
-		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
+		fileSrc = pdfIcon;
 	} else if (file.value?.name) {
 		fileSrc = URL.createObjectURL(file.value);
 	}

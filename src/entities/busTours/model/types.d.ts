@@ -29,7 +29,7 @@ interface IHotel {
 	};
 	includedInThePrice: {
 		serviceName: string;
-		icon?: string;
+		iconForService?: string;
 	}[];
 	images: string[];
 	minPrice: number;

@@ -1,6 +1,7 @@
 import { api } from '@/shared/api/api';
 import type { CreateHotelDto, EditHotelDto } from '../model/types';
 import type { ApiResponse } from '@/shared/api/types';
+import { omitMetaFields } from '@/shared/lib/omitMetaFields';
 
 export const busToursApi = {
 	getTours: async (
@@ -38,7 +39,7 @@ export const busToursApi = {
 	editTour: async (tour: EditHotelDto): Promise<EditHotelDto> => {
 		const url = `/api/admin/hotels/${tour._id}`;
 
-		const response = await api.put<EditHotelDto>(url, tour);
+		const response = await api.put<EditHotelDto>(url, omitMetaFields(tour));
 		return response?.data;
 	},
 

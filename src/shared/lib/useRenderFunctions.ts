@@ -18,11 +18,19 @@ export const linkFormat = (title: string, route: RouteLocationAsRelativeGeneric)
   );
 };
 
+const priceFormatter = new Intl.NumberFormat('ru-RU', {
+  style: 'currency',
+  currency: 'RUB',
+  maximumFractionDigits: 0
+});
+
+export const formatPrice = (val: number): string => priceFormatter.format(val ?? 0);
+
 export const priceFormat = (val: number) => {
   return h(
     'span',
     null,
-    `${val}₽`
+    formatPrice(val)
   );
 };
 

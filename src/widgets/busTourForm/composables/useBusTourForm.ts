@@ -2,6 +2,7 @@ import { useBusTourStore } from '@/entities/busTours/model';
 import type { CreateHotelDto } from '@/entities/busTours/model/types';
 import { storeToRefs } from 'pinia';
 import { onInvalidSubmit } from '@/shared/lib/useInvalidSubmits';
+import { useToast } from '@/shared/lib/useToasts';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { computed } from 'vue';
@@ -123,19 +124,24 @@ export function useBusTourForm(tourId?: string) {
     }
   };
 
+  const { show } = useToast();
+
   const saveTour = async () => {
     if (tourId) {
       const res = await editTour({ ...values, _id: tourId });
       resetForm({
         values: res,
       });
+      show('Тур сохранён', 'success');
     } else {
       await createTour(values);
+      show('Тур создан', 'success');
     }
   };
 
   const changeStatus = async (published: boolean) => {
     await updateStatus(tourId as string, published);
+    show(published ? 'Тур опубликован' : 'Тур снят с публикации', 'success');
   };
 
   return {

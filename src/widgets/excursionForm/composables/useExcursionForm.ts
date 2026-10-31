@@ -19,6 +19,7 @@ const schema = yup.object({
   cities: yup.array().required().min(1, 'Укажите минимум 1 город').of(yup.string()).defined(),
   type: yup.string().required('Укажите тип экскурсии').defined('Укажите тип экскурсии').typeError('Поле должно быть текстовым'),
   hotelName: yup.string().defined(),
+  hotelLink: yup.string().transform((value, originalValue) => originalValue === '' ? undefined : value).url('Введите корректную ссылку'),
   thePriceIncludes: yup.array().of(yup.string()).defined().ensure(),
   additionallyPaid: yup.array().of(yup.string()).defined().ensure()
 }) as yup.ObjectSchema<CreateExcursionDto>;
@@ -46,6 +47,7 @@ export function useExcursionForm(exId?: string) {
       excursionStartDates: [],
       cities: [] as string[],
       hotelName: '',
+      hotelLink: '',
       thePriceIncludes: [],
       additionallyPaid: []
     },
@@ -74,8 +76,10 @@ export function useExcursionForm(exId?: string) {
       resetForm({
         values: res,
       });
+      show('Экскурсия сохранена', 'success');
     } else {
       await createExcursion(schema.cast(values));
+      show('Экскурсия создана', 'success');
     }
   };
 

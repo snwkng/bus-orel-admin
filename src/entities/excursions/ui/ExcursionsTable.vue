@@ -4,6 +4,9 @@ import { useExcursionStore } from '../model';
 import { useRouter } from 'vue-router';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
+import TableToolbar from '@/shared/ui/table/TableToolbar.vue';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog.vue';
+import { useToast } from '@/shared/lib/useToasts';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
 import type { EditExcursionDto } from '../model/types';
@@ -14,7 +17,7 @@ import {
 } from '@/shared/lib/useRenderFunctions';
 import { storeToRefs } from 'pinia';
 import { useQueryFilters } from '@/shared/lib/useQueryFilters';
-import { excursionSchema } from '../model/excursion.schema';
+import { excursionSchema, type ExcursionFilters } from '../model/excursion.schema';
 
 const router = useRouter();
 const store = useExcursionStore();
@@ -87,19 +90,50 @@ const openExcursion = (item: EditExcursionDto) => {
 	router.push({ name: 'edit-excursion', params: { id: item._id } });
 };
 
-const deleteExcursion = async (id: string) => {
-	await store
-		.deleteExcursion(id)
-		.then(async () => {
-			await store.getExcursions(filters.value);
-		})
-		.catch((err) => {
-			console.error(err);
-		});
+const sortOptions = [
+	{ value: 'createdAt', label: 'По дате добавления' },
+	{ value: 'name', label: 'По названию' },
+	{ value: 'price', label: 'По цене' },
+	{ value: 'type', label: 'По типу' },
+	{ value: 'duration', label: 'По длительности' }
+];
+
+const { show } = useToast();
+
+const excursionToDelete = shallowRef<EditExcursionDto | null>(null);
+
+const askDeleteExcursion = (item: EditExcursionDto) => {
+	excursionToDelete.value = item;
+};
+
+const confirmDeleteExcursion = async () => {
+	const item = excursionToDelete.value;
+	excursionToDelete.value = null;
+	if (!item) return;
+	try {
+		await store.deleteExcursion(item._id);
+		await store.getExcursions(filters.value);
+		show('Экскурсия удалена', 'success');
+	} catch (err) {
+		console.error(err);
+		show('Не удалось удалить экскурсию', 'error');
+	}
 };
 </script>
 <template>
-	<BaseTable
+	<div class="flex h-full min-h-0 flex-col gap-4">
+		<TableToolbar
+			with-search
+			search-placeholder="Поиск по названию"
+			:search="filters.search ?? ''"
+			:sort-by="filters.sortBy"
+			:sort-dir="filters.sortDir"
+			:sort-options="sortOptions"
+			@update:search="(v) => updateFilters({ search: v || undefined, page: 1 })"
+			@update:sort-by="(v) => updateFilters({ sortBy: v, page: 1 })"
+			@update:sort-dir="(v) => updateFilters({ sortDir: v as ExcursionFilters['sortDir'] })"
+		/>
+		<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="excursions"
 		:pagination="tablePagination"
@@ -125,11 +159,19 @@ const deleteExcursion = async (id: string) => {
 					type="button"
 					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
 					title="Удалить"
-					@click.stop="deleteExcursion(item._id)"
+					@click.stop="askDeleteExcursion(item)"
 				>
 					<TrashIcon fill="currentColor" :width="20" :height="20" />
 				</button>
 			</div>
 		</template>
-	</BaseTable>
+		</BaseTable>
+		<ConfirmDialog
+			:open="!!excursionToDelete"
+			title="Удалить экскурсию?"
+			:message="`Экскурсия «${excursionToDelete?.name}» будет удалена без возможности восстановления.`"
+			@confirm="confirmDeleteExcursion"
+			@cancel="excursionToDelete = null"
+		/>
+	</div>
 </template>

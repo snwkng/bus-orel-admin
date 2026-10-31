@@ -5,12 +5,15 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
+import TableToolbar from '@/shared/ui/table/TableToolbar.vue';
+import ConfirmDialog from '@/shared/ui/ConfirmDialog.vue';
+import { useToast } from '@/shared/lib/useToasts';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
 import type { EditHotelDto } from '../model/types';
 import { imageFormat, priceFormat } from '@/shared/lib/useRenderFunctions';
 import { useQueryFilters } from '@/shared/lib/useQueryFilters';
-import { hotelSchema } from '../model/hotel.schema';
+import { hotelSchema, type HotelFilters } from '../model/hotel.schema';
 
 const router = useRouter();
 const store = useBusTourStore();
@@ -77,19 +80,46 @@ const openTour = (item: EditHotelDto) => {
 	router.push({ name: 'edit-hotel', params: { id: item._id } });
 };
 
-const deleteTour = async (id: string) => {
-	await store
-		.deleteTour(id)
-		.then(async () => {
-			await store.getTours(filters.value);
-		})
-		.catch((err: unknown) => {
-			console.error(err);
-		});
+const sortOptions = [
+	{ value: 'createdAt', label: 'По дате добавления' },
+	{ value: 'name', label: 'По названию' },
+	{ value: 'minPrice', label: 'По цене' },
+	{ value: 'type', label: 'По типу' },
+	{ value: 'seaType', label: 'По морю' }
+];
+
+const { show } = useToast();
+
+const tourToDelete = shallowRef<EditHotelDto | null>(null);
+
+const askDeleteTour = (item: EditHotelDto) => {
+	tourToDelete.value = item;
+};
+
+const confirmDeleteTour = async () => {
+	const item = tourToDelete.value;
+	tourToDelete.value = null;
+	if (!item) return;
+	try {
+		await store.deleteTour(String(item._id));
+		await store.getTours(filters.value);
+		show('Тур удалён', 'success');
+	} catch (err: unknown) {
+		console.error(err);
+		show('Не удалось удалить тур', 'error');
+	}
 };
 </script>
 <template>
-	<BaseTable
+	<div class="flex h-full min-h-0 flex-col gap-4">
+		<TableToolbar
+			:sort-by="filters.sortBy"
+			:sort-dir="filters.sortDir"
+			:sort-options="sortOptions"
+			@update:sort-by="(v) => updateFilters({ sortBy: v as HotelFilters['sortBy'], page: 1 })"
+			@update:sort-dir="(v) => updateFilters({ sortDir: v as HotelFilters['sortDir'] })"
+		/>
+		<BaseTable
 		:table-data-config="tableDataConfig"
 		:table-data="tours"
 		:pagination="tablePagination"
@@ -115,11 +145,19 @@ const deleteTour = async (id: string) => {
 					type="button"
 					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
 					title="Удалить"
-					@click.stop="deleteTour(item._id)"
+					@click.stop="askDeleteTour(item)"
 				>
 					<TrashIcon fill="currentColor" :width="20" :height="20" />
 				</button>
 			</div>
 		</template>
-	</BaseTable>
+		</BaseTable>
+		<ConfirmDialog
+			:open="!!tourToDelete"
+			title="Удалить тур?"
+			:message="`Тур «${tourToDelete?.name}» будет удалён без возможности восстановления.`"
+			@confirm="confirmDeleteTour"
+			@cancel="tourToDelete = null"
+		/>
+	</div>
 </template>

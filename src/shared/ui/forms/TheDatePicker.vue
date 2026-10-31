@@ -4,6 +4,9 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { ru } from 'date-fns/locale';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
+import { useTheme } from '@/shared/lib/useTheme';
+
+const { isDark } = useTheme();
 
 export interface IProps {
 	name: string;
@@ -35,6 +38,7 @@ const { value, errorMessage, meta, handleBlur } =
 			:id="name"
 			v-model="value"
 			:locale="ru"
+			:dark="isDark"
 			:multi-dates="multiDates"
 			:enable-time-picker="false"
 			:min-date="new Date()"

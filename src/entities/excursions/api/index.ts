@@ -1,6 +1,7 @@
 import { api } from '@/shared/api/api';
 import type { EditExcursionDto, CreateExcursionDto } from '../model/types';
 import type { ApiResponse } from '@/shared/api/types';
+import { omitMetaFields } from '@/shared/lib/omitMetaFields';
 
 export const excursionsApi = {
   getExcursions: async (
@@ -49,7 +50,7 @@ export const excursionsApi = {
   editExcursion: async (tour: EditExcursionDto): Promise<EditExcursionDto> => {
     const url = `/api/admin/excursions/${tour._id}`;
 
-    const response = await api.put<EditExcursionDto>(url, tour);
+    const response = await api.put<EditExcursionDto>(url, omitMetaFields(tour));
     return response?.data;
   },
 

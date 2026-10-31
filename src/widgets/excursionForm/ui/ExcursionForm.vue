@@ -36,6 +36,8 @@ const onSubmit = async () => {
 	}
 };
 
+const maxDays = computed(() => Number(values.duration) || 0);
+
 onMounted(async () => {
 	await getCitiesList();
 	await getTypesList();
@@ -99,6 +101,13 @@ onMounted(async () => {
 					label="Название отеля (если есть)"
 					column
 				/>
+				<BaseInput
+					name="hotelLink"
+					type="text"
+					label="Ссылка на отель (если есть)"
+					placeholder="https://"
+					column
+				/>
 				<TheDatePicker
 					name="excursionStartDates"
 					label="Даты отправления"
@@ -112,7 +121,7 @@ onMounted(async () => {
 				<BaseArrayFields
 					name="description"
 					label="Программа экскурсии"
-					:max="values.duration"
+					:max="maxDays"
 					addButtonLabel="Добавить день"
 					:render-field="
 						({index, fieldName}) =>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
+import docxIcon from '@/app/assets/icons/docxIcon.svg';
+import pdfIcon from '@/app/assets/icons/pdfIcon.svg';
 
 export interface Props {
 	title?: string;
@@ -76,9 +78,9 @@ const remove = (index: number) => {
 const generatePreview = (file: File): string => {
 	let fileSrc = '';
 	if (file?.type?.includes('openxmlformats') || file?.name?.includes('.docx') || file?.name?.includes('.doc')) {
-		fileSrc = '/src/app/assets/icons/docxIcon.svg';
+		fileSrc = docxIcon;
 	} else if (file?.type?.includes('pdf') || file?.name?.includes('.pdf')) {
-		fileSrc = '/src/app/assets/icons/pdfIcon.svg';
+		fileSrc = pdfIcon;
 	} else if (file?.name) {
 		fileSrc = URL.createObjectURL(file);
 	}
