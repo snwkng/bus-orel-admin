@@ -7,7 +7,6 @@ import VueClickAway from "vue3-click-away";
 
 import App from './app/App.vue';
 import router from './app/router';
-import BaseToast from './shared/ui/toasts/BaseToast.vue';
 
 const app = createApp(App);
 
@@ -18,11 +17,8 @@ configure({
   validateOnModelUpdate: true,
 });
 
-// app.config.globalProperties.$api = fetchApi;
-
 app.use(createPinia());
 app.use(VueClickAway);
 app.use(router);
-app.provide('toast', BaseToast)
 
 app.mount('#app');

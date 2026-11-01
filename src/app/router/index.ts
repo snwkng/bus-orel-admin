@@ -30,7 +30,7 @@ const router = createRouter({
 		{
 			path: '/hotels',
 			name: RouteNames.Hotels,
-			component: () => import('@/pages/busTours'),
+			component: () => import('@/pages/hotels'),
 			meta: {
 				title: 'Автобусные туры к морю'
 			}
@@ -38,17 +38,19 @@ const router = createRouter({
 		{
 			path: '/hotels/create',
 			name: RouteNames.CreateHotel,
-			component: () => import('@/pages/createBusTour'),
+			component: () => import('@/pages/createHotel'),
 			meta: {
-				title: 'Создать автобусный тур к морю'
+				title: 'Создать автобусный тур к морю',
+				backTo: RouteNames.Hotels
 			}
 		},
 		{
 			path: '/hotels/edit/:id',
 			name: RouteNames.EditHotel,
-			component: () => import('@/pages/editBusTour'),
+			component: () => import('@/pages/editHotel'),
 			meta: {
-				title: 'Редактировать автобусный тур к морю'
+				title: 'Редактировать автобусный тур к морю',
+				backTo: RouteNames.Hotels
 			}
 		},
 		{
@@ -64,7 +66,8 @@ const router = createRouter({
 			name: RouteNames.CreateExcursion,
 			component: () => import('@/pages/createExcursion'),
 			meta: {
-				title: 'Создать экскурсию'
+				title: 'Создать экскурсию',
+				backTo: RouteNames.Excursions
 			}
 		},
 		{
@@ -72,7 +75,8 @@ const router = createRouter({
 			name: RouteNames.EditExcursion,
 			component: () => import('@/pages/editExcursion'),
 			meta: {
-				title: 'Редактировать эскурсию'
+				title: 'Редактировать экскурсию',
+				backTo: RouteNames.Excursions
 			}
 		},
 		{
@@ -94,7 +98,7 @@ router.beforeEach(async (to) => {
 	if (to.meta.public) return true;
 
 	if (!authStore.isLoggedIn) {
-		return { name: 'login' };
+		return { name: RouteNames.Login };
 	}
 
 	if (!authStore.user) {

@@ -16,7 +16,7 @@ const getToastType = (type: ToastItem['type']) => {
 
 <template>
 	<Teleport to="body">
-		<div class="fixed right-5 top-5 z-[9999px] flex flex-col gap-2">
+		<div class="fixed right-5 top-5 z-[9999] flex flex-col gap-2">
 			<TransitionGroup name="list">
 				<div
 					v-for="toast in toasts"

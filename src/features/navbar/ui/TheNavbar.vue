@@ -4,6 +4,7 @@ import { RouterLink, useRoute } from 'vue-router';
 import { SeaIcon, ExcursionIcon, BusIcon } from '@/shared/ui/icons';
 import { RouteNames } from '@/app/router/RouteNames.enum';
 import { useExpanded } from '@/shared/lib/useExpanded';
+import logoBlack from '@/app/assets/icons/logo_black.svg';
 
 const { isExpanded } = useExpanded()
 
@@ -39,8 +40,8 @@ const routes = ref([
 				to="/"
 			>
 				<img
-					class="h-8 w-auto max-w-full object-contain px-1"
-					src="/src/app/assets/icons/logo_black.svg"
+					class="h-8 w-auto max-w-full object-contain px-1 dark:invert"
+					:src="logoBlack"
 					alt="logo"
 				/>
 			</RouterLink>

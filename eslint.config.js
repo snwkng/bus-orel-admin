@@ -18,6 +18,12 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   {
+    name: 'app/rules',
+    rules: {
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+    },
+  },
+  {
     ...pluginCypress.configs.recommended,
     files: [
       'cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}',

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../model';
+import { ApiError } from '@/shared/api/types';
 
 const { loginAction } = useAuthStore();
 
@@ -9,11 +10,24 @@ const router = useRouter();
 
 const username = ref('');
 const password = ref('');
+const isLoading = ref(false);
+const errorMessage = ref('');
 
 const loginHandler = async () => {
-  await loginAction(username.value, password.value).then(() => {
+  if (isLoading.value) return;
+  errorMessage.value = '';
+  isLoading.value = true;
+  try {
+    await loginAction(username.value, password.value);
     router.replace('/');
-  })
+  } catch (err) {
+    errorMessage.value =
+      err instanceof ApiError && err.status === 401
+        ? 'Неверный логин или пароль'
+        : 'Не удалось войти. Попробуйте позже';
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 
@@ -57,9 +71,13 @@ const loginHandler = async () => {
 		<button
 			type="button"
 			class="base-btn w-full"
+			:disabled="isLoading"
       @click="loginHandler"
 		>
-			Войти
+			{{ isLoading ? 'Вход…' : 'Войти' }}
 		</button>
+		<p v-if="errorMessage" class="mt-4 text-sm text-red-600">
+			{{ errorMessage }}
+		</p>
 	</form>
 </template>

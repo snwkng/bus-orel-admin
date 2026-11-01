@@ -3,8 +3,13 @@
 
 @plugin '@tailwindcss/forms';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Текст на акцентных кнопках — всегда белый, не переопределяется в dark */
+  --color-on-accent: #ffffff;
 
   /* Акцент — кораллово-оранжевый (основной брендовый) */
   --color-deep-orange: #ff5722;
@@ -76,15 +81,15 @@
 }
 
 .base-btn {
-	@apply rounded-lg bg-deep-orange px-4 py-2 font-semibold text-white transition-all hover:bg-deep-orange/85;
+	@apply rounded-lg bg-deep-orange px-4 py-2 font-semibold text-on-accent transition-all hover:bg-deep-orange/85;
 }
 
 .secondary-btn {
-	@apply rounded-lg bg-deep-teal px-4 py-2 font-semibold text-white transition-all hover:bg-deep-teal/85;
+	@apply rounded-lg bg-deep-teal px-4 py-2 font-semibold text-on-accent transition-all hover:bg-deep-teal/85;
 }
 
 .delete-btn {
-	@apply rounded-lg bg-red-500 px-4 py-2 font-semibold text-white transition-all hover:bg-red-500/85;
+	@apply rounded-lg bg-red-500 px-4 py-2 font-semibold text-on-accent transition-all hover:bg-red-500/85;
 }
 
 .form-container {
@@ -101,4 +106,55 @@
 
 .the-label {
 	@apply block text-nowrap font-semibold text-base;
+}
+
+/*
+  Тёмная тема (класс .dark на <html>): палитра переопределяется через
+  CSS-переменные Tailwind — утилиты вроде bg-white, bg-slate-100,
+  text-slate-900 ссылаются на эти переменные, компоненты менять не нужно.
+*/
+@layer base {
+	.dark {
+		color-scheme: dark;
+
+		/* Поверхности карточек/шапки/сайдбара */
+		--color-white: #26211f;
+
+		/* Тёплые нейтрали, инвертированные */
+		--color-slate-50: #141110;
+		--color-slate-100: #1c1917;
+		--color-slate-200: #332e2a;
+		--color-slate-300: #463f39;
+		--color-slate-400: #6f655d;
+		--color-slate-500: #a8a29e;
+		--color-slate-600: #d6d3d1;
+		--color-slate-700: #e7e5e4;
+		--color-slate-800: #f5f5f4;
+		--color-slate-900: #fafaf9;
+
+		/* Светлые подложки акцентов → приглушённые тёмные */
+		--color-orange-50: #3a2114;
+		--color-red-50: #3a1d1a;
+
+		--shadow-card:
+			0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.5);
+		--shadow-card-hover:
+			0 2px 4px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.6);
+		--shadow-rounded-left:
+			-8px 0 10px -15px rgba(0, 0, 0, 0.6), -3px 0 10px -3px rgba(0, 0, 0, 0.5);
+		--shadow-material-1:
+			0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.6);
+	}
+
+	.dark body {
+		background-color: var(--color-slate-100);
+		color: var(--color-slate-900);
+	}
+
+	/* @tailwindcss/forms жёстко красит поля в #fff — в тёмной теме прозрачные */
+	.dark input,
+	.dark select,
+	.dark textarea {
+		background-color: transparent;
+	}
 }

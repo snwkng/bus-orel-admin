@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFieldArray, type FieldEntry } from 'vee-validate';
 import { computed, toRef, type PropType } from 'vue';
-import { X } from '@lucide/vue';
+import { Trash2 } from '@lucide/vue';
 
 type ArrayItem = string | number | boolean | Record<string, unknown> | unknown[];
 type InitialValue = ArrayItem | (() => ArrayItem);
@@ -57,7 +57,11 @@ const handlePush = () => {
 	<div class="flex flex-col gap-y-4">
 		<div class="the-label" v-if="!fields.length">{{ label }}</div>
 
-		<div v-for="(field, idx) in fields" :key="field.key">
+		<div
+			v-for="(field, idx) in fields"
+			:key="field.key"
+			class="flex items-center gap-2"
+		>
 			<component
 				:is="
 					renderField({
@@ -67,18 +71,16 @@ const handlePush = () => {
 						remove
 					})
 				"
+			/>
+			<button
+				type="button"
+				title="Удалить поле"
+				@click="() => remove(idx)"
+				class="shrink-0 cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+				:class="{ 'mt-7': idx === 0 }"
 			>
-				<template #actions>
-					<button
-						type="button"
-						title="Удалить поле"
-						@click="() => remove(idx)"
-						class="absolute -top-2.5 -right-2.5 cursor-pointer rounded-full bg-red-500 p-1 text-white shadow-md transition-all hover:bg-red-600/95"
-					>
-						<X :width="20" :height="20" fill="white" />
-					</button>
-				</template>
-			</component>
+				<Trash2 :width="18" :height="18" />
+			</button>
 		</div>
 		<button
 			v-if="showAddButton"

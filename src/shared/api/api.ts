@@ -135,7 +135,6 @@ async function _request<T>(
 
     return data as ApiResponse<T>;
   } catch (error) {
-    console.log(error, 'error');
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new ApiError('Request aborted', 0, url);
     }
@@ -184,31 +183,6 @@ export const api = {
     data: FormData,
     config: { headers?: HeadersInit; signal?: AbortSignal; } = {},
   ) => _request<T>('POST', url, config, data),
-
-  // upload: <T>(url: string, file: FormData, config: { headers?: HeadersInit; signal?: AbortSignal; } = {}) => {
-
-  //   const authHeader = getAuthHeader();
-  //   const headers = new Headers(config.headers ?? {});
-  //   if (authHeader) {
-  //     headers.set('Authorization', authHeader);
-  //   }
-  //   const response = await fetch(url, {
-  //     method: 'POST',
-  //     headers,
-  //     body: file
-  //   });
-  //   if (response.ok) {
-  //     return await response.text();
-  //   } else {
-  //     let errorText = '';
-  //     try {
-  //       errorText = await response.text();
-  //     } catch {
-  //       errorText = response.statusText;
-  //     }
-  //     throw new ApiError(`Upload failed: ${response.status}`, response.status, url, errorText);
-  //   }
-  // },
 
   downloadBlob: async (
     url: string,

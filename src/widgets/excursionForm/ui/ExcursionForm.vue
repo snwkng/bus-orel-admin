@@ -11,6 +11,9 @@ import {
 import { computed, h, onMounted } from 'vue';
 import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
 import { useRoute, useRouter } from 'vue-router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
+import { onBeforeUnmount, watch } from 'vue';
+import { useUnsavedChangesStore } from '@/shared/lib/useUnsavedChanges';
 
 const route = useRoute();
 const router = useRouter();
@@ -32,9 +35,17 @@ const {
 const onSubmit = async () => {
 	const success = await handleSubmit();
 	if (success) {
-		router.push('/excursions');
+		router.push({ name: RouteNames.Excursions });
 	}
 };
+
+const unsavedChanges = useUnsavedChangesStore();
+watch(() => meta.value.dirty, (dirty) => unsavedChanges.setDirty(dirty), {
+	immediate: true
+});
+onBeforeUnmount(() => unsavedChanges.setDirty(false));
+
+const maxDays = computed(() => Number(values.duration) || 0);
 
 onMounted(async () => {
 	await getCitiesList();
@@ -99,6 +110,13 @@ onMounted(async () => {
 					label="Название отеля (если есть)"
 					column
 				/>
+				<BaseInput
+					name="hotelLink"
+					type="text"
+					label="Ссылка на отель (если есть)"
+					placeholder="https://"
+					column
+				/>
 				<TheDatePicker
 					name="excursionStartDates"
 					label="Даты отправления"
@@ -112,7 +130,7 @@ onMounted(async () => {
 				<BaseArrayFields
 					name="description"
 					label="Программа экскурсии"
-					:max="values.duration"
+					:max="maxDays"
 					addButtonLabel="Добавить день"
 					:render-field="
 						({index, fieldName}) =>
@@ -161,21 +179,20 @@ onMounted(async () => {
 					label="Изображения экскурсии"
 					column
 					name="images"
-					accept="image/*"
+					accept="image/jpeg, image/png, image/webp, image/gif, image/avif"
+					hint="Форматы: JPEG, PNG, WebP, GIF, AVIF. SVG не поддерживается."
 					multiple
-					place="excursion"
 				/>
 				<TheFileInput
 					label="Файл прайса"
 					column
 					name="documentName"
 					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-					place="excursion"
 				/>
 			</FormSection>
 		</div>
 		<div
-			class="flex w-full shrink-0 items-center border-t border-slate-100 px-6 py-4 md:px-12"
+			class="flex w-full shrink-0 items-center gap-x-2 border-t border-slate-100 px-6 py-4 md:px-12"
 		>
 			<button
 				class="base-btn max-w-75 cursor-pointer"

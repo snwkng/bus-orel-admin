@@ -2,11 +2,13 @@
 import { computed, onMounted, ref } from 'vue';
 import { Bus, Map as MapIcon, Eye, EyeOff } from '@lucide/vue';
 
-import { busToursApi } from '@/entities/busTours/api';
+import { RouteNames } from '@/app/router/RouteNames.enum';
+import { hotelsApi } from '@/entities/hotels/api';
 import { excursionsApi } from '@/entities/excursions/api';
-import type { EditHotelDto } from '@/entities/busTours/model/types';
+import type { EditHotelDto } from '@/entities/hotels/model/types';
 import type { EditExcursionDto } from '@/entities/excursions/model/types';
 import { pluralize } from '@/shared/lib/pluralize';
+import { formatPrice } from '@/shared/lib/useRenderFunctions';
 import StatCard from './StatCard.vue';
 import RecentList, { type RecentItem } from './RecentList.vue';
 
@@ -22,7 +24,7 @@ onMounted(async () => {
 		// limit 100 у отелей: счётчики «опубликовано/скрыто» считаются по выборке,
 		// отдельного эндпоинта статистики на бэкенде нет
 		const [hotelsRes, excursionsRes] = await Promise.all([
-			busToursApi.getTours({ limit: 100, sortBy: 'createdAt', sortDir: 'desc' }),
+			hotelsApi.getHotels({ limit: 100, sortBy: 'createdAt', sortDir: 'desc' }),
 			excursionsApi.getExcursions({ limit: 5, sortBy: 'createdAt', sortDir: 'desc' })
 		]);
 
@@ -52,8 +54,8 @@ const hotelItems = computed<RecentItem[]>(() =>
 		id: String(hotel._id),
 		title: hotel.name,
 		subtitle: [hotel.address?.city, hotel.seaType].filter(Boolean).join(' · '),
-		value: `${hotel.minPrice}₽`,
-		to: { name: 'edit-hotel', params: { id: String(hotel._id) } }
+		value: formatPrice(hotel.minPrice),
+		to: { name: RouteNames.EditHotel, params: { id: String(hotel._id) } }
 	}))
 );
 
@@ -63,7 +65,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 		title: excursion.name,
 		subtitle: (excursion.cities || []).join(', '),
 		value: `${excursion.duration} ${pluralize(excursion.duration, ['день', 'дня', 'дней'])}`,
-		to: { name: 'edit-excursion', params: { id: excursion._id } }
+		to: { name: RouteNames.EditExcursion, params: { id: excursion._id } }
 	}))
 );
 </script>
@@ -103,7 +105,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 		<div class="grid gap-4 lg:grid-cols-2">
 			<RecentList
 				title="Последние туры"
-				:link-to="{ name: 'hotels' }"
+				:link-to="{ name: RouteNames.Hotels }"
 				link-label="Все туры"
 				:items="hotelItems"
 				empty-text="Туров пока нет"
@@ -111,7 +113,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 			/>
 			<RecentList
 				title="Последние экскурсии"
-				:link-to="{ name: 'excursions' }"
+				:link-to="{ name: RouteNames.Excursions }"
 				link-label="Все экскурсии"
 				:items="excursionItems"
 				empty-text="Экскурсий пока нет"

@@ -1,4 +1,5 @@
 import type { IPagination } from '@/shared/config/interfaces/pagination.interface';
+import type { components } from './schema';
 
 type ParamsValue = string | number | boolean | null | undefined;
 
@@ -21,6 +22,8 @@ export interface ApiResponse<T> {
     pagination?: IPagination
   };
 }
+
+export type SelectItem = components['schemas']['SelectItemDto'];
 
 export class ApiError extends Error {
   constructor(
