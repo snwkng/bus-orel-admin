@@ -77,6 +77,7 @@ const handlePush = () => {
 				title="Удалить поле"
 				@click="() => remove(idx)"
 				class="shrink-0 cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+				:class="{ 'mt-7': idx === 0 }"
 			>
 				<Trash2 :width="18" :height="18" />
 			</button>

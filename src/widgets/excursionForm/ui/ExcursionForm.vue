@@ -12,6 +12,8 @@ import { computed, h, onMounted } from 'vue';
 import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
 import { useRoute, useRouter } from 'vue-router';
 import { RouteNames } from '@/app/router/RouteNames.enum';
+import { onBeforeUnmount, watch } from 'vue';
+import { useUnsavedChangesStore } from '@/shared/lib/useUnsavedChanges';
 
 const route = useRoute();
 const router = useRouter();
@@ -37,12 +39,11 @@ const onSubmit = async () => {
 	}
 };
 
-const goBack = () => {
-	if (meta.value.dirty && !window.confirm('Есть несохранённые изменения. Уйти без сохранения?')) {
-		return;
-	}
-	router.push({ name: RouteNames.Excursions });
-};
+const unsavedChanges = useUnsavedChangesStore();
+watch(() => meta.value.dirty, (dirty) => unsavedChanges.setDirty(dirty), {
+	immediate: true
+});
+onBeforeUnmount(() => unsavedChanges.setDirty(false));
 
 const maxDays = computed(() => Number(values.duration) || 0);
 
@@ -203,9 +204,6 @@ onMounted(async () => {
 				@click.stop.prevent="onSubmit"
 			>
 				{{ buttonTitle }}
-			</button>
-			<button type="button" class="secondary-btn max-w-75" @click="goBack">
-				Назад
 			</button>
 		</div>
 		</div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { computed, h, onMounted } from 'vue';
+import { computed, h, onBeforeUnmount, onMounted, watch } from 'vue';
 import { RouteNames } from '@/app/router/RouteNames.enum';
+import { useUnsavedChangesStore } from '@/shared/lib/useUnsavedChanges';
 import {
 	BaseInput,
 	BaseTextArea,
@@ -51,12 +52,11 @@ const onSubmit = async () => {
 	}
 };
 
-const goBack = () => {
-	if (meta.value.dirty && !window.confirm('Есть несохранённые изменения. Уйти без сохранения?')) {
-		return;
-	}
-	router.push({ name: RouteNames.Hotels });
-};
+const unsavedChanges = useUnsavedChangesStore();
+watch(() => meta.value.dirty, (dirty) => unsavedChanges.setDirty(dirty), {
+	immediate: true
+});
+onBeforeUnmount(() => unsavedChanges.setDirty(false));
 
 onMounted(async () => {
 	await getCitiesList();
@@ -209,10 +209,6 @@ onMounted(async () => {
 				:disabled="!meta.dirty || isSubmitting"
 			>
 				{{ buttonTitle }}
-			</button>
-
-			<button type="button" class="secondary-btn max-w-[300px]" @click="goBack">
-				Назад
 			</button>
 
 			<button

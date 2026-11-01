@@ -40,7 +40,8 @@ const router = createRouter({
 			name: RouteNames.CreateHotel,
 			component: () => import('@/pages/createHotel'),
 			meta: {
-				title: 'Создать автобусный тур к морю'
+				title: 'Создать автобусный тур к морю',
+				backTo: RouteNames.Hotels
 			}
 		},
 		{
@@ -48,7 +49,8 @@ const router = createRouter({
 			name: RouteNames.EditHotel,
 			component: () => import('@/pages/editHotel'),
 			meta: {
-				title: 'Редактировать автобусный тур к морю'
+				title: 'Редактировать автобусный тур к морю',
+				backTo: RouteNames.Hotels
 			}
 		},
 		{
@@ -64,7 +66,8 @@ const router = createRouter({
 			name: RouteNames.CreateExcursion,
 			component: () => import('@/pages/createExcursion'),
 			meta: {
-				title: 'Создать экскурсию'
+				title: 'Создать экскурсию',
+				backTo: RouteNames.Excursions
 			}
 		},
 		{
@@ -72,7 +75,8 @@ const router = createRouter({
 			name: RouteNames.EditExcursion,
 			component: () => import('@/pages/editExcursion'),
 			meta: {
-				title: 'Редактировать экскурсию'
+				title: 'Редактировать экскурсию',
+				backTo: RouteNames.Excursions
 			}
 		},
 		{
