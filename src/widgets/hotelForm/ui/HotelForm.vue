@@ -51,6 +51,13 @@ const onSubmit = async () => {
 	}
 };
 
+const goBack = () => {
+	if (meta.value.dirty && !window.confirm('Есть несохранённые изменения. Уйти без сохранения?')) {
+		return;
+	}
+	router.push({ name: RouteNames.Hotels });
+};
+
 onMounted(async () => {
 	await getCitiesList();
 	await loadHotel();
@@ -178,7 +185,8 @@ onMounted(async () => {
 					label="Изображения гостиницы"
 					column
 					name="images"
-					accept="image/*"
+					accept="image/jpeg, image/png, image/webp, image/gif, image/avif"
+					hint="Форматы: JPEG, PNG, WebP, GIF, AVIF. SVG не поддерживается."
 					multiple
 				/>
 				<TheFileInput
@@ -201,6 +209,10 @@ onMounted(async () => {
 				:disabled="!meta.dirty || isSubmitting"
 			>
 				{{ buttonTitle }}
+			</button>
+
+			<button type="button" class="secondary-btn max-w-[300px]" @click="goBack">
+				Назад
 			</button>
 
 			<button

@@ -50,7 +50,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 	{
 		label: 'Изображения',
 		propertyName: 'images',
-		cellWidth: '280px',
+		cellWidth: '110px',
 		format: (val) => imageFormat(val)
 	},
 	{

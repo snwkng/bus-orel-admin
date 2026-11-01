@@ -43,16 +43,16 @@ const tableDataConfig = shallowRef<ITableConfig<EditHotelDto>[]>([
 	{
 		label: 'Изображения',
 		propertyName: 'images',
-		cellWidth: '280px',
+		cellWidth: '110px',
 		format: (val) => imageFormat(val)
 	},
 	{ label: 'Тип', propertyName: 'type', cellWidth: '140px' },
 	{ label: 'Питание', propertyName: 'additionalInfo.food.type', cellWidth: '130px' },
 	{ label: 'Тип пляжа', propertyName: 'additionalInfo.beach.type', cellWidth: '140px' },
 	{
-		label: 'Расстояние до пляжа (мин.)',
+		label: 'До пляжа (мин.)',
 		propertyName: 'additionalInfo.beach.distanceMinutes',
-		cellWidth: '160px'
+		cellWidth: '110px'
 	},
 	{ label: 'Адрес', propertyName: 'address.fullAddress', cellWidth: '260px' },
 	{

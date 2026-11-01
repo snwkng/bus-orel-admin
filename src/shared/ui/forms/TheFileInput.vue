@@ -14,6 +14,7 @@ export interface Props {
 	column?: boolean;
 	multiple?: boolean;
 	required?: boolean;
+	hint?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -126,6 +127,7 @@ const onChange = () => {
 					:accept="props.accept"
 				/>
 			</label>
+			<p v-if="hint" class="mt-2 text-xs text-slate-400">{{ hint }}</p>
 		</div>
 	</div>
 </template>

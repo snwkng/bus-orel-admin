@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, ref, type Ref } from 'vue';
+import { ImageOff } from '@lucide/vue';
 import docxIcon from '@/app/assets/icons/docxIcon.svg';
 import pdfIcon from '@/app/assets/icons/pdfIcon.svg';
 
@@ -16,6 +17,13 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const file: Ref<File | null> = ref(null);
+const loadFailed = ref(false);
+
+const isDocument = computed(
+	() =>
+		file.value?.type?.includes('openxmlformats') ||
+		file.value?.type?.includes('pdf')
+);
 
 const generatePreview = (): string => {
 	let fileSrc = '';
@@ -44,26 +52,32 @@ onMounted(async () => {
 <template>
 	<div
 		:class="{
-			'flex items-center justify-center gap-x-1':
-				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
+			'flex items-center justify-center gap-x-1': isDocument
 		}"
 	>
-		<img
-			loading="lazy"
-			:src="generatePreview()"
-			:alt="file?.name"
-			:class="[
-				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
-					? 'h-7 w-7'
-					: `${previewHeight} ${previewWidth} rounded-lg object-fill`
-			]"
-		/>
-		<span
-			v-if="
-				file?.type?.includes('openxmlformats') || file?.type?.includes('pdf')
-			"
+		<div
+			v-if="loadFailed && !isDocument"
+			class="flex items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+			:class="`${previewHeight} ${previewWidth}`"
+			:title="`Не удалось загрузить ${file?.name ?? 'изображение'}`"
 		>
-			{{ file?.name }}
-		</span>
+			<ImageOff :width="32" :height="32" />
+		</div>
+		<template v-else>
+			<img
+				loading="lazy"
+				:src="generatePreview()"
+				:alt="file?.name"
+				:class="[
+					isDocument
+						? 'h-7 w-7'
+						: `${previewHeight} ${previewWidth} rounded-lg object-fill`
+				]"
+				@error="loadFailed = true"
+			/>
+			<span v-if="isDocument">
+				{{ file?.name }}
+			</span>
+		</template>
 	</div>
 </template>

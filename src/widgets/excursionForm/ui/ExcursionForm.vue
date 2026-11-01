@@ -37,6 +37,13 @@ const onSubmit = async () => {
 	}
 };
 
+const goBack = () => {
+	if (meta.value.dirty && !window.confirm('Есть несохранённые изменения. Уйти без сохранения?')) {
+		return;
+	}
+	router.push({ name: RouteNames.Excursions });
+};
+
 const maxDays = computed(() => Number(values.duration) || 0);
 
 onMounted(async () => {
@@ -171,7 +178,8 @@ onMounted(async () => {
 					label="Изображения экскурсии"
 					column
 					name="images"
-					accept="image/*"
+					accept="image/jpeg, image/png, image/webp, image/gif, image/avif"
+					hint="Форматы: JPEG, PNG, WebP, GIF, AVIF. SVG не поддерживается."
 					multiple
 				/>
 				<TheFileInput
@@ -183,7 +191,7 @@ onMounted(async () => {
 			</FormSection>
 		</div>
 		<div
-			class="flex w-full shrink-0 items-center border-t border-slate-100 px-6 py-4 md:px-12"
+			class="flex w-full shrink-0 items-center gap-x-2 border-t border-slate-100 px-6 py-4 md:px-12"
 		>
 			<button
 				class="base-btn max-w-75 cursor-pointer"
@@ -195,6 +203,9 @@ onMounted(async () => {
 				@click.stop.prevent="onSubmit"
 			>
 				{{ buttonTitle }}
+			</button>
+			<button type="button" class="secondary-btn max-w-75" @click="goBack">
+				Назад
 			</button>
 		</div>
 		</div>
