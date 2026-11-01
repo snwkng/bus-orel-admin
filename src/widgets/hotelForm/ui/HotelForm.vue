@@ -1,4 +1,3 @@
-<!-- widgets/busTourForm/ui/BusTourForm.vue -->
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { computed, h, onMounted } from 'vue';
@@ -10,12 +9,12 @@ import {
 	BaseArrayFields,
 	FormSection
 } from '@/shared/ui/forms';
-import { useBusTourForm } from '@/widgets/busTourForm/composables/useBusTourForm';
+import { useHotelForm } from '@/widgets/hotelForm/composables/useHotelForm';
 import HotelRooms from '@/entities/hotelRooms/ui/HotelRooms.vue';
 
 const route = useRoute();
 const router = useRouter();
-const tourId = computed(() => (route?.params?.id as string) || '');
+const hotelId = computed(() => (route?.params?.id as string) || '');
 
 const {
 	meta,
@@ -24,11 +23,11 @@ const {
 	buttonTitle,
 	isPublished,
 	publishTitle,
-	loadTour,
+	loadHotel,
 	getCitiesList,
 	handleSubmit,
 	changeStatus
-} = useBusTourForm(tourId.value);
+} = useHotelForm(hotelId.value);
 
 const renderServiceField = ({
 	index,
@@ -53,7 +52,7 @@ const onSubmit = async () => {
 
 onMounted(async () => {
 	await getCitiesList();
-	await loadTour();
+	await loadHotel();
 });
 </script>
 <template>
@@ -180,14 +179,12 @@ onMounted(async () => {
 					name="images"
 					accept="image/*"
 					multiple
-					place="busTour"
 				/>
 				<TheFileInput
 					label="Файл прайса"
 					column
 					name="documentName"
 					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-					place="busTour"
 				/>
 			</FormSection>
 		</div>
@@ -206,7 +203,7 @@ onMounted(async () => {
 			</button>
 
 			<button
-				v-if="tourId"
+				v-if="hotelId"
 				class="secondary-btn max-w-[300px]"
 				:class="{
 					'pointer-events-none !bg-deep-teal/70': meta.dirty || isSubmitting

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouteNames } from '@/app/router/RouteNames.enum';
-import BusToursTable from '@/entities/busTours';
+import HotelsTable from '@/entities/hotels';
 </script>
 <template>
 	<div class="flex h-full flex-col">
@@ -11,6 +11,6 @@ import BusToursTable from '@/entities/busTours';
 				</router-link>
 			</div>
 		</div>
-		<BusToursTable />
+		<HotelsTable />
 	</div>
 </template>

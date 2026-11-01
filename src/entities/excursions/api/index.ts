@@ -1,6 +1,6 @@
 import { api } from '@/shared/api/api';
 import type { EditExcursionDto, CreateExcursionDto } from '../model/types';
-import type { ApiResponse } from '@/shared/api/types';
+import type { ApiResponse, SelectItem } from '@/shared/api/types';
 import { omitMetaFields } from '@/shared/lib/omitMetaFields';
 
 export const excursionsApi = {
@@ -61,42 +61,6 @@ export const excursionsApi = {
   deleteExcursion: async (id: string): Promise<void> => {
     try {
       await api.delete('/api/admin/excursions/' + id);
-    } catch (err: unknown) {
-      console.error(err);
-      throw err;
-    }
-  },
-
-  uploadFile: async (
-    File: FormData,
-  ) => {
-    try {
-      const res = await api.upload('/api/admin/s3/upload', File);
-      return res;
-    } catch (err: unknown) {
-      console.error(err);
-      throw err;
-    }
-  },
-
-  getFile: async (
-    fileName: string,
-  ): Promise<File> => {
-    try {
-      const res = await api.downloadBlob(`/api/s3/download/${fileName}`,);
-      return new File([res], fileName);
-    } catch (err: unknown) {
-      console.error(err);
-      throw err;
-    }
-  },
-
-  deleteFile: async (
-    fileName: string,
-  ): Promise<boolean> => {
-    try {
-      const res = await api.delete<boolean>(`/api/admin/s3/delete?uuid=${fileName}`);
-      return res?.data;
     } catch (err: unknown) {
       console.error(err);
       throw err;

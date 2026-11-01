@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, toRef } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
-import { useExcursionStore } from '@/entities/excursions/model';
-import { useBusTourStore } from '@/entities/busTours/model';
+import { uploadFile, getFile, deleteFile } from '@/shared/api/s3';
 import { useFieldArray, type FieldEntry } from 'vee-validate';
 
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
@@ -13,7 +12,6 @@ export interface Props {
 	label?: string;
 	column?: boolean;
 	multiple?: boolean;
-	place: string;
 	required?: boolean;
 }
 
@@ -26,9 +24,6 @@ const name = toRef(props, 'name');
 
 const { remove, replace, fields } = useFieldArray(name);
 
-const store =
-	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
-const { getFile, uploadFile, deleteFile } = store;
 const files = ref<File[]>([]);
 const file = ref<HTMLInputElement | null>(null);
 

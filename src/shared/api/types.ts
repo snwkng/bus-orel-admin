@@ -22,6 +22,11 @@ export interface ApiResponse<T> {
   };
 }
 
+export interface SelectItem {
+  id: number;
+  name: string;
+}
+
 export class ApiError extends Error {
   constructor(
     public message: string,

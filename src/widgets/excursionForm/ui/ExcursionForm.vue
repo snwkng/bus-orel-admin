@@ -172,14 +172,12 @@ onMounted(async () => {
 					name="images"
 					accept="image/*"
 					multiple
-					place="excursion"
 				/>
 				<TheFileInput
 					label="Файл прайса"
 					column
 					name="documentName"
 					accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-					place="excursion"
 				/>
 			</FormSection>
 		</div>

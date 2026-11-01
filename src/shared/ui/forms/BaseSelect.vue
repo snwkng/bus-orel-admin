@@ -7,6 +7,7 @@ import { computed, nextTick, ref, toRef, useTemplateRef } from 'vue';
 
 import { ChevronDown } from '@lucide/vue';
 import { useField } from 'vee-validate';
+import type { SelectItem } from '@/shared/api/types';
 
 export interface Props {
 	name: string;

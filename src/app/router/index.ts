@@ -30,7 +30,7 @@ const router = createRouter({
 		{
 			path: '/hotels',
 			name: RouteNames.Hotels,
-			component: () => import('@/pages/busTours'),
+			component: () => import('@/pages/hotels'),
 			meta: {
 				title: 'Автобусные туры к морю'
 			}
@@ -38,7 +38,7 @@ const router = createRouter({
 		{
 			path: '/hotels/create',
 			name: RouteNames.CreateHotel,
-			component: () => import('@/pages/createBusTour'),
+			component: () => import('@/pages/createHotel'),
 			meta: {
 				title: 'Создать автобусный тур к морю'
 			}
@@ -46,7 +46,7 @@ const router = createRouter({
 		{
 			path: '/hotels/edit/:id',
 			name: RouteNames.EditHotel,
-			component: () => import('@/pages/editBusTour'),
+			component: () => import('@/pages/editHotel'),
 			meta: {
 				title: 'Редактировать автобусный тур к морю'
 			}

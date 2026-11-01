@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, h, shallowRef, watch } from 'vue';
-import { useBusTourStore } from '../model';
+import { useHotelStore } from '../model';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -16,16 +16,16 @@ import { useQueryFilters } from '@/shared/lib/useQueryFilters';
 import { hotelSchema, type HotelFilters } from '../model/hotel.schema';
 
 const router = useRouter();
-const store = useBusTourStore();
+const store = useHotelStore();
 
 const { filters, updateFilters } = useQueryFilters(hotelSchema);
 
-const { tours, pagination } = storeToRefs(store);
+const { hotels, pagination } = storeToRefs(store);
 
 watch(
 	filters,
 	(newFilters) => {
-		store.getTours(newFilters);
+		store.getHotels(newFilters);
 	},
 	{ immediate: true, deep: true }
 );
@@ -76,7 +76,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditHotelDto>[]>([
 	{ label: 'Море', propertyName: 'seaType', cellWidth: '140px' }
 ] as const);
 
-const openTour = (item: EditHotelDto) => {
+const openHotel = (item: EditHotelDto) => {
 	router.push({ name: 'edit-hotel', params: { id: item._id } });
 };
 
@@ -90,19 +90,19 @@ const sortOptions = [
 
 const { show } = useToast();
 
-const tourToDelete = shallowRef<EditHotelDto | null>(null);
+const hotelToDelete = shallowRef<EditHotelDto | null>(null);
 
-const askDeleteTour = (item: EditHotelDto) => {
-	tourToDelete.value = item;
+const askDeleteHotel = (item: EditHotelDto) => {
+	hotelToDelete.value = item;
 };
 
-const confirmDeleteTour = async () => {
-	const item = tourToDelete.value;
-	tourToDelete.value = null;
+const confirmDeleteHotel = async () => {
+	const item = hotelToDelete.value;
+	hotelToDelete.value = null;
 	if (!item) return;
 	try {
-		await store.deleteTour(String(item._id));
-		await store.getTours(filters.value);
+		await store.deleteHotel(String(item._id));
+		await store.getHotels(filters.value);
 		show('Тур удалён', 'success');
 	} catch (err: unknown) {
 		console.error(err);
@@ -120,14 +120,14 @@ const confirmDeleteTour = async () => {
 			@update:sort-dir="(v) => updateFilters({ sortDir: v as HotelFilters['sortDir'] })"
 		/>
 		<BaseTable
-		:table-data-config="tableDataConfig"
-		:table-data="tours"
-		:pagination="tablePagination"
-		sticky-header
-		clickable-rows
-		@update-filters="updateFilters"
-		@row-click="openTour"
-	>
+			:table-data-config="tableDataConfig"
+			:table-data="hotels"
+			:pagination="tablePagination"
+			sticky-header
+			clickable-rows
+			@update-filters="updateFilters"
+			@row-click="openHotel"
+		>
 		<template #cell(name)="{ value }">
 			<span class="font-medium text-slate-900">{{ value }}</span>
 		</template>
@@ -137,7 +137,7 @@ const confirmDeleteTour = async () => {
 					type="button"
 					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-deep-teal"
 					title="Редактировать"
-					@click.stop="openTour(item)"
+					@click.stop="openHotel(item)"
 				>
 					<EditIcon fill="currentColor" :width="20" :height="20" />
 				</button>
@@ -145,7 +145,7 @@ const confirmDeleteTour = async () => {
 					type="button"
 					class="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
 					title="Удалить"
-					@click.stop="askDeleteTour(item)"
+					@click.stop="askDeleteHotel(item)"
 				>
 					<TrashIcon fill="currentColor" :width="20" :height="20" />
 				</button>
@@ -153,11 +153,11 @@ const confirmDeleteTour = async () => {
 		</template>
 		</BaseTable>
 		<ConfirmDialog
-			:open="!!tourToDelete"
+			:open="!!hotelToDelete"
 			title="Удалить тур?"
-			:message="`Тур «${tourToDelete?.name}» будет удалён без возможности восстановления.`"
-			@confirm="confirmDeleteTour"
-			@cancel="tourToDelete = null"
+			:message="`Тур «${hotelToDelete?.name}» будет удалён без возможности восстановления.`"
+			@confirm="confirmDeleteHotel"
+			@cancel="hotelToDelete = null"
 		/>
 	</div>
 </template>

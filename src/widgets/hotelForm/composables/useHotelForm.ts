@@ -1,5 +1,5 @@
-import { useBusTourStore } from '@/entities/busTours/model';
-import type { CreateHotelDto } from '@/entities/busTours/model/types';
+import { useHotelStore } from '@/entities/hotels/model';
+import type { CreateHotelDto } from '@/entities/hotels/model/types';
 import { storeToRefs } from 'pinia';
 import { onInvalidSubmit } from '@/shared/lib/useInvalidSubmits';
 import { useToast } from '@/shared/lib/useToasts';
@@ -52,7 +52,7 @@ const schema = yup.object().shape({
   published: yup.boolean(),
 }) as yup.ObjectSchema<CreateHotelDto>;
 
-export function useBusTourForm(tourId?: string) {
+export function useHotelForm(hotelId?: string) {
   const {
     validate,
     values,
@@ -98,10 +98,10 @@ export function useBusTourForm(tourId?: string) {
     validateOnMount: false,
   });
 
-  const { createTour, editTour, getTour, getCitiesList, updateStatus } = useBusTourStore();
-  const { citiesList } = storeToRefs(useBusTourStore());
+  const { createHotel, editHotel, getHotel, getCitiesList, updateStatus } = useHotelStore();
+  const { citiesList } = storeToRefs(useHotelStore());
 
-  const buttonTitle = computed(() => tourId ? 'Сохранить' : 'Создать тур');
+  const buttonTitle = computed(() => hotelId ? 'Сохранить' : 'Создать тур');
 
   const publishTitle = computed(() => isPublished.value ? 'Снять с публикации' : 'Опубликовать');
 
@@ -112,12 +112,12 @@ export function useBusTourForm(tourId?: string) {
     if (!result.valid) {
       return onInvalidSubmit(errors.value);
     }
-    await saveTour();
+    await saveHotel();
     return true;
   };
-  const loadTour = async () => {
-    if (tourId) {
-      const res = await getTour(tourId);
+  const loadHotel = async () => {
+    if (hotelId) {
+      const res = await getHotel(hotelId);
       resetForm({
         values: res,
       });
@@ -126,21 +126,21 @@ export function useBusTourForm(tourId?: string) {
 
   const { show } = useToast();
 
-  const saveTour = async () => {
-    if (tourId) {
-      const res = await editTour({ ...values, _id: tourId });
+  const saveHotel = async () => {
+    if (hotelId) {
+      const res = await editHotel({ ...values, _id: hotelId });
       resetForm({
         values: res,
       });
       show('Тур сохранён', 'success');
     } else {
-      await createTour(values);
+      await createHotel(values);
       show('Тур создан', 'success');
     }
   };
 
   const changeStatus = async (published: boolean) => {
-    await updateStatus(tourId as string, published);
+    await updateStatus(hotelId as string, published);
     show(published ? 'Тур опубликован' : 'Тур снят с публикации', 'success');
   };
 
@@ -151,7 +151,7 @@ export function useBusTourForm(tourId?: string) {
     buttonTitle,
     isPublished,
     publishTitle,
-    loadTour,
+    loadHotel,
     getCitiesList,
     handleSubmit,
     changeStatus,
