@@ -1,4 +1,6 @@
-export const AUTH_STORAGE_KEY = 'token';
+import { StorageKey } from '@/shared/config/storage-keys';
+
+export const AUTH_STORAGE_KEY = StorageKey.TOKEN;
 
 export interface AuthState {
 	accessToken: string;

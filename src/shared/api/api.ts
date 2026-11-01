@@ -135,7 +135,6 @@ async function _request<T>(
 
     return data as ApiResponse<T>;
   } catch (error) {
-    console.log(error, 'error');
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new ApiError('Request aborted', 0, url);
     }

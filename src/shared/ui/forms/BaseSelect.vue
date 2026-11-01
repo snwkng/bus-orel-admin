@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange, validate, handleBlur } = useField<string | string[]>(
+const { value, errorMessage, meta, handleChange, validate } = useField<string | string[]>(
 	name
 );
 
@@ -34,6 +34,7 @@ const searchSelectRef = useTemplateRef('searchSelect')
 
 const showSelect = ref(false);
 const inputValue = ref('');
+const activeIndex = ref(-1);
 
 const searchableList = computed(() => {
 	return props.list.filter((listItem: SelectItem) => {
@@ -52,6 +53,7 @@ const searchableList = computed(() => {
 
 const toggle = () => {
 	showSelect.value = !showSelect.value;
+	activeIndex.value = -1;
 	if (showSelect.value) {
 		nextTick(() => {
 			searchSelectRef.value?.focus()
@@ -63,6 +65,7 @@ const close = async () => {
 	if (!showSelect.value) return
 	await validate()
 	inputValue.value = '';
+	activeIndex.value = -1;
 	showSelect.value = false;
 };
 
@@ -103,6 +106,28 @@ const add = () => {
 	}
 };
 
+const onSearchKeydown = (event: KeyboardEvent) => {
+	if (event.key === 'ArrowDown') {
+		event.preventDefault();
+		activeIndex.value = Math.min(activeIndex.value + 1, searchableList.value.length - 1);
+	} else if (event.key === 'ArrowUp') {
+		event.preventDefault();
+		activeIndex.value = Math.max(activeIndex.value - 1, 0);
+	} else if (event.key === 'Escape') {
+		event.preventDefault();
+		close();
+	}
+};
+
+const onSearchEnter = () => {
+	const highlighted = activeIndex.value >= 0 ? searchableList.value[activeIndex.value] : undefined;
+	if (highlighted) {
+		addToSelected(highlighted);
+	} else {
+		add();
+	}
+};
+
 </script>
 <template>
 	<div>
@@ -121,7 +146,6 @@ const add = () => {
 						'border-deep-teal ring ring-deep-teal/20 rounded-t-md rounded-b-none': showSelect
 					},
 				]"
-				@blur="handleBlur"
 			>
 				<div
 					class="flex min-h-10.5 w-full flex-wrap gap-2 px-3 py-2"
@@ -151,7 +175,8 @@ const add = () => {
 									name="searchSelect"
 									placeholder="Поиск"
 									v-model="inputValue"
-									@keydown.enter.prevent.stop="add"
+									@keydown="onSearchKeydown"
+									@keydown.enter.prevent.stop="onSearchEnter"
 								/>
 							</div>
 							<button
@@ -168,9 +193,10 @@ const add = () => {
 							v-if="searchableList.length"
 						>
 							<div
-								v-for="item in searchableList"
+								v-for="(item, idx) in searchableList"
 								:key="item.id"
 								class="p-2 hover:bg-slate-50"
+								:class="{ 'bg-slate-100': idx === activeIndex }"
 								@click.stop="addToSelected(item)"
 							>
 								<span>{{ item.name }}</span>
