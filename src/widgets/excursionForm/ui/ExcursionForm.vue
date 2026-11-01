@@ -11,6 +11,7 @@ import {
 import { computed, h, onMounted } from 'vue';
 import { useExcursionForm } from '@/widgets/excursionForm/composables/useExcursionForm';
 import { useRoute, useRouter } from 'vue-router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 
 const route = useRoute();
 const router = useRouter();
@@ -32,7 +33,7 @@ const {
 const onSubmit = async () => {
 	const success = await handleSubmit();
 	if (success) {
-		router.push('/excursions');
+		router.push({ name: RouteNames.Excursions });
 	}
 };
 

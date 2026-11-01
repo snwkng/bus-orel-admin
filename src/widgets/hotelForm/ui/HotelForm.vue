@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { computed, h, onMounted } from 'vue';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 import {
 	BaseInput,
 	BaseTextArea,
@@ -46,7 +47,7 @@ const renderServiceField = ({
 const onSubmit = async () => {
 	const success = await handleSubmit();
 	if (success) {
-		router.push('/hotels');
+		router.push({ name: RouteNames.Hotels });
 	}
 };
 

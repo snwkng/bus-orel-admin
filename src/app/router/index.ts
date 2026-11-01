@@ -72,7 +72,7 @@ const router = createRouter({
 			name: RouteNames.EditExcursion,
 			component: () => import('@/pages/editExcursion'),
 			meta: {
-				title: 'Редактировать эскурсию'
+				title: 'Редактировать экскурсию'
 			}
 		},
 		{
@@ -94,7 +94,7 @@ router.beforeEach(async (to) => {
 	if (to.meta.public) return true;
 
 	if (!authStore.isLoggedIn) {
-		return { name: 'login' };
+		return { name: RouteNames.Login };
 	}
 
 	if (!authStore.user) {

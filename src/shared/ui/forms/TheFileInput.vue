@@ -3,6 +3,7 @@ import { ref, watch, toRef } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
 import { uploadFile, getFile, deleteFile } from '@/shared/api/s3';
 import { useFieldArray, type FieldEntry } from 'vee-validate';
+import { useToast } from '@/shared/lib/useToasts';
 
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 
@@ -26,6 +27,7 @@ const { remove, replace, fields } = useFieldArray(name);
 
 const files = ref<File[]>([]);
 const file = ref<HTMLInputElement | null>(null);
+const { show } = useToast();
 
 watch(
 	() => fields.value,
@@ -54,7 +56,7 @@ const removeFile = async (index: number, fileName: string) => {
 		files.value.splice(index, 1);
 		remove(index);
 	} catch {
-		console.error('err');
+		show('Не удалось удалить файл', 'error');
 	}
 };
 

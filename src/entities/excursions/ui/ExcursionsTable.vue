@@ -2,6 +2,7 @@
 import { computed, h, shallowRef, watch } from 'vue';
 import { useExcursionStore } from '../model';
 import { useRouter } from 'vue-router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import TableToolbar from '@/shared/ui/table/TableToolbar.vue';
@@ -87,7 +88,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 ] as const);
 
 const openExcursion = (item: EditExcursionDto) => {
-	router.push({ name: 'edit-excursion', params: { id: item._id } });
+	router.push({ name: RouteNames.EditExcursion, params: { id: item._id } });
 };
 
 const sortOptions = [

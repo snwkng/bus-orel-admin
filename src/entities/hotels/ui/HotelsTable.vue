@@ -2,6 +2,7 @@
 import { computed, h, shallowRef, watch } from 'vue';
 import { useHotelStore } from '../model';
 import { useRouter } from 'vue-router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 import { storeToRefs } from 'pinia';
 
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
@@ -77,7 +78,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditHotelDto>[]>([
 ] as const);
 
 const openHotel = (item: EditHotelDto) => {
-	router.push({ name: 'edit-hotel', params: { id: item._id } });
+	router.push({ name: RouteNames.EditHotel, params: { id: item._id } });
 };
 
 const sortOptions = [

@@ -185,31 +185,6 @@ export const api = {
     config: { headers?: HeadersInit; signal?: AbortSignal; } = {},
   ) => _request<T>('POST', url, config, data),
 
-  // upload: <T>(url: string, file: FormData, config: { headers?: HeadersInit; signal?: AbortSignal; } = {}) => {
-
-  //   const authHeader = getAuthHeader();
-  //   const headers = new Headers(config.headers ?? {});
-  //   if (authHeader) {
-  //     headers.set('Authorization', authHeader);
-  //   }
-  //   const response = await fetch(url, {
-  //     method: 'POST',
-  //     headers,
-  //     body: file
-  //   });
-  //   if (response.ok) {
-  //     return await response.text();
-  //   } else {
-  //     let errorText = '';
-  //     try {
-  //       errorText = await response.text();
-  //     } catch {
-  //       errorText = response.statusText;
-  //     }
-  //     throw new ApiError(`Upload failed: ${response.status}`, response.status, url, errorText);
-  //   }
-  // },
-
   downloadBlob: async (
     url: string,
     config: { params?: ParamsObject; headers?: HeadersInit; signal?: AbortSignal; } = {},

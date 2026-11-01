@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { Bus, Map as MapIcon, Eye, EyeOff } from '@lucide/vue';
 
+import { RouteNames } from '@/app/router/RouteNames.enum';
 import { hotelsApi } from '@/entities/hotels/api';
 import { excursionsApi } from '@/entities/excursions/api';
 import type { EditHotelDto } from '@/entities/hotels/model/types';
@@ -54,7 +55,7 @@ const hotelItems = computed<RecentItem[]>(() =>
 		title: hotel.name,
 		subtitle: [hotel.address?.city, hotel.seaType].filter(Boolean).join(' · '),
 		value: formatPrice(hotel.minPrice),
-		to: { name: 'edit-hotel', params: { id: String(hotel._id) } }
+		to: { name: RouteNames.EditHotel, params: { id: String(hotel._id) } }
 	}))
 );
 
@@ -64,7 +65,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 		title: excursion.name,
 		subtitle: (excursion.cities || []).join(', '),
 		value: `${excursion.duration} ${pluralize(excursion.duration, ['день', 'дня', 'дней'])}`,
-		to: { name: 'edit-excursion', params: { id: excursion._id } }
+		to: { name: RouteNames.EditExcursion, params: { id: excursion._id } }
 	}))
 );
 </script>
@@ -104,7 +105,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 		<div class="grid gap-4 lg:grid-cols-2">
 			<RecentList
 				title="Последние туры"
-				:link-to="{ name: 'hotels' }"
+				:link-to="{ name: RouteNames.Hotels }"
 				link-label="Все туры"
 				:items="hotelItems"
 				empty-text="Туров пока нет"
@@ -112,7 +113,7 @@ const excursionItems = computed<RecentItem[]>(() =>
 			/>
 			<RecentList
 				title="Последние экскурсии"
-				:link-to="{ name: 'excursions' }"
+				:link-to="{ name: RouteNames.Excursions }"
 				link-label="Все экскурсии"
 				:items="excursionItems"
 				empty-text="Экскурсий пока нет"

@@ -7,6 +7,7 @@ import {
 	hasValidSession
 } from '@/shared/api/auth-session';
 import router from '@/app/router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 
 interface User {
   _id: string;
@@ -45,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
       clearAuthTokens();
       this.token = null;
       this.user = null;
-      router.push({ name: 'login' });
+      router.push({ name: RouteNames.Login });
     },
   },
 });

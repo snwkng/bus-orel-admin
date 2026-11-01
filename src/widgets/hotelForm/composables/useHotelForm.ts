@@ -6,6 +6,7 @@ import { useToast } from '@/shared/lib/useToasts';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { computed } from 'vue';
+import type { ApiError } from '@/shared/api/types';
 
 const schema = yup.object().shape({
   name: yup.string().required('Укажите название гостиницы').defined().typeError('Поле должно быть текстовым'),
@@ -112,8 +113,16 @@ export function useHotelForm(hotelId?: string) {
     if (!result.valid) {
       return onInvalidSubmit(errors.value);
     }
-    await saveHotel();
-    return true;
+    try {
+      await saveHotel();
+      return true;
+    } catch (err: unknown) {
+      if (Array.isArray((err as ApiError)?.data)) {
+        (err as ApiError)?.data?.forEach((message: string) => {
+          show(message, 'error');
+        });
+      }
+    }
   };
   const loadHotel = async () => {
     if (hotelId) {
