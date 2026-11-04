@@ -3,8 +3,7 @@ import { login, logoutRequest } from '../api';
 import { api } from '@/shared/api/api';
 import {
 	AUTH_STORAGE_KEY,
-	clearAuthTokens,
-	hasValidSession
+	clearAuthTokens
 } from '@/shared/api/auth-session';
 import router from '@/app/router';
 import { RouteNames } from '@/app/router/RouteNames.enum';
@@ -19,10 +18,6 @@ export const useAuthStore = defineStore('auth', {
     user: null as User | null,
     token: localStorage.getItem(AUTH_STORAGE_KEY),
   }),
-
-  getters: {
-    isLoggedIn: () => hasValidSession(),
-  },
 
   actions: {
     async loginAction(username: string, password: string): Promise<void> {

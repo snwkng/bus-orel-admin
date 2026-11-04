@@ -6,6 +6,7 @@ import {
 } from 'vue-router';
 import { loadLayoutMiddleware } from '@/app/router/middleware/loadLayout';
 import { useAuthStore } from '@/features/auth/model';
+import { hasValidSession } from '@/shared/api/auth-session';
 import { RouteNames } from './RouteNames.enum';
 
 const DEFAULT_TITLE = 'Панель управления';
@@ -97,7 +98,9 @@ router.beforeEach(async (to) => {
 	// Публичные страницы
 	if (to.meta.public) return true;
 
-	if (!authStore.isLoggedIn) {
+	// hasValidSession читает localStorage напрямую: геттер стора закэшировал бы
+	// первое значение (нет реактивных зависимостей) и не пускал бы после логина
+	if (!hasValidSession()) {
 		return { name: RouteNames.Login };
 	}
 
