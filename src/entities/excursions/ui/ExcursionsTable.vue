@@ -7,6 +7,7 @@ import { RouteNames } from '@/app/router/RouteNames.enum';
 import BaseTable from '@/shared/ui/table/BaseTable.vue';
 import TableToolbar from '@/shared/ui/table/TableToolbar.vue';
 import ConfirmDialog from '@/shared/ui/ConfirmDialog.vue';
+import FileActions from '@/shared/ui/files/FileActions.vue';
 import { useToast } from '@/shared/lib/useToasts';
 import { TrashIcon, EditIcon } from '@/shared/ui/icons';
 import type { ITableConfig } from '@/shared/config/interfaces/table.interface';
@@ -65,6 +66,7 @@ const tableDataConfig = shallowRef<ITableConfig<EditExcursionDto>[]>([
 		cellWidth: '110px',
 		format: (val: EditExcursionDto['price']) => priceFormat(val)
 	},
+	{ label: 'Прайс', propertyName: 'documentName', cellWidth: '100px' },
 	{
 		label: 'Даты экскурсий',
 		propertyName: 'excursionStartDates',
@@ -145,6 +147,9 @@ const confirmDeleteExcursion = async () => {
 	>
 		<template #cell(name)="{ value }">
 			<span class="font-medium text-slate-900">{{ value }}</span>
+		</template>
+		<template #cell(documentName)="{ value }">
+			<FileActions :files="(value as string[])" />
 		</template>
 		<template #actions="{ item }">
 			<div class="flex items-center gap-1">
