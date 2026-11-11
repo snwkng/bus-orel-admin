@@ -1,0 +1,30 @@
+# Dev-окружение админки (Vue 3 SPA + Vite) в Docker.
+# Требует запущенный бэкенд: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# (в репо bus-orel-backend) — он создаёт сеть localnet и сервис nestjs.
+services:
+  vite-app:
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    image: admin:dev
+    container_name: vite-admin
+    environment:
+      NODE_ENV: development
+      # /api проксируется dev-сервером Vite → адрес бэкенда внутри docker-сети
+      # (process.env имеет приоритет над /app/.env в vite loadEnv)
+      BASE_URL: http://nestjs:3001
+      # polling — чтобы watcher видел изменения через bind-mount на Windows
+      CHOKIDAR_USEPOLLING: 'true'
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+    networks:
+      - localnet
+    restart: unless-stopped
+networks:
+  localnet:
+    external: true
+    name: localnet
