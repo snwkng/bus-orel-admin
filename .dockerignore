@@ -1,0 +1,17 @@
+/node_modules
+/dist
+/cypress
+/.git
+/.github
+/.vscode
+
+# секреты
+.env
+.env.*
+
+# dev-мусор
+*.log
+docker-compose*.yml
+dockerfile*
+.dockerignore
+*.md
