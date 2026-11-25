@@ -1,0 +1,14 @@
+# Продакшн-стек для VPS (IMP-021). Образ приезжает из GHCR (на сервере ничего не собирается),
+# network_mode: host — контейнер слушает порт 5174 на хосте, конфиг nginx не меняется.
+# Раскладка на сервере: ~/apps/admin/docker-compose.yml (копия этого файла).
+services:
+  admin:
+    image: ghcr.io/snwkng/bus-orel-admin:latest
+    container_name: bus-orel-admin
+    network_mode: host
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
