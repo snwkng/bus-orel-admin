@@ -7,7 +7,7 @@ import BaseTextArea from '@/shared/ui/forms/BaseTextArea.vue';
 
 interface IProps {
 	name: string;
-	label: string;
+	label?: string;
 	addButtonLabel?: string;
 	required?: boolean;
 }
@@ -31,7 +31,7 @@ const { errorMessage, meta, errors } = useField<string>(name);
 </script>
 <template>
 	<div class="flex flex-col gap-y-2">
-		<div>
+		<div v-if="label">
 			<div
 				:class="[
 					'the-label',
@@ -41,32 +41,36 @@ const { errorMessage, meta, errors } = useField<string>(name);
 				{{ label }}
 				<span class="text-red-600" v-if="required"> * </span>
 			</div>
-			<span
-				:name="name"
-				class="text-red-600"
-				v-show="errors?.length && !meta.valid"
-			>
-				{{ errorMessage }}
-			</span>
 		</div>
-		<div class="rounded-md bg-white p-6">
+		<span
+			:name="name"
+			class="text-red-600"
+			v-show="errors?.length && !meta.valid"
+		>
+			{{ errorMessage }}
+		</span>
+		<div class="flex flex-col gap-y-4 rounded-md bg-slate-50 p-6">
 			<div
-				class="relative flex flex-col gap-y-4"
+				class="relative flex flex-col gap-y-4 rounded-xl border border-slate-200 bg-white p-4"
 				v-for="(field, idx) in fields"
 				:key="field.key"
 			>
-				<BaseInput
-					:name="`${name}[${idx}].name`"
-					label="Название номера"
-					required
-					column
-				/>
-				<BaseInput
-					:name="`${name}[${idx}].type`"
-					label="Тип номера"
-					required
-					column
-				/>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<BaseInput
+						:name="`${name}[${idx}].name`"
+						label="Название номера"
+						required
+						column
+						width="w-full"
+					/>
+					<BaseInput
+						:name="`${name}[${idx}].type`"
+						label="Тип номера"
+						required
+						column
+						width="w-full"
+					/>
+				</div>
 				<BaseInput
 					:name="`${name}[${idx}].capacity`"
 					label="Количество спальных мест"
@@ -77,6 +81,7 @@ const { errorMessage, meta, errors } = useField<string>(name);
 					:name="`${name}[${idx}].inRoom`"
 					label="Что находится в номере"
 					column
+					width="w-full"
 				/>
 
 				<button

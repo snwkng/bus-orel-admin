@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { TheNavbar } from '@/features/navbar';
-import { TheHeader } from '@/features/header';
+	import { TheNavbar } from '@/features/navbar';
+	import { TheHeader } from '@/features/header';
 </script>
 <template>
-	<div class="flex overflow-hidden rounded-xl bg-slate-300">
+	<div class="flex h-screen overflow-hidden bg-slate-100">
 		<TheNavbar />
-		<div class="flex-1 flex-col overflow-auto">
+		<div class="flex min-w-0 flex-1 flex-col">
 			<TheHeader />
-			<div class="h-[calc(100vh-70px)] bg-white">
-				<main
-					class="base-px base-py h-full overflow-hidden rounded-tl-xl bg-slate-200 transition-all"
-				>
-					<slot />
-				</main>
-			</div>
+			<main class="base-px base-py min-h-0 flex-1 overflow-hidden">
+				<slot />
+			</main>
 		</div>
 	</div>
 </template>

@@ -1,61 +1,55 @@
 # bus-orel-admin
 
-This template should help get you started developing with Vue 3 in Vite.
+Админ-панель для управления автобусными турами (отелями), экскурсиями и гостиничными номерами. SPA на Vue 3, собирается Vite, работает на REST API бэкенда [bus-orel-backend](../bus-orel-backend) (NestJS + MongoDB). Публичный сайт — [bus-orel-front](../bus-orel-front).
 
-## Recommended IDE Setup
+API-контракт бэкенда описан в `swagger.json` (OpenAPI 3.0) в корне репозитория; источник истины — версия из репозитория бэкенда (регенерируется там командой `npm run swagger:generate`).
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Стек
 
-## Type Support for `.vue` Imports in TS
+- Vue 3 (Composition API, `<script setup>`) + TypeScript, Vite
+- Vue Router, Pinia
+- Tailwind CSS 4 (`@tailwindcss/vite`)
+- vee-validate + yup (формы), dayjs, @vuepic/vue-datepicker, @lucide/vue
+- Vitest (юнит-тесты), Cypress (e2e), ESLint + Prettier
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Архитектура — Feature-Sliced Design (`app → pages → widgets → features → entities → shared`), алиас `@` → `./src`. Подробности — в `AGENTS.md`.
 
-## Customize configuration
+## Требования
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Node.js 24, npm 11 (как у бэкенда)
 
-## Project Setup
+## Переменные окружения
 
-```sh
-npm install
-```
+Копируем `.env.example` в `.env` и заполняем:
 
-### Compile and Hot-Reload for Development
+| Переменная | Назначение |
+|---|---|
+| `BASE_URL` | URL бэкенда; dev-прокси Vite перенаправляет на него запросы `/api` |
+| `APP_ENV` | Окружение приложения; доступно в коде как `__APP_ENV__` |
+| `VITE_BASE_URL` | Заполняется CI при деплое (см. `.github/workflows/node.js.yml`) |
 
-```sh
-npm run dev
-```
+## Команды
 
-### Type-Check, Compile and Minify for Production
+| Команда | Назначение |
+|---|---|
+| `npm install` | Установка зависимостей |
+| `npm run dev` | Dev-сервер (Vite, прокси `/api` → `BASE_URL`) |
+| `npm run build` | Продакшн-сборка: type-check (`vue-tsc`) + `vite build` |
+| `npm run build-only` | Сборка без проверки типов |
+| `npm run type-check` | Проверка типов (`vue-tsc --build --force`) |
+| `npm run lint` | ESLint с автофиксом |
+| `npm run format` | Prettier для `src/**/*.ts` |
+| `npm run test:unit` | Юнит-тесты (Vitest) |
+| `npm run test:e2e` | E2e-тесты против продакшн-сборки (нужен предварительный `npm run build`) |
+| `npm run test:e2e:dev` | E2e-тесты против dev-сервера (Cypress open, быстрее для разработки) |
+| `npm run types:generate` | Генерация типов API из `../bus-orel-backend/swagger.json` в `src/shared/api/schema.d.ts` (openapi-typescript). Запускать при изменениях API-контракта бэкенда |
 
-```sh
-npm run build
-```
+Доменные типы по мере актуализации swagger переводятся на сгенерированные схемы из `src/shared/api/schema.d.ts` (сейчас на них основан `SelectItem`). До закрытия bus-orel-backend IMP-025 часть схем в swagger неточна — такие типы остаются рукописными в `src/entities/*/model/types.d.ts`.
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## Деплой
 
-```sh
-npm run test:unit
-```
+- Продакшн-сборка раздаётся статикой (`dist/`) через `serve` на порту 5174 (PM2, `ecosystem.config.cjs`).
+- Vite проксирует `/api` только в dev-режиме; в проде `/api` должен проксировать внешний веб-сервер (nginx).
+- Деплой запускается push'ем в `master` (GitHub Actions, self-hosted раннер): сборка + `pm2 restart`. Перед push должны быть зелёными `npm run type-check`, `npm run lint`, `npm run test:unit`, `npm run build`.
 
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
-
-```sh
-npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Актуальный чеклист выката и известные проблемы — в `BACKLOG.md`.

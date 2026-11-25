@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia';
-import { login } from '../api';
+import { login, logoutRequest } from '../api';
 import { api } from '@/shared/api/api';
+import {
+	AUTH_STORAGE_KEY,
+	clearAuthTokens
+} from '@/shared/api/auth-session';
 import router from '@/app/router';
+import { RouteNames } from '@/app/router/RouteNames.enum';
 
 interface User {
   _id: string;
@@ -11,26 +16,13 @@ interface User {
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
-    token: localStorage.getItem('token'), 
+    token: localStorage.getItem(AUTH_STORAGE_KEY),
   }),
-
-  getters: {
-    isLoggedIn: (state) => {
-      if (!state.token) return false;
-      try {
-        const data = JSON.parse(state.token);
-        // Проверка времени жизни
-        return data?.accessToken && Date.now() < data.expiresAt;
-      } catch {
-        return false;
-      }
-    },
-  },
 
   actions: {
     async loginAction(username: string, password: string): Promise<void> {
       await login(username, password);
-      this.token = localStorage.getItem('token'); 
+      this.token = localStorage.getItem(AUTH_STORAGE_KEY);
       await this.fetchProfile();
     },
 
@@ -38,19 +30,18 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await api.get<{ _id: string; username: string; }>('/api/users/profile');
         this.user = res.data;
-        router.push({ name: 'home' });
       } catch (err) {
+        // Не 401 (например, обрыв сети): сессию не трогаем, профиль подгрузится позже
         console.error('[Store] Failed to fetch profile', err);
-        this.logout();
-        throw err;
       }
     },
 
-    logout() {
-      localStorage.removeItem('token');
+    async logout() {
+      await logoutRequest();
+      clearAuthTokens();
       this.token = null;
       this.user = null;
-      router.push({ name: 'login' });
+      router.push({ name: RouteNames.Login });
     },
   },
 });

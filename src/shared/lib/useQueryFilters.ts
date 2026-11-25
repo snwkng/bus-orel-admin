@@ -1,11 +1,11 @@
 import { computed } from 'vue';
 import { useRoute, useRouter, type LocationQueryRaw } from 'vue-router';
-import { type InferType, ObjectSchema } from 'yup';
+import { type InferType, ObjectSchema, type AnyObject } from 'yup';
 import { StorageKey } from '@/shared/config/storage-keys';
 import { debounce } from './useDebounces';
 
 // T extends ObjectSchema<any> позволяет передать любую схему объекта Yup
-export function useQueryFilters<T extends ObjectSchema<any>>(schema: T) {
+export function useQueryFilters<T extends ObjectSchema<AnyObject>>(schema: T) {
   const router = useRouter();
   const route = useRoute();
 

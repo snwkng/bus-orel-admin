@@ -2,7 +2,7 @@
 import { toRef } from 'vue';
 import { BaseInput, TheDatePicker } from '@/shared/ui/forms';
 import { TrashIcon } from '@/shared/ui/icons';
-import type { IDatesAndPrices } from '@/entities/busTours/model/types';
+import type { IDatesAndPrices } from '@/entities/hotels/model/types';
 
 interface IProps {
 	name: string;

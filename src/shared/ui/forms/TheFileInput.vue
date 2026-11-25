@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, toRef } from 'vue';
 import { CloseIcon } from '@/shared/ui/icons';
-import { useExcursionStore } from '@/entities/excursions/model';
-import { useBusTourStore } from '@/entities/busTours/model';
+import { uploadFile, getFile, deleteFile } from '@/shared/api/s3';
 import { useFieldArray, type FieldEntry } from 'vee-validate';
+import { useToast } from '@/shared/lib/useToasts';
 
 import GenerateFilePreview from '@/shared/ui/files/GenerateFilePreview.vue';
 
@@ -13,8 +13,8 @@ export interface Props {
 	label?: string;
 	column?: boolean;
 	multiple?: boolean;
-	place: string;
 	required?: boolean;
+	hint?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,13 +24,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const name = toRef(props, 'name');
 
-const { remove, push, replace, fields } = useFieldArray(name);
+const { remove, replace, fields } = useFieldArray(name);
 
-const store =
-	props.place === 'excursion' ? useExcursionStore() : useBusTourStore();
-const { getFile, uploadFile, deleteFile } = store;
 const files = ref<File[]>([]);
-const file = ref<any>(null);
+const file = ref<HTMLInputElement | null>(null);
+const { show } = useToast();
 
 watch(
 	() => fields.value,
@@ -58,13 +56,13 @@ const removeFile = async (index: number, fileName: string) => {
 		await deleteFile(fileName);
 		files.value.splice(index, 1);
 		remove(index);
-	} catch (error) {
-		console.error('err');
+	} catch {
+		show('Не удалось удалить файл', 'error');
 	}
 };
 
 const onChange = () => {
-	const newFiles = Array.from(file.value.files) as File[];
+	const newFiles = Array.from(file.value?.files ?? []) as File[];
 	const arrayFunctions = newFiles.map((x: File) => {
 		const formData = new FormData();
 		formData.append('file', x);
@@ -129,6 +127,7 @@ const onChange = () => {
 					:accept="props.accept"
 				/>
 			</label>
+			<p v-if="hint" class="mt-2 text-xs text-slate-400">{{ hint }}</p>
 		</div>
 	</div>
 </template>

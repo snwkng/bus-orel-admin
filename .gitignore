@@ -29,3 +29,9 @@ coverage
 
 *.tsbuildinfo
 .env
+
+AGENTS.md
+BACKLOG.md
+swagger.json
+.agents
+skills-lock.json

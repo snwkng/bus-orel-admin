@@ -2,9 +2,6 @@
   import { useRoute } from "vue-router";
 	import BaseToast from '@/shared/ui/toasts/BaseToast.vue';
   const route = useRoute();
-
-// const route = useRoute();
-// const layout = computed(() => route.meta.layout || DefaultLayout);
 </script>
 
 <template>

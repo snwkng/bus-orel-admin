@@ -9,12 +9,14 @@ export interface IProps {
 	name: string;
 	label?: string;
 	placeholder?: string;
+	type?: string;
 	column?: boolean;
 	required?: boolean;
 	width?: 'w-sm' | 'w-md' | 'w-lg' | 'w-2xl' | 'w-3xl' | 'w-4xl' | 'w-full';
 }
 
 const props = withDefaults(defineProps<IProps>(), {
+	type: 'text',
 	width: 'w-lg'
 });
 
@@ -33,7 +35,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			<input
 				:id="name"
 				:name="name"
-				type="text"
+				:type="type"
 				:value="value"
 				:placeholder="placeholder"
 				:class="[

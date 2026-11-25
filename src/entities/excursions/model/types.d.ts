@@ -10,6 +10,7 @@ interface IExcursion {
 	excursionStartDates: string[];
 	cities: string[];
 	hotelName: string;
+	hotelLink?: string | undefined;
 	thePriceIncludes: string[];
 	additionallyPaid: string[]
 }

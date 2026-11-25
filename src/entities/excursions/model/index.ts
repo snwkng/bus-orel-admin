@@ -2,18 +2,17 @@ import { defineStore } from 'pinia';
 import type { EditExcursionDto, CreateExcursionDto } from './types';
 import { excursionsApi } from '../api';
 import type { IPagination } from '@/shared/config/interfaces/pagination.interface';
+import type { SelectItem } from '@/shared/api/types';
 
 export const useExcursionStore = defineStore('useExcursionStore', {
 	state: () => <{
 		excursions: EditExcursionDto[]
 		pagination: null | IPagination
-		files: File[]
 		citiesList: SelectItem[]
 		typesList: SelectItem[]
 	}>({
 		excursions: [],
 		pagination: null,
-		files: [],
 		citiesList: [],
 		typesList: []
 	}),
@@ -38,23 +37,6 @@ export const useExcursionStore = defineStore('useExcursionStore', {
 
 		async deleteExcursion(id: string): Promise<void> {
 			await excursionsApi.deleteExcursion(id);
-		},
-
-		async uploadFile(file: FormData): Promise<string> {
-			const res = await excursionsApi.uploadFile(file);
-			return res.data as string
-		},
-
-		async getFile(
-			fileName: string,
-		): Promise<File> {
-			return await excursionsApi.getFile(fileName);
-		},
-
-		async deleteFile(
-			fileName: string,
-		): Promise<boolean> {
-			return await excursionsApi.deleteFile(fileName);
 		},
 
 		async getCitiesList(): Promise<void> {

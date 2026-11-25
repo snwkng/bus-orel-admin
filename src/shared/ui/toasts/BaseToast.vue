@@ -9,14 +9,14 @@ const getToastType = (type: ToastItem['type']) => {
 		case 'error':
 			return 'bg-red-300';
 		case 'info':
-			return 'bg-blue-300';
+			return 'bg-deep-teal/60';
 	}
 };
 </script>
 
 <template>
 	<Teleport to="body">
-		<div class="fixed right-5 top-5 z-[9999px] flex flex-col gap-2">
+		<div class="fixed right-5 top-5 z-[9999] flex flex-col gap-2">
 			<TransitionGroup name="list">
 				<div
 					v-for="toast in toasts"

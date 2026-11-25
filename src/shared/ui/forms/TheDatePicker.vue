@@ -4,11 +4,13 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { ru } from 'date-fns/locale';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
+import { useTheme } from '@/shared/lib/useTheme';
+
+const { isDark } = useTheme();
 
 export interface IProps {
 	name: string;
 	label?: string;
-	value?: string[] | string;
 	column?: boolean;
 	multiDates?: boolean;
 	required?: boolean;
@@ -22,7 +24,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const name = toRef(props, 'name');
 
-const { value, errorMessage, meta, handleChange, handleBlur } =
+const { value, errorMessage, meta, handleBlur } =
 	useField<string>(name);
 </script>
 
@@ -36,6 +38,7 @@ const { value, errorMessage, meta, handleChange, handleBlur } =
 			:id="name"
 			v-model="value"
 			:locale="ru"
+			:dark="isDark"
 			:multi-dates="multiDates"
 			:enable-time-picker="false"
 			:min-date="new Date()"
