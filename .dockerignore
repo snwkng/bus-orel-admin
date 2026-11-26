@@ -2,14 +2,14 @@
 /dist
 /coverage
 /test
+/cypress
+/.git
+/.github
+/.vscode
 
 # секреты
 .env
 .env.*
-
-# VCS и CI
-/.git
-/.github
 
 # docker-файлы
 /dockerfile
