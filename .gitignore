@@ -35,3 +35,5 @@ BACKLOG.md
 swagger.json
 .agents
 skills-lock.json
+# Kimi Code local config (skills, MCP)
+.kimi-code/
